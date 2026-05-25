@@ -1138,3 +1138,345 @@ body.page-home #app {
   position: relative;
   height: 220px;
 }
+
+/* =============================================================
+   PUBLIC MULTI-CLAN ADDITIONS
+   ============================================================= */
+
+/* Landing pubblica */
+.landing-page main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  min-height: 60vh;
+}
+.landing-hero {
+  text-align: center;
+  max-width: 360px;
+}
+.landing-logo {
+  width: 96px;
+  height: auto;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 4px 12px rgba(245, 200, 66, .3));
+}
+.landing-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 32px;
+  color: var(--gold);
+  margin: 0 0 12px;
+}
+.landing-sub {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+.landing-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Auth form */
+.auth-page main {
+  display: flex;
+  justify-content: center;
+  padding: 24px 20px;
+}
+.auth-form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--bg3);
+  border-radius: 12px;
+  padding: 24px;
+}
+.auth-title {
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold);
+  margin: 0 0 4px;
+  font-size: 22px;
+  text-align: center;
+}
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.auth-form input {
+  background: var(--bg);
+  color: #fff;
+  border: 1px solid var(--bg3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: inherit;
+}
+.auth-form input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.auth-switch {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+.auth-switch a {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+/* Header con azioni */
+.header-with-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 16px;
+}
+.header-with-actions .logo {
+  flex: 1;
+  text-align: center;
+}
+.header-action {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-size: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 8px;
+  min-width: 36px;
+}
+
+/* Lista clan */
+.clans-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+}
+.clans-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 20px 80px;
+}
+.clan-card {
+  display: block;
+  background: var(--bg2);
+  border: 1px solid var(--bg3);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-decoration: none;
+  color: #fff;
+  transition: border-color .15s;
+}
+.clan-card:active { border-color: var(--gold); }
+.clan-card-name {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.clan-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.badge-owner, .badge-member {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.badge-owner { background: var(--gold); color: var(--bg); }
+.badge-member { background: var(--bg3); color: var(--muted); }
+.clan-code {
+  margin-left: auto;
+  font-family: monospace;
+  color: var(--gold-dim);
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--bg3);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.modal-title {
+  font-family: 'Cinzel Decorative', serif;
+  color: var(--gold);
+  margin: 0;
+  font-size: 20px;
+}
+.modal label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.modal input[type="text"], .modal input[type="email"], .modal input[type="password"] {
+  background: var(--bg);
+  color: #fff;
+  border: 1px solid var(--bg3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 15px;
+}
+.modal input:focus { outline: none; border-color: var(--gold); }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+.btn-danger {
+  background: #5a1f1f !important;
+  border-color: #8a3232 !important;
+  color: #f0aaaa !important;
+}
+
+/* Players manager */
+.players-manager {
+  padding: 0 16px 12px;
+}
+.player-form {
+  margin-bottom: 12px;
+}
+.player-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 6px;
+}
+.player-form-row input {
+  background: var(--bg2);
+  color: #fff;
+  border: 1px solid var(--bg3);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: inherit;
+  font-size: 13px;
+  min-width: 0;
+}
+.player-form-row input:focus { outline: none; border-color: var(--gold); }
+.players-list-admin {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.players-list-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--bg3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.players-name { flex: 1; }
+.players-tag { color: var(--muted); font-family: monospace; font-size: 12px; }
+.btn-mini {
+  padding: 2px 8px !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+}
+
+/* Settings */
+.settings-block {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--bg3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.settings-h {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 0;
+}
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.settings-row-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.invite-code {
+  font-family: monospace;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: var(--gold);
+}
+.members-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.members-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg2);
+  border: 1px solid var(--bg3);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.members-id {
+  flex: 1;
+  font-family: monospace;
+  color: #ccd;
+}
+.radio-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  cursor: pointer;
+}

@@ -1,13 +1,17 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import type { Tournament } from '~~/shared/types/domain'
 
-useHead({ title: 'Storico — Royal Arena' })
+definePageMeta({ middleware: ['clan-member'] })
 
+const { clan, clanId } = useActiveClan()
 const api = useApi()
 const tournaments = ref<Tournament[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const hideInvalid = ref(true)
+
+useHead(() => ({ title: clan.value ? `${clan.value.name} — Storico` : 'Storico' }))
 
 const visibleList = computed(() =>
   hideInvalid.value
@@ -17,7 +21,7 @@ const visibleList = computed(() =>
 
 onMounted(async () => {
   try {
-    tournaments.value = await api.getTournamentsHistory()
+    if (clanId.value) tournaments.value = await api.getTournamentsHistory(clanId.value)
   } catch (err: any) {
     error.value = err?.message ?? String(err)
   } finally {
@@ -28,10 +32,7 @@ onMounted(async () => {
 
 <template>
   <div>
-    <header>
-      <div class="logo">Storico</div>
-    </header>
-
+    <header><div class="logo">Storico</div></header>
     <main>
       <div id="tab-content">
         <p v-if="loading" class="loading">Caricamento...</p>

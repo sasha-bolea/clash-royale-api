@@ -2,14 +2,17 @@
 import { storeToRefs } from 'pinia'
 import type { Tournament } from '~~/shared/types/domain'
 
-useHead({ title: 'Statistiche — Royal Arena' })
+definePageMeta({ middleware: ['clan-member'] })
 
-type Tab = 'giocatori' | 'torneo'
-type ChartFilter = '1m' | '3m' | 'sempre'
-
+const { clan, clanId } = useActiveClan()
 const api = useApi()
 const playerStore = usePlayerStore()
 const { allPlayers, standingsMap } = storeToRefs(playerStore)
+
+useHead(() => ({ title: clan.value ? `${clan.value.name} — Statistiche` : 'Statistiche' }))
+
+type Tab = 'giocatori' | 'torneo'
+type ChartFilter = '1m' | '3m' | 'sempre'
 
 const activeTab = ref<Tab>('torneo')
 const chartFilter = ref<ChartFilter>('sempre')
@@ -52,20 +55,21 @@ const lastDateLabel = computed(() => {
 const generaleExpanded = ref(false)
 
 async function ensurePlayers() {
-  if (!playerStore.loaded) {
-    try {
-      await playerStore.loadAll()
-    } catch (err: any) {
-      error.value = err?.message ?? String(err)
-    }
+  if (!clanId.value) return
+  try {
+    await playerStore.loadAll(clanId.value)
+  } catch (err: any) {
+    error.value = err?.message ?? String(err)
+  } finally {
+    loadingPlayers.value = false
   }
-  loadingPlayers.value = false
 }
 
 async function ensureTournaments() {
+  if (!clanId.value) return
   if (tournaments.value.length === 0) {
     try {
-      tournaments.value = await api.getTournamentsHistory()
+      tournaments.value = await api.getTournamentsHistory(clanId.value)
     } catch (err: any) {
       error.value = err?.message ?? String(err)
     }
@@ -84,22 +88,17 @@ onMounted(() => switchTab(activeTab.value))
 
 <template>
   <div>
-    <header>
-      <div class="logo">Statistiche</div>
-    </header>
-
+    <header><div class="logo">Statistiche</div></header>
     <main>
       <div class="tabs">
         <button
           class="tab-btn"
           :class="{ active: activeTab === 'giocatori' }"
-          data-tab="giocatori"
           @click="switchTab('giocatori')"
         >GIOCATORI</button>
         <button
           class="tab-btn"
           :class="{ active: activeTab === 'torneo' }"
-          data-tab="torneo"
           @click="switchTab('torneo')"
         >TORNEO</button>
       </div>
@@ -107,20 +106,14 @@ onMounted(() => switchTab(activeTab.value))
       <div id="tab-content">
         <p v-if="error" class="error-msg">Errore: {{ error }}</p>
 
-        <!-- TAB GIOCATORI -->
         <template v-else-if="activeTab === 'giocatori'">
           <p v-if="loadingPlayers" class="loading">Caricamento giocatori...</p>
-          <p v-else-if="!allPlayers.length" class="empty-msg">Nessun giocatore registrato.</p>
+          <p v-else-if="!allPlayers.length" class="empty-msg">Nessun giocatore nel clan.</p>
           <div v-else id="stats-grid">
-            <PlayerStatsCard
-              v-for="p in allPlayers"
-              :key="p.id"
-              :player="p"
-            />
+            <PlayerStatsCard v-for="p in allPlayers" :key="p.id" :player="p" />
           </div>
         </template>
 
-        <!-- TAB TORNEO -->
         <template v-else>
           <p v-if="loadingTournaments" class="loading">Caricamento...</p>
           <p v-else-if="!finishedTournaments.length" class="empty-msg">Nessun torneo concluso.</p>
@@ -148,21 +141,9 @@ onMounted(() => switchTab(activeTab.value))
                 <div class="ts-chart-header">
                   <span class="ts-chart-title">Andamento punti</span>
                   <div class="ts-filter-btns">
-                    <button
-                      class="ts-filter-btn"
-                      :class="{ active: chartFilter === '1m' }"
-                      @click="chartFilter = '1m'"
-                    >1M</button>
-                    <button
-                      class="ts-filter-btn"
-                      :class="{ active: chartFilter === '3m' }"
-                      @click="chartFilter = '3m'"
-                    >3M</button>
-                    <button
-                      class="ts-filter-btn"
-                      :class="{ active: chartFilter === 'sempre' }"
-                      @click="chartFilter = 'sempre'"
-                    >Sempre</button>
+                    <button class="ts-filter-btn" :class="{ active: chartFilter === '1m' }" @click="chartFilter = '1m'">1M</button>
+                    <button class="ts-filter-btn" :class="{ active: chartFilter === '3m' }" @click="chartFilter = '3m'">3M</button>
+                    <button class="ts-filter-btn" :class="{ active: chartFilter === 'sempre' }" @click="chartFilter = 'sempre'">Sempre</button>
                   </div>
                 </div>
                 <PointsChart

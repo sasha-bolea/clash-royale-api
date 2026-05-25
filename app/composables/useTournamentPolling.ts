@@ -6,8 +6,8 @@ const AUTOPAUSE_DELAY = 10 * 60_000 // 10min senza nuove partite
 const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
 
 // Polling battlelog + autopausa + timer + check completamento bracket.
-// Estratto da js/home.js (poll, startPolling, stopPolling, autoPause, checkCompletion, startTimer).
-export function useTournamentPolling() {
+// Richiede clanId (per addPoints alla classifica del clan).
+export function useTournamentPolling(clanId: number) {
   const api = useApi()
   const bracket = useBracket()
   const store = useTournamentStore()
@@ -21,7 +21,7 @@ export function useTournamentPolling() {
   let timerInterval: ReturnType<typeof setInterval> | null = null
 
   function startPolling() {
-    poll() // primo poll immediato
+    poll()
     pollingTimer = setInterval(poll, POLL_INTERVAL)
     resetAutopause()
     startTimer()
@@ -148,9 +148,8 @@ export function useTournamentPolling() {
       player_id: pos.player_id,
       points: POINTS_BY_PLACE[i + 1] ?? 0,
     }))
-    await api.addPoints(pointsEntries)
+    await api.addPoints(clanId, pointsEntries)
 
-    // Aggiorna standings cache locale
     pointsEntries.forEach(({ player_id, points }) => {
       const current = playerStore.standingsMap[player_id] ?? 0
       playerStore.standingsMap[player_id] = current + points
