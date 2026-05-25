@@ -1,32 +1,17 @@
-// Tipi dominio derivati da docs/schema.sql
+// Tipi dominio derivati da docs/schema.sql (modello flat, no auth)
 
 export type MatchType = '1v1' | 'tripla' | 'amichevole'
 export type TournamentStatus = 'active' | 'paused' | 'finished' | 'invalid'
 
-// Auth
-export interface AuthUser {
-  id: string // UUID
-  email: string | undefined
-}
-
-// Clan
+// Clan: nessuna ownership, codice univoco è la chiave d'accesso
 export interface Clan {
   id: number
   name: string
-  owner_id: string // UUID
-  invite_code: string
+  code: string
   created_at: string
 }
 
-export interface ClanMember {
-  clan_id: number
-  user_id: string
-  joined_at: string
-  // join opzionali (lato app, non in schema): email del membro via auth.users
-  email?: string
-}
-
-// Player (scoped al clan)
+// Player (scoped al clan, NO account proprio)
 export interface Player {
   id: number
   clan_id: number
@@ -40,7 +25,6 @@ export interface Tournament {
   clan_id: number
   match_type: MatchType
   status: TournamentStatus
-  created_by: string | null // UUID auth.users
   started_at: string
   finished_at: string | null
   tournament_players?: Array<{ player_id: number; players: Player }>

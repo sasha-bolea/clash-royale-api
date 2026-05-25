@@ -10,18 +10,7 @@ export default defineNuxtConfig({
   modules: [
     '@pinia/nuxt',
     '@vite-pwa/nuxt',
-    '@nuxtjs/supabase',
   ],
-
-  supabase: {
-    // Legge SUPABASE_URL + SUPABASE_KEY da .env (vedi .env per alias da SUPABASE_ANON_KEY)
-    redirectOptions: {
-      login: '/login',
-      callback: '/confirm',
-      // Pagine accessibili anche senza login: landing + signup
-      exclude: ['/', '/signup', '/confirm'],
-    },
-  },
 
   css: ['~/assets/css/style.css'],
 
@@ -29,6 +18,10 @@ export default defineNuxtConfig({
     // server-only — proxy CR API
     crApiKey: process.env.CR_API_KEY ?? '',
     crProxyUrl: process.env.CR_PROXY_URL ?? 'https://proxy.royaleapi.dev/v1',
+    public: {
+      supabaseUrl: process.env.SUPABASE_URL ?? '',
+      supabaseAnonKey: process.env.SUPABASE_ANON_KEY ?? '',
+    },
   },
 
   app: {

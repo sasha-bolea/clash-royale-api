@@ -10,16 +10,29 @@ const code = ref('')
 const error = ref<string | null>(null)
 const submitting = ref(false)
 const api = useApi()
+const session = useBrowserSession()
 
 async function submit() {
   if (!code.value.trim()) return
   error.value = null
   submitting.value = true
   try {
-    const clan = await api.joinByCode(code.value.trim().toUpperCase())
+    const clean = code.value.trim().toUpperCase()
+    const clan = await api.getClanByCode(clean)
+    if (!clan) {
+      error.value = 'Codice non valido'
+      return
+    }
+    session.addClan({
+      clan_id: clan.id,
+      code: clan.code,
+      name: clan.name,
+      joined_at: new Date().toISOString(),
+    })
     emit('joined', clan)
+    await navigateTo(`/clans/${clan.code}/torneo`)
   } catch (err: any) {
-    error.value = err?.message ?? 'Codice non valido'
+    error.value = err?.message ?? 'Errore'
   } finally {
     submitting.value = false
   }
@@ -29,9 +42,9 @@ async function submit() {
 <template>
   <div class="modal-overlay" @click.self="$emit('close')">
     <form class="modal" @submit.prevent="submit">
-      <h2 class="modal-title">Entra in un clan</h2>
+      <h2 class="modal-title">Entra con codice</h2>
       <label>
-        <span>Codice invito</span>
+        <span>Codice clan</span>
         <input
           v-model="code"
           type="text"

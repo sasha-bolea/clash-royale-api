@@ -3,11 +3,11 @@
 const route = useRoute()
 
 // Bottom nav visibile solo nelle pagine di un clan attivo.
-const showNav = computed(() => /^\/clans\/\d+(\/|$)/.test(route.path))
+const showNav = computed(() => /^\/clans\/[A-Z0-9]+(\/|$)/.test(route.path))
 
 const bodyClass = computed(() => {
   // Pagina torneo applica blocco scroll (vedi CSS .page-home)
-  if (/^\/clans\/\d+\/torneo$/.test(route.path)) return 'page-home'
+  if (/^\/clans\/[A-Z0-9]+\/torneo$/.test(route.path)) return 'page-home'
   return ''
 })
 

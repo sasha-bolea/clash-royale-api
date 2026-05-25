@@ -8,119 +8,50 @@ import type {
   CRPlayerProfile,
   CRBattle,
   Clan,
-  ClanMember,
 } from '~~/shared/types/domain'
 
-// Wrapper Supabase (via @nuxtjs/supabase) + CR proxy.
-// Tutte le query sono protette da RLS server-side; il client filtra anche per UX.
+// Wrapper Supabase ($db da plugin) + CR proxy.
+// Modello flat: no auth. Le query sono protette solo dall'oscurità del codice clan.
 export function useApi() {
-  const db = useSupabaseClient()
-  const user = useSupabaseUser()
+  const { $db } = useNuxtApp()
 
   // =====================================================
   // CLANS
   // =====================================================
 
-  // Lista clan a cui l'utente loggato appartiene.
-  async function getMyClans(): Promise<Clan[]> {
-    const { data, error } = await db
-      .from('clans')
-      .select('*')
-      .order('created_at', { ascending: false })
-    if (error) throw error
-    return (data as Clan[]) ?? []
+  async function createClan(name: string): Promise<Clan> {
+    // Genera code 6 char client-side; in caso di collisione (23505) retry.
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const code = randomCode(6)
+      const { data, error } = await $db
+        .from('clans')
+        .insert({ name, code })
+        .select()
+        .single()
+      if (!error) return data as Clan
+      if ((error as any).code !== '23505') throw error
+    }
+    throw new Error('Impossibile generare codice univoco. Riprova.')
   }
 
-  async function getClan(clanId: number): Promise<Clan | null> {
-    const { data, error } = await db.from('clans').select('*').eq('id', clanId).maybeSingle()
+  async function getClanByCode(code: string): Promise<Clan | null> {
+    const { data, error } = await $db.rpc('get_clan_by_code', { _code: code })
     if (error) throw error
     return (data as Clan | null) ?? null
   }
 
-  // Crea clan con nome + invite_code random 6 char. Trigger DB aggiunge owner come member.
-  async function createClan(name: string): Promise<Clan> {
-    if (!user.value) throw new Error('Non autenticato')
-    const inviteCode = randomCode(6)
-    const { data, error } = await db
-      .from('clans')
-      .insert({ name, owner_id: user.value.id, invite_code: inviteCode })
-      .select()
-      .single()
-    if (error) throw error
-    return data as Clan
-  }
-
-  async function renameClan(clanId: number, name: string): Promise<void> {
-    const { error } = await db.from('clans').update({ name }).eq('id', clanId)
-    if (error) throw error
-  }
-
-  async function deleteClan(clanId: number): Promise<void> {
-    const { error } = await db.from('clans').delete().eq('id', clanId)
-    if (error) throw error
-  }
-
-  // =====================================================
-  // CLAN MEMBERS
-  // =====================================================
-
-  async function getClanMembers(clanId: number): Promise<ClanMember[]> {
-    const { data, error } = await db
-      .from('clan_members')
-      .select('*')
-      .eq('clan_id', clanId)
-    if (error) throw error
-    return (data as ClanMember[]) ?? []
-  }
-
-  async function leaveClan(clanId: number): Promise<void> {
-    if (!user.value) throw new Error('Non autenticato')
-    const { error } = await db
-      .from('clan_members')
-      .delete()
-      .eq('clan_id', clanId)
-      .eq('user_id', user.value.id)
-    if (error) throw error
-  }
-
-  async function kickMember(clanId: number, userId: string): Promise<void> {
-    const { error } = await db
-      .from('clan_members')
-      .delete()
-      .eq('clan_id', clanId)
-      .eq('user_id', userId)
-    if (error) throw error
-  }
-
-  // RPC: join via codice. Idempotente.
-  async function joinByCode(code: string): Promise<Clan> {
-    const { data, error } = await db.rpc('join_clan_by_code', { code })
-    if (error) throw error
-    return data as Clan
-  }
-
-  // RPC: trasferisci ownership (owner only)
-  async function transferOwnership(clanId: number, newOwnerId: string): Promise<void> {
-    const { error } = await db.rpc('transfer_ownership', {
-      _clan_id: clanId,
-      _new_owner: newOwnerId,
-    })
-    if (error) throw error
-  }
-
-  // RPC: rigenera codice invito (owner only)
-  async function regenerateInviteCode(clanId: number): Promise<string> {
-    const { data, error } = await db.rpc('regenerate_invite_code', { _clan_id: clanId })
+  async function regenerateCode(clanId: number): Promise<string> {
+    const { data, error } = await $db.rpc('regenerate_code', { _clan_id: clanId })
     if (error) throw error
     return data as string
   }
 
   // =====================================================
-  // PLAYERS (scoped al clan)
+  // PLAYERS
   // =====================================================
 
   async function getPlayers(clanId: number): Promise<Player[]> {
-    const { data, error } = await db
+    const { data, error } = await $db
       .from('players')
       .select('*')
       .eq('clan_id', clanId)
@@ -130,7 +61,7 @@ export function useApi() {
   }
 
   async function addPlayer(clanId: number, username: string, crTag: string): Promise<Player> {
-    const { data, error } = await db
+    const { data, error } = await $db
       .from('players')
       .insert({ clan_id: clanId, username, cr_tag: crTag })
       .select()
@@ -140,16 +71,16 @@ export function useApi() {
   }
 
   async function removePlayer(playerId: number): Promise<void> {
-    const { error } = await db.from('players').delete().eq('id', playerId)
+    const { error } = await $db.from('players').delete().eq('id', playerId)
     if (error) throw error
   }
 
   // =====================================================
-  // TOURNAMENTS (scoped al clan)
+  // TOURNAMENTS
   // =====================================================
 
   async function getActiveTournament(clanId: number): Promise<Tournament | null> {
-    const { data, error } = await db
+    const { data, error } = await $db
       .from('tournaments')
       .select(`*, tournament_players ( player_id, players (*) )`)
       .eq('clan_id', clanId)
@@ -166,21 +97,15 @@ export function useApi() {
     playerIds: number[],
     matchType: MatchType,
   ): Promise<Tournament> {
-    if (!user.value) throw new Error('Non autenticato')
-    const { data: tournament, error: tErr } = await db
+    const { data: tournament, error: tErr } = await $db
       .from('tournaments')
-      .insert({
-        clan_id: clanId,
-        match_type: matchType,
-        status: 'active',
-        created_by: user.value.id,
-      })
+      .insert({ clan_id: clanId, match_type: matchType, status: 'active' })
       .select()
       .single()
     if (tErr) throw tErr
 
     const rows = playerIds.map(pid => ({ tournament_id: tournament.id, player_id: pid }))
-    const { error: tpErr } = await db.from('tournament_players').insert(rows)
+    const { error: tpErr } = await $db.from('tournament_players').insert(rows)
     if (tpErr) throw tpErr
 
     return tournament as Tournament
@@ -194,12 +119,12 @@ export function useApi() {
     if (status === 'finished' || status === 'invalid') {
       update.finished_at = new Date().toISOString()
     }
-    const { error } = await db.from('tournaments').update(update).eq('id', tournamentId)
+    const { error } = await $db.from('tournaments').update(update).eq('id', tournamentId)
     if (error) throw error
   }
 
   async function getTournamentMatches(tournamentId: number): Promise<TournamentMatch[]> {
-    const { data, error } = await db
+    const { data, error } = await $db
       .from('tournament_matches')
       .select(`
         *,
@@ -213,12 +138,11 @@ export function useApi() {
     return (data as TournamentMatch[]) ?? []
   }
 
-  // Ritorna true se salvata, false se duplicato (cr_battle_id già esistente per quel torneo)
   async function saveTournamentMatch(payload: SaveMatchPayload): Promise<boolean> {
     const { tournament_id, player1_id, player2_id, winner_id,
       crowns_p1, crowns_p2, played_at, cr_battle_id } = payload
 
-    const { error } = await db.from('tournament_matches').insert({
+    const { error } = await $db.from('tournament_matches').insert({
       tournament_id, player1_id, player2_id, winner_id,
       crowns_p1, crowns_p2, played_at, cr_battle_id,
     })
@@ -230,11 +154,11 @@ export function useApi() {
   }
 
   // =====================================================
-  // STANDINGS (scoped al clan)
+  // STANDINGS
   // =====================================================
 
   async function getStandings(clanId: number): Promise<Standing[]> {
-    const { data, error } = await db
+    const { data, error } = await $db
       .from('standings')
       .select('*, players (*)')
       .eq('clan_id', clanId)
@@ -248,16 +172,16 @@ export function useApi() {
     entries: Array<{ player_id: number; points: number }>,
   ): Promise<void> {
     for (const { player_id, points } of entries) {
-      const { data } = await db
+      const { data } = await $db
         .from('standings').select('points')
         .eq('clan_id', clanId).eq('player_id', player_id).maybeSingle()
       const current = (data as { points: number } | null)?.points ?? 0
-      await db.from('standings').upsert({ clan_id: clanId, player_id, points: current + points })
+      await $db.from('standings').upsert({ clan_id: clanId, player_id, points: current + points })
     }
   }
 
   async function getTournamentsHistory(clanId: number): Promise<Tournament[]> {
-    const { data, error } = await db
+    const { data, error } = await $db
       .from('tournaments')
       .select(`
         *,
@@ -291,9 +215,7 @@ export function useApi() {
 
   return {
     // clans
-    getMyClans, getClan, createClan, renameClan, deleteClan,
-    // members
-    getClanMembers, leaveClan, kickMember, joinByCode, transferOwnership, regenerateInviteCode,
+    createClan, getClanByCode, regenerateCode,
     // players
     getPlayers, addPlayer, removePlayer,
     // tournaments
@@ -306,9 +228,9 @@ export function useApi() {
   }
 }
 
-// Codice invito alfanumerico uppercase
+// Codice 6 char alfanumerico uppercase (no caratteri ambigui)
 function randomCode(len: number): string {
-  const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789' // no 0/O/1/I/L per leggibilità
+  const alphabet = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
   let s = ''
   for (let i = 0; i < len; i++) s += alphabet[Math.floor(Math.random() * alphabet.length)]
   return s

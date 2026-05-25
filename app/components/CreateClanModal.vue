@@ -10,6 +10,7 @@ const name = ref('')
 const error = ref<string | null>(null)
 const submitting = ref(false)
 const api = useApi()
+const session = useBrowserSession()
 
 async function submit() {
   if (!name.value.trim()) return
@@ -17,7 +18,14 @@ async function submit() {
   submitting.value = true
   try {
     const clan = await api.createClan(name.value.trim())
+    session.addClan({
+      clan_id: clan.id,
+      code: clan.code,
+      name: clan.name,
+      joined_at: new Date().toISOString(),
+    })
     emit('created', clan)
+    await navigateTo(`/clans/${clan.code}/torneo`)
   } catch (err: any) {
     error.value = err?.message ?? 'Errore creazione clan'
   } finally {

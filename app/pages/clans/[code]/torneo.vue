@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-definePageMeta({ middleware: ['clan-member'] })
+definePageMeta({ middleware: ['clan-access'] })
 
-const { clan, clanId, isOwner } = useActiveClan()
+const { clan, clanId } = useActiveClan()
 const api = useApi()
 const { showToast, showError } = useToast()
 
@@ -36,7 +36,6 @@ const participants = computed(() =>
   (activeTournament.value?.tournament_players ?? []).map(tp => tp.players),
 )
 
-// Polling istanziato solo quando clanId è noto
 let polling: ReturnType<typeof useTournamentPolling> | null = null
 const timerLabel = ref('0:00')
 const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
@@ -44,7 +43,6 @@ const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
 function ensurePolling() {
   if (!polling && clanId.value) {
     polling = useTournamentPolling(clanId.value)
-    // Sync timerLabel
     watch(() => polling!.timerLabel.value, v => { timerLabel.value = v })
   }
   return polling
@@ -54,7 +52,6 @@ onMounted(async () => {
   try {
     if (!clanId.value) throw new Error('Clan non valido')
 
-    // Reset store se cambio clan
     if (tournamentStore.clanId !== clanId.value) {
       tournamentStore.reset()
       tournamentStore.clanId = clanId.value
@@ -141,10 +138,11 @@ async function resumeTournament() {
 <template>
   <div>
     <header class="header-with-actions">
+      <NuxtLink to="/" class="header-action" aria-label="home">←</NuxtLink>
       <div class="logo">{{ clan?.name ?? 'Torneo' }}</div>
       <NuxtLink
-        v-if="clanId"
-        :to="`/clans/${clanId}/settings`"
+        v-if="clan"
+        :to="`/clans/${clan.code}/settings`"
         class="header-action"
         aria-label="settings"
       >⚙</NuxtLink>
@@ -155,7 +153,7 @@ async function resumeTournament() {
         <p v-if="view === 'loading'" class="loading">Caricamento...</p>
 
         <div v-else-if="view === 'idle'" class="idle-view">
-          <PlayersManager v-if="clanId" :clan-id="clanId" :is-owner="isOwner" />
+          <PlayersManager v-if="clanId" :clan-id="clanId" />
 
           <div class="section-label">SELEZIONA PARTECIPANTI</div>
           <div class="player-list-card">

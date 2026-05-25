@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import type { Tournament } from '~~/shared/types/domain'
 
-definePageMeta({ middleware: ['clan-member'] })
+definePageMeta({ middleware: ['clan-access'] })
 
 const { clan, clanId } = useActiveClan()
 const api = useApi()

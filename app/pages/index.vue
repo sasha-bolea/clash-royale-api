@@ -1,30 +1,53 @@
 <script setup lang="ts">
-// Landing pubblica: se loggato redirect a /clans, altrimenti CTA login/signup
+// Dashboard locale: lista clan salvati nel browser + CTA crea/entra
 useHead({ title: 'Royal Arena' })
 definePageMeta({ layout: false })
 
-const user = useSupabaseUser()
+const { savedClans } = useBrowserSession()
 
-watchEffect(() => {
-  if (user.value) navigateTo('/clans', { replace: true })
-})
+const showCreate = ref(false)
+const showJoin = ref(false)
 </script>
 
 <template>
-  <div class="landing-page">
+  <div>
     <header><div class="logo">Royal Arena</div></header>
+
     <main>
-      <div class="landing-hero">
-        <img src="/images/ui/logo.png" alt="logo" class="landing-logo" />
-        <h1 class="landing-title">Royal Arena</h1>
-        <p class="landing-sub">
-          Crea il clan, sfida gli amici, traccia ogni torneo di Clash Royale.
-        </p>
-        <div class="landing-cta">
-          <NuxtLink to="/signup" class="btn-gold">CREA ACCOUNT</NuxtLink>
-          <NuxtLink to="/login" class="btn-link">Ho già un account</NuxtLink>
+      <template v-if="!savedClans.length">
+        <div class="landing-hero">
+          <img src="/images/ui/logo.png" alt="logo" class="landing-logo" />
+          <h1 class="landing-title">Royal Arena</h1>
+          <p class="landing-sub">
+            Crea un clan, condividi il codice con gli amici, traccia ogni torneo di Clash Royale.
+          </p>
+          <div class="landing-cta">
+            <button class="btn-gold" @click="showCreate = true">CREA CLAN</button>
+            <button class="btn-link" @click="showJoin = true">Ho un codice</button>
+          </div>
         </div>
-      </div>
+      </template>
+
+      <template v-else>
+        <div class="clans-actions">
+          <button class="btn-gold" @click="showCreate = true">+ Nuovo clan</button>
+          <button class="btn-link" @click="showJoin = true">Entra con codice</button>
+        </div>
+        <div class="clans-list">
+          <ClanCard v-for="c in savedClans" :key="c.clan_id" :clan="c" />
+        </div>
+      </template>
     </main>
+
+    <CreateClanModal
+      v-if="showCreate"
+      @close="showCreate = false"
+      @created="showCreate = false"
+    />
+    <JoinByCodeModal
+      v-if="showJoin"
+      @close="showJoin = false"
+      @joined="showJoin = false"
+    />
   </div>
 </template>
