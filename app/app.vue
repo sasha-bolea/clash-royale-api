@@ -14,6 +14,13 @@ const bodyClass = computed(() => {
 useHead({
   bodyAttrs: { class: bodyClass },
 })
+
+// Blocca pinch-zoom su iOS (ignora user-scalable=no dal iOS 10)
+onMounted(() => {
+  document.addEventListener('touchmove', (e) => {
+    if (e.touches.length > 1) e.preventDefault()
+  }, { passive: false })
+})
 </script>
 
 <template>
