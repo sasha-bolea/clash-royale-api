@@ -43,8 +43,7 @@ function fmt(n: number) {
       <template v-else-if="data">
         <div class="level-trophy-row">
           <div class="level-badge">
-            <img src="/images/ui/level-big.png" alt="" class="level-img" @error="($event.target as HTMLImageElement).style.display='none'" />
-            <span class="level-num">{{ data.expLevel }}</span>
+            <span class="level-num-plain">Lv {{ data.expLevel }}</span>
           </div>
           <div class="trophy-block">
             <span class="trophy-icon">🏆</span>
@@ -74,15 +73,7 @@ function fmt(n: number) {
 
         <div v-if="data.arena" class="stat-row">
           <span class="stat-lbl">Arena</span>
-          <span class="stat-val arena-val">
-            <img
-              :src="arenaImg(data.arena.name)"
-              alt=""
-              class="arena-img"
-              @error="($event.target as HTMLImageElement).style.display='none'"
-            />
-            {{ data.arena.name }}
-          </span>
+          <span class="stat-val">{{ data.arena.name }}</span>
         </div>
         <div v-if="data.clan" class="stat-row">
           <span class="stat-lbl">Clan</span>

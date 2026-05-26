@@ -21,17 +21,9 @@
   --radius:   12px;
 }
 
-html::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: url('/images/background.jpg') center / cover no-repeat;
-  z-index: -1;
-}
-
 html {
   min-height: 100dvh;
-  background: var(--bg);
+  background: #3a90d9;
 }
 
 body {
@@ -151,14 +143,12 @@ main {
   -webkit-tap-highlight-color: transparent;
 }
 
-.bn-icon {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
+.bn-emoji {
+  font-size: 24px;
   opacity: 0.55;
-  transition: opacity .15s, filter .15s;
+  transition: opacity .15s;
 }
-.bn-item.active .bn-icon { opacity: 1; filter: drop-shadow(0 0 6px rgba(245,200,66,.6)); }
+.bn-item.active .bn-emoji { opacity: 1; }
 
 .bn-center { padding: 8px 24px; }
 
@@ -179,14 +169,11 @@ main {
   box-shadow: 0 2px 14px rgba(245,200,66,.3);
 }
 
-.bn-icon-center {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  opacity: 0.65;
-  transition: opacity .15s;
+.bn-emoji-center {
+  font-size: 22px;
 }
-.bn-center.active .bn-icon-center { opacity: 1; }
+
+.bn-center.active .bn-emoji-center { opacity: 1; }
 
 .bn-item span { display: none; }
 
@@ -769,28 +756,18 @@ body.page-home #app {
 }
 
 .level-badge {
-  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
   flex-shrink: 0;
 }
-.level-img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  display: block;
-}
-.level-num {
-  position: absolute;
+.level-num-plain {
   font-family: 'Lilita One', cursive;
   font-size: 14px;
-  color: #fff;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7);
-  line-height: 1;
-  pointer-events: none;
+  color: var(--muted);
+  background: var(--bg3);
+  border-radius: 6px;
+  padding: 4px 10px;
 }
 
 .trophy-block { display: flex; align-items: baseline; gap: 6px; }
@@ -847,7 +824,6 @@ body.page-home #app {
 }
 
 .arena-val { display: flex; align-items: center; gap: 6px; }
-.arena-img { height: 28px; width: auto; border-radius: 4px; }
 
 /* ============================================================
    CLASSIFICHE (classifiche.html)
@@ -1150,12 +1126,6 @@ body.page-home #app {
 .landing-hero {
   text-align: center;
   max-width: 360px;
-}
-.landing-logo {
-  width: 96px;
-  height: auto;
-  margin-bottom: 16px;
-  filter: drop-shadow(0 4px 12px rgba(245, 200, 66, .3));
 }
 .landing-title {
   font-family: 'Lilita One', cursive;

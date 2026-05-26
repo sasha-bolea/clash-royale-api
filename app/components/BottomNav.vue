@@ -11,17 +11,17 @@ const isActive = (suffix: string) => code.value
 <template>
   <nav v-if="code" class="bottom-nav">
     <NuxtLink :to="`/clans/${code}/storico`" class="bn-item" :class="{ active: isActive('storico') }">
-      <img src="/images/ui/leaderboard.png" class="bn-icon" alt="storico" />
+      <span class="bn-emoji">📋</span>
       <span>STORICO</span>
     </NuxtLink>
     <NuxtLink :to="`/clans/${code}/torneo`" class="bn-item bn-center" :class="{ active: isActive('torneo') }">
       <div class="bn-center-ring">
-        <img src="/images/ui/battle.png" class="bn-icon-center" alt="arena" />
+        <span class="bn-emoji-center">⚔️</span>
       </div>
       <span>ARENA</span>
     </NuxtLink>
     <NuxtLink :to="`/clans/${code}/statistiche`" class="bn-item" :class="{ active: isActive('statistiche') }">
-      <img src="/images/ui/social.png" class="bn-icon" alt="stats" />
+      <span class="bn-emoji">📊</span>
       <span>STATS</span>
     </NuxtLink>
   </nav>

@@ -16,7 +16,6 @@ const showJoin = ref(false)
     <main>
       <template v-if="!savedClans.length">
         <div class="landing-hero">
-          <img src="/images/ui/logo.png" alt="logo" class="landing-logo" />
           <h1 class="landing-title">Royal Arena</h1>
           <p class="landing-sub">
             Crea un clan, condividi il codice con gli amici, traccia ogni torneo di Clash Royale.
