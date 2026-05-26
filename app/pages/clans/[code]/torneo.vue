@@ -6,9 +6,13 @@ definePageMeta({ middleware: ['clan-access'] })
 const { clan, clanId } = useActiveClan()
 const api = useApi()
 const { showToast, showError } = useToast()
+const session = useBrowserSession()
 
 const playerStore = usePlayerStore()
 const { allPlayers, trophiesMap } = storeToRefs(playerStore)
+
+const showWelcome = ref(false)
+const showAddFromWelcome = ref(false)
 
 const tournamentStore = useTournamentStore()
 const {
@@ -66,12 +70,33 @@ onMounted(async () => {
       knownBattleIds.value = new Set(tournamentMatches.value.map(m => m.cr_battle_id))
       if (active.status === 'active') ensurePolling()?.startPolling()
     }
+
+    // Welcome dialog primo accesso al clan
+    if (clanId.value && !session.isWelcomed(clanId.value)) {
+      showWelcome.value = true
+    }
   } catch (err: any) {
     showError('Errore: ' + (err?.message ?? err))
   } finally {
     loading.value = false
   }
 })
+
+function closeWelcome() {
+  showWelcome.value = false
+  if (clanId.value) session.markWelcomed(clanId.value)
+}
+
+function welcomeAddPlayer() {
+  closeWelcome()
+  showAddFromWelcome.value = true
+}
+
+function onAddedFromWelcome(player: import('~~/shared/types/domain').Player) {
+  allPlayers.value = [...allPlayers.value, player].sort((a, b) =>
+    a.username.localeCompare(b.username),
+  )
+}
 
 onBeforeUnmount(() => polling?.stopPolling())
 
@@ -234,5 +259,20 @@ async function resumeTournament() {
         />
       </div>
     </main>
+
+    <WelcomeClanDialog
+      v-if="showWelcome && clan"
+      :clan-name="clan.name"
+      :players="allPlayers"
+      @close="closeWelcome"
+      @add="welcomeAddPlayer"
+    />
+
+    <AddPlayerModal
+      v-if="showAddFromWelcome && clanId"
+      :clan-id="clanId"
+      @close="showAddFromWelcome = false"
+      @added="onAddedFromWelcome"
+    />
   </div>
 </template>

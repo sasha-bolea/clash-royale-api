@@ -3,7 +3,7 @@
    ============================================================ */
 @font-face {
   font-family: 'ClashRoyale';
-  src: url('../images/Clash-Royale-Font/You Blockhead.ttf') format('truetype');
+  src: url('/images/Clash-Royale-Font/You Blockhead.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -30,7 +30,7 @@ html::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: url('../images/background.jpg') center / cover no-repeat;
+  background: url('/images/background.jpg') center / cover no-repeat;
   z-index: -1;
 }
 
@@ -1377,8 +1377,17 @@ body.page-home #app {
 }
 .player-form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr auto;
+  grid-template-columns: 1fr auto;
   gap: 6px;
+}
+.player-form-found {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+.player-form-found strong {
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
 }
 .player-form-row input {
   background: var(--bg2);
@@ -1495,4 +1504,126 @@ main .landing-hero {
   text-align: center;
   max-width: 360px;
   padding: 0 20px;
+}
+
+/* PlayerForm — nome read-only */
+.player-form-name {
+  display: flex;
+  align-items: center;
+  padding: 8px 10px;
+  background: var(--bg);
+  border: 1px solid var(--bg3);
+  border-radius: 6px;
+  font-size: 13px;
+  min-width: 0;
+  overflow: hidden;
+}
+.player-form-name-val {
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-form-name-placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* AddPlayerModal */
+.add-player-btn {
+  display: block;
+  margin: 8px 0;
+}
+.add-player-feedback {
+  min-height: 22px;
+  font-size: 13px;
+}
+.add-player-help {
+  background: var(--bg3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.add-player-help summary {
+  cursor: pointer;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.add-player-help summary::-webkit-details-marker { display: none; }
+.add-player-help summary::before {
+  content: '?';
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+  text-align: center;
+  line-height: 16px;
+  font-size: 11px;
+}
+.add-player-steps {
+  margin: 10px 0 6px;
+  padding-left: 22px;
+  line-height: 1.6;
+}
+.add-player-steps code,
+.add-player-note code {
+  background: var(--bg);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--gold);
+  font-family: monospace;
+}
+.add-player-note {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* LeaveClanDialog */
+.leave-clan-players {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--bg3);
+  border-radius: 6px;
+  padding: 8px;
+}
+.leave-clan-players .players-tag {
+  margin-left: 8px;
+}
+
+/* WelcomeClanDialog */
+.welcome-players {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  border: 1px solid var(--bg3);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.welcome-players li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+.welcome-players strong {
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
 }

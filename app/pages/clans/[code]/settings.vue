@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
 definePageMeta({ middleware: ['clan-access'] })
 
 const { clan, clanId } = useActiveClan()
@@ -7,9 +9,27 @@ const session = useBrowserSession()
 const api = useApi()
 const { showToast, showError } = useToast()
 
+const playerStore = usePlayerStore()
+const { allPlayers } = storeToRefs(playerStore)
+
 useHead(() => ({ title: clan.value ? `${clan.value.name} — Settings` : 'Settings' }))
 
 const regenerating = ref(false)
+const loadingPlayers = ref(true)
+
+onMounted(async () => {
+  if (clanId.value && playerStore.clanId !== clanId.value) {
+    playerStore.reset()
+  }
+  if (clanId.value) {
+    try {
+      await playerStore.loadAll(clanId.value)
+    } catch (err: any) {
+      showError(err?.message ?? 'Errore caricamento giocatori')
+    }
+  }
+  loadingPlayers.value = false
+})
 
 async function copyCode() {
   if (!clan.value) return
@@ -41,12 +61,37 @@ async function regen() {
   }
 }
 
-function leaveLocal() {
+async function removePlayer(playerId: number) {
+  if (!confirm('Rimuovere il giocatore? Se è l\'ultimo, anche il clan viene eliminato.')) return
+  try {
+    await api.removePlayer(playerId)
+    allPlayers.value = allPlayers.value.filter(p => p.id !== playerId)
+    if (allPlayers.value.length === 0 && clanId.value) {
+      session.removeClan(clanId.value)
+      clanStore.reset()
+      await navigateTo('/', { replace: true })
+    }
+  } catch (err: any) {
+    showError(err?.message ?? 'Errore rimozione')
+  }
+}
+
+const showLeave = ref(false)
+
+async function confirmLeave(removePlayerId: number | null) {
   if (!clanId.value) return
-  if (!confirm('Uscire dal clan? Il clan resta su DB, puoi rientrare con il codice.')) return
-  session.removeClan(clanId.value)
-  clanStore.reset()
-  navigateTo('/', { replace: true })
+  showLeave.value = false
+  try {
+    if (removePlayerId != null) {
+      await api.removePlayer(removePlayerId)
+      allPlayers.value = allPlayers.value.filter(p => p.id !== removePlayerId)
+    }
+    session.removeClan(clanId.value)
+    clanStore.reset()
+    await navigateTo('/', { replace: true })
+  } catch (err: any) {
+    showError(err?.message ?? 'Errore uscita')
+  }
 }
 </script>
 
@@ -81,11 +126,26 @@ function leaveLocal() {
       </section>
 
       <section class="settings-block">
+        <h3 class="settings-h">Giocatori ({{ allPlayers.length }})</h3>
+        <p v-if="loadingPlayers" class="loading">Caricamento...</p>
+        <p v-else-if="!allPlayers.length" class="empty-msg">
+          Nessun giocatore. Aggiungi il primo dalla pagina Torneo.
+        </p>
+        <ul v-else class="players-list-admin">
+          <li v-for="p in allPlayers" :key="p.id" class="players-list-row">
+            <span class="players-name">{{ p.username }}</span>
+            <span class="players-tag">{{ p.cr_tag }}</span>
+            <button class="btn-cancel btn-mini" @click="removePlayer(p.id)">×</button>
+          </li>
+        </ul>
+      </section>
+
+      <section class="settings-block">
         <h3 class="settings-h">Esci dal clan</h3>
         <p class="settings-help">
           Rimuove il clan dai tuoi clan salvati nel browser. Il clan resta operativo per gli altri.
         </p>
-        <button class="btn-cancel btn-danger" @click="leaveLocal">Esci dal clan</button>
+        <button class="btn-cancel btn-danger" @click="showLeave = true">Esci dal clan</button>
       </section>
 
       <section class="settings-block">
@@ -95,5 +155,12 @@ function leaveLocal() {
         </p>
       </section>
     </main>
+
+    <LeaveClanDialog
+      v-if="showLeave"
+      :players="allPlayers"
+      @close="showLeave = false"
+      @confirm="confirmLeave"
+    />
   </div>
 </template>

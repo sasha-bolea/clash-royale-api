@@ -6,6 +6,7 @@ export interface SavedClan {
   code: string
   name: string
   joined_at: string
+  welcomed?: boolean // true dopo che il dialog di benvenuto è stato visto
 }
 
 const STORAGE_KEY = 'royal-arena:saved-clans'
@@ -37,7 +38,6 @@ export function useBrowserSession() {
   function addClan(c: SavedClan) {
     const existing = savedClans.value.find(s => s.clan_id === c.clan_id)
     if (existing) {
-      // Aggiorna code/name se cambiati
       existing.code = c.code
       existing.name = c.name
     } else {
@@ -55,7 +55,6 @@ export function useBrowserSession() {
     return savedClans.value.some(s => s.clan_id === clanId)
   }
 
-  // Aggiorna code per un clan salvato (post regen)
   function updateCode(clanId: number, newCode: string) {
     const found = savedClans.value.find(s => s.clan_id === clanId)
     if (found) {
@@ -64,5 +63,21 @@ export function useBrowserSession() {
     }
   }
 
-  return { savedClans, addClan, removeClan, hasClan, updateCode }
+  function isWelcomed(clanId: number): boolean {
+    const found = savedClans.value.find(s => s.clan_id === clanId)
+    return !!found?.welcomed
+  }
+
+  function markWelcomed(clanId: number) {
+    const found = savedClans.value.find(s => s.clan_id === clanId)
+    if (found && !found.welcomed) {
+      found.welcomed = true
+      persist(savedClans.value)
+    }
+  }
+
+  return {
+    savedClans, addClan, removeClan, hasClan, updateCode,
+    isWelcomed, markWelcomed,
+  }
 }
