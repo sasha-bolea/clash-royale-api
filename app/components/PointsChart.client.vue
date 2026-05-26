@@ -39,7 +39,7 @@ function buildChart() {
   const canvas = canvasRef.value
   if (!canvas) return
 
-  Chart.defaults.font.family = 'ClashRoyale, serif'
+  Chart.defaults.font.family = 'Lilita One, serif'
   Chart.defaults.font.size = 10
 
   const now = new Date()
@@ -118,17 +118,17 @@ function buildChart() {
           labels: {
             color: '#e8d9c0',
             boxWidth: 12,
-            font: { family: 'ClashRoyale, serif', size: 11 },
+            font: { family: 'Lilita One, serif', size: 11 },
           },
         },
       },
       scales: {
         x: {
-          ticks: { color: '#8a7f6e', maxRotation: 45, font: { family: 'ClashRoyale, serif', size: 10 } },
+          ticks: { color: '#8a7f6e', maxRotation: 45, font: { family: 'Lilita One, serif', size: 10 } },
           grid: { color: 'rgba(255,255,255,0.05)' },
         },
         y: {
-          ticks: { color: '#8a7f6e', stepSize: 1, font: { family: 'ClashRoyale, serif', size: 10 } },
+          ticks: { color: '#8a7f6e', stepSize: 1, font: { family: 'Lilita One, serif', size: 10 } },
           grid: { color: 'rgba(255,255,255,0.05)' },
           beginAtZero: true,
         },
@@ -138,7 +138,7 @@ function buildChart() {
 }
 
 onMounted(async () => {
-  await (document as any).fonts?.load?.('10px "ClashRoyale"').catch(() => {})
+  await (document as any).fonts?.load?.('10px "Lilita One"').catch(() => {})
   buildChart()
 })
 watch(() => [props.filter, props.tournaments, props.players], () => buildChart(), { deep: true })

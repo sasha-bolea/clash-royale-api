@@ -39,7 +39,7 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', href: '/images/ui/icon.png' },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap',
+          href: 'https://fonts.googleapis.com/css2?family=Lilita+One&family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap',
         },
       ],
     },

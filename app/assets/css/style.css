@@ -1,12 +1,7 @@
 /* ============================================================
-   FONT CUSTOM
+   FONT — Lilita One (Google Fonts, SIL OFL, commercial OK)
+   Caricato via <link> in nuxt.config head
    ============================================================ */
-@font-face {
-  font-family: 'ClashRoyale';
-  src: url('/images/Clash-Royale-Font/You Blockhead.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
 
 /* ============================================================
    RESET & VARIABILI
@@ -43,7 +38,7 @@ body {
   height: 100dvh;
   background: transparent;
   color: var(--text);
-  font-family: 'ClashRoyale', 'Cinzel Decorative', cursive;
+  font-family: 'Lilita One', 'Cinzel Decorative', cursive;
   font-size: 18px;
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
@@ -68,7 +63,7 @@ header {
 }
 
 .logo {
-  font-family: 'ClashRoyale', 'Cinzel Decorative', cursive;
+  font-family: 'Lilita One', 'Cinzel Decorative', cursive;
   font-size: 22px;
   color: #6b3500;
   letter-spacing: 2px;
@@ -95,7 +90,7 @@ header {
 }
 
 .nav-link {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 13px;
   color: var(--muted);
   text-decoration: none;
@@ -199,7 +194,7 @@ main {
    LABEL DI SEZIONE
    ============================================================ */
 .section-label {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 11px;
   letter-spacing: 2px;
   color: var(--muted);
@@ -216,7 +211,7 @@ main {
   color: var(--gold);
   border-radius: var(--radius);
   padding: 14px;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 14px;
   letter-spacing: 1px;
   cursor: pointer;
@@ -232,7 +227,7 @@ main {
   color: var(--red);
   border-radius: var(--radius);
   padding: 14px;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 14px;
   letter-spacing: 1px;
   cursor: pointer;
@@ -243,7 +238,7 @@ main {
 
 .btn-link {
   display: inline-block;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 15px;
   color: var(--gold);
   text-decoration: none;
@@ -271,7 +266,7 @@ main {
   background: var(--bg2);
   border: none;
   color: var(--muted);
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 13px;
   letter-spacing: 1px;
   padding: 14px;
@@ -331,7 +326,7 @@ main {
 .battle-loss { border-left-color: var(--red); }
 
 .battle-result-badge {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 13px;
   font-weight: 700;
   width: 22px;
@@ -468,7 +463,7 @@ body.page-home #app {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 18px;
   color: var(--muted);
 }
@@ -476,7 +471,7 @@ body.page-home #app {
 .player-info { flex: 1; min-width: 0; }
 
 .player-name {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 15px;
   font-weight: 600;
   color: var(--text);
@@ -487,7 +482,7 @@ body.page-home #app {
 .player-card.selected .player-name { color: var(--gold); }
 
 .player-subtag {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 11px;
   color: var(--gold-dim);
   letter-spacing: 0.5px;
@@ -495,7 +490,7 @@ body.page-home #app {
 }
 
 .player-pts {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 15px;
   color: var(--gold);
   white-space: nowrap;
@@ -518,7 +513,7 @@ body.page-home #app {
   border: none;
   border-bottom: 4px solid #9a5c00;
   color: #6b3500;
-  font-family: 'ClashRoyale', 'Cinzel Decorative', cursive;
+  font-family: 'Lilita One', 'Cinzel Decorative', cursive;
   font-size: 18px;
   font-weight: 900;
   letter-spacing: 2px;
@@ -568,14 +563,14 @@ body.page-home #app {
 }
 
 .status-text {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 14px;
   letter-spacing: 1px;
   flex: 1;
 }
 
 .timer {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 16px;
   color: var(--gold);
   min-width: 44px;
@@ -596,13 +591,13 @@ body.page-home #app {
   background: var(--bg3);
   border-radius: 4px;
   padding: 2px 8px;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 12px;
   color: var(--text);
 }
 
 .match-type-badge {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 12px;
   color: var(--gold);
   letter-spacing: 1px;
@@ -626,7 +621,7 @@ body.page-home #app {
 }
 
 .match-num {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 12px;
   color: var(--muted);
   width: 16px;
@@ -666,7 +661,7 @@ body.page-home #app {
 .complete-view { text-align: center; }
 
 .complete-title {
-  font-family: 'ClashRoyale', 'Cinzel Decorative', cursive;
+  font-family: 'Lilita One', 'Cinzel Decorative', cursive;
   font-size: 20px;
   color: var(--gold);
   letter-spacing: 2px;
@@ -697,13 +692,13 @@ body.page-home #app {
 
 .podio-name {
   flex: 1;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 18px;
   text-align: left;
 }
 
 .podio-pts {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 16px;
   color: var(--gold);
 }
@@ -741,7 +736,7 @@ body.page-home #app {
 }
 
 .card-name {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 17px;
   color: var(--gold);
 }
@@ -790,7 +785,7 @@ body.page-home #app {
 }
 .level-num {
   position: absolute;
-  font-family: 'ClashRoyale', 'Cinzel Decorative', cursive;
+  font-family: 'Lilita One', 'Cinzel Decorative', cursive;
   font-size: 14px;
   color: #fff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 6px rgba(0, 0, 0, 0.7);
@@ -801,7 +796,7 @@ body.page-home #app {
 .trophy-block { display: flex; align-items: baseline; gap: 6px; }
 .trophy-icon  { font-size: 18px; }
 .trophy-val {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 22px;
   color: var(--gold);
 }
@@ -823,7 +818,7 @@ body.page-home #app {
 .stat-box.highlight { border: 1px solid var(--gold-dim); }
 
 .stat-box-val {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 20px;
   line-height: 1.2;
 }
@@ -877,8 +872,8 @@ body.page-home #app {
 .leaderboard-row.rank-3 { border-color: #c87d3e; }
 
 .lb-rank { font-size: 22px; width: 32px; flex-shrink: 0; text-align: center; }
-.lb-name { flex: 1; font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 17px; }
-.lb-pts  { font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 16px; color: var(--gold); }
+.lb-name { flex: 1; font-family: 'Lilita One', 'Cinzel', serif; font-size: 17px; }
+.lb-pts  { font-family: 'Lilita One', 'Cinzel', serif; font-size: 16px; color: var(--gold); }
 
 .storico-list {
   display: flex;
@@ -902,8 +897,8 @@ body.page-home #app {
   margin-bottom: 8px;
 }
 
-.card-date  { font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 13px; }
-.card-badge { font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 11px; letter-spacing: 1px; color: var(--gold); }
+.card-date  { font-family: 'Lilita One', 'Cinzel', serif; font-size: 13px; }
+.card-badge { font-family: 'Lilita One', 'Cinzel', serif; font-size: 11px; letter-spacing: 1px; color: var(--gold); }
 .badge-invalid { color: var(--muted); font-style: italic; }
 
 .card-players { font-size: 15px; color: var(--muted); margin-bottom: 10px; font-style: italic; }
@@ -927,7 +922,7 @@ body.page-home #app {
   color: var(--text);
   border-radius: 20px;
   padding: 5px 14px;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 12px;
   cursor: pointer;
   transition: background .15s, color .15s, border-color .15s;
@@ -963,7 +958,7 @@ body.page-home #app {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 16px;
   color: var(--gold);
   font-weight: 700;
@@ -981,7 +976,7 @@ body.page-home #app {
 .ts-name-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .ts-medal      { font-size: 18px; line-height: 1; }
 .ts-pts-preview {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 13px;
   color: var(--gold);
   opacity: 0.85;
@@ -1008,7 +1003,7 @@ body.page-home #app {
 }
 
 .ts-place-icon { font-size: 20px; }
-.ts-place-val  { font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 20px; color: var(--text); font-weight: 700; }
+.ts-place-val  { font-family: 'Lilita One', 'Cinzel', serif; font-size: 20px; color: var(--text); font-weight: 700; }
 .ts-place-pct  { font-size: 11px; color: var(--muted); }
 
 .ts-matches { display: flex; flex-direction: column; gap: 0; }
@@ -1053,13 +1048,13 @@ body.page-home #app {
   background: rgba(0,0,0,0.15);
 }
 .ts-trn-row:last-child { border-bottom: none; }
-.ts-trn-date { color: var(--muted); font-family: 'ClashRoyale', 'Cinzel', serif; }
-.ts-trn-pos { font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 13px; }
-.ts-trn-pts { font-family: 'ClashRoyale', 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-left: auto; padding-left: 10px; }
+.ts-trn-date { color: var(--muted); font-family: 'Lilita One', 'Cinzel', serif; }
+.ts-trn-pos { font-family: 'Lilita One', 'Cinzel', serif; font-size: 13px; }
+.ts-trn-pts { font-family: 'Lilita One', 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-left: auto; padding-left: 10px; }
 
 .ts-match-lbl { color: var(--text); }
 .ts-match-val {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 14px;
   font-weight: 600;
   color: var(--text);
@@ -1084,7 +1079,7 @@ body.page-home #app {
   gap: 4px;
 }
 .ts-summary-val {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 22px;
   color: var(--gold);
   font-weight: 700;
@@ -1109,7 +1104,7 @@ body.page-home #app {
 }
 
 .ts-chart-title {
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   font-size: 14px;
   color: var(--text);
   font-weight: 600;
@@ -1124,7 +1119,7 @@ body.page-home #app {
   border-radius: 6px;
   padding: 4px 10px;
   font-size: 12px;
-  font-family: 'ClashRoyale', 'Cinzel', serif;
+  font-family: 'Lilita One', 'Cinzel', serif;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1627,3 +1622,21 @@ main .landing-hero {
   color: var(--gold);
   font-family: 'Cinzel', serif;
 }
+
+/* AppFooter — disclaimer Supercell IP */
+.app-footer {
+  max-width: 480px;
+  margin: 24px auto 0;
+  padding: 16px 20px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted);
+  text-align: center;
+  opacity: 0.7;
+}
+.app-footer a {
+  color: var(--gold);
+  text-decoration: underline;
+}
+/* Quando bottom-nav visibile, già copre 68px → footer padding-bottom basta */
