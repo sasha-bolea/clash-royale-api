@@ -22,5 +22,6 @@ useHead({
     <AppFooter />
     <BottomNav v-if="showNav" />
     <Toast />
+    <PwaUpdatePrompt />
   </div>
 </template>

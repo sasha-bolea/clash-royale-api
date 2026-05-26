@@ -52,7 +52,7 @@ export default defineNuxtConfig({
   },
 
   pwa: {
-    registerType: 'autoUpdate',
+    registerType: 'prompt',
     manifest: {
       name: 'Royal Arena',
       short_name: 'Royal Arena',
