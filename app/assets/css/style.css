@@ -23,7 +23,9 @@
 
 html {
   min-height: 100dvh;
-  background: #1a5fa0;
+  background-color: #082d4d;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' viewBox='0 0 50 50'><rect x='-16' y='-16' width='32' height='32' rx='4' transform='translate(25 25) rotate(45)' fill='%23125790'/><rect x='-16' y='-16' width='32' height='32' rx='4' transform='translate(0 0) rotate(45)' fill='%230e4274'/><rect x='-16' y='-16' width='32' height='32' rx='4' transform='translate(50 0) rotate(45)' fill='%230e4274'/><rect x='-16' y='-16' width='32' height='32' rx='4' transform='translate(0 50) rotate(45)' fill='%230e4274'/><rect x='-16' y='-16' width='32' height='32' rx='4' transform='translate(50 50) rotate(45)' fill='%230e4274'/></svg>");
+  background-repeat: repeat;
 }
 
 body {
