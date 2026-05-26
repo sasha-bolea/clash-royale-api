@@ -117,21 +117,12 @@ main {
   justify-content: space-around;
   background: linear-gradient(180deg, #0a1030 0%, #060a1e 100%);
   border-top: 2px solid var(--bg3);
-  padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+  padding: 10px 0;
+  padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
   z-index: 50;
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   will-change: transform;
-}
-
-/* Fix banda blu iOS PWA su pagine non-scrollabili:
-   In standalone, bottom:0 cade sopra la safe-area (~34px); la nav viene abbassata
-   per coprirla. Su dispositivi senza home indicator env()=0 → nessun effetto. */
-@media (display-mode: standalone) {
-  .bottom-nav {
-    bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-  }
 }
 
 .bn-item {
