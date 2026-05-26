@@ -29,7 +29,7 @@ html {
 }
 
 body {
-  height: 100dvh;
+  min-height: 100dvh;
   background: transparent;
   color: var(--text);
   font-family: 'Lilita One', cursive;
@@ -122,9 +122,6 @@ main {
   padding: 10px 0;
   padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
   z-index: 50;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  will-change: transform;
 }
 
 .bn-item {
@@ -365,6 +362,7 @@ main {
    HOME PAGE (index.html)
    ============================================================ */
 body.page-home {
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   overflow: hidden;
