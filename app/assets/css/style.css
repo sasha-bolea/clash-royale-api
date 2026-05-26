@@ -143,12 +143,13 @@ main {
   -webkit-tap-highlight-color: transparent;
 }
 
-.bn-emoji {
-  font-size: 24px;
-  opacity: 0.55;
-  transition: opacity .15s;
+.bn-svg {
+  width: 28px;
+  height: 28px;
+  color: var(--muted);
+  transition: color .15s;
 }
-.bn-item.active .bn-emoji { opacity: 1; }
+.bn-item.active .bn-svg { color: var(--gold); }
 
 .bn-center { padding: 8px 24px; }
 
@@ -169,11 +170,13 @@ main {
   box-shadow: 0 2px 14px rgba(245,200,66,.3);
 }
 
-.bn-emoji-center {
-  font-size: 22px;
+.bn-svg-center {
+  width: 26px;
+  height: 26px;
+  color: var(--muted);
+  transition: color .15s;
 }
-
-.bn-center.active .bn-emoji-center { opacity: 1; }
+.bn-center.active .bn-svg-center { color: var(--gold); }
 
 .bn-item span { display: none; }
 
