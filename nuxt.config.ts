@@ -57,6 +57,7 @@ export default defineNuxtConfig({
       name: 'Royal Arena',
       short_name: 'Royal Arena',
       start_url: '/',
+      scope: '/',
       display: 'standalone',
       background_color: '#0a0f2e',
       theme_color: '#0a0f2e',
