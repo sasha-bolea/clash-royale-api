@@ -1210,7 +1210,8 @@ body.page-home #app {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 0 16px;
+  padding: 14px 16px;
+  padding-top: max(14px, env(safe-area-inset-top));
 }
 .header-with-actions .logo {
   flex: 1;
