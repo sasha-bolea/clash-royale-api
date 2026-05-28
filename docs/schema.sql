@@ -157,3 +157,18 @@ SELECT cron.schedule(
       AND id NOT IN (SELECT clan_id FROM players)
       AND id NOT IN (SELECT clan_id FROM tournaments)$$
 );
+
+-- Cron: ogni 30min invalida tornei attivi da >2h con 0 partite.
+SELECT cron.unschedule('autoinvalid-idle-tournaments') WHERE EXISTS (
+  SELECT 1 FROM cron.job WHERE jobname = 'autoinvalid-idle-tournaments'
+);
+
+SELECT cron.schedule(
+  'autoinvalid-idle-tournaments',
+  '*/30 * * * *',
+  $$UPDATE tournaments
+    SET status = 'invalid', finished_at = now()
+    WHERE status = 'active'
+      AND started_at < now() - interval '2 hours'
+      AND id NOT IN (SELECT DISTINCT tournament_id FROM tournament_matches)$$
+);

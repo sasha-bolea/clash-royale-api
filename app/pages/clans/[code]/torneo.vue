@@ -28,11 +28,10 @@ useHead(() => ({ title: clan.value ? `${clan.value.name} — Torneo` : 'Torneo' 
 const loading = ref(true)
 const starting = ref(false)
 
-const view = computed<'loading' | 'idle' | 'active' | 'paused' | 'complete'>(() => {
+const view = computed<'loading' | 'idle' | 'active' | 'complete'>(() => {
   if (loading.value) return 'loading'
   if (completedPositions.value) return 'complete'
   if (!activeTournament.value) return 'idle'
-  if (activeTournament.value.status === 'paused') return 'paused'
   return 'active'
 })
 
@@ -148,16 +147,6 @@ async function cancelTournament() {
   }
 }
 
-async function resumeTournament() {
-  if (!activeTournament.value) return
-  try {
-    await api.updateTournamentStatus(activeTournament.value.id, 'active')
-    activeTournament.value = { ...activeTournament.value, status: 'active' }
-    ensurePolling()?.startPolling()
-  } catch (err: any) {
-    showError('Errore ripresa: ' + (err?.message ?? err))
-  }
-}
 </script>
 
 <template>
@@ -226,28 +215,6 @@ async function resumeTournament() {
             />
           </div>
           <div class="active-footer">
-            <button class="btn-cancel" @click="cancelTournament">Annulla torneo</button>
-          </div>
-        </div>
-
-        <div v-else-if="view === 'paused'" class="active-view">
-          <div class="status-bar paused">
-            <span class="dot-paused"></span>
-            <span class="status-text">In pausa</span>
-          </div>
-          <div class="matches-list">
-            <MatchRow
-              v-for="(m, i) in tournamentMatches"
-              :key="m.id"
-              :match="m"
-              :index="i"
-            />
-          </div>
-          <p class="pause-msg">
-            Nessuna partita rilevata da 10 minuti.<br>Il torneo è in pausa.
-          </p>
-          <div class="active-footer">
-            <button class="btn-gold" @click="resumeTournament">Riprendi polling</button>
             <button class="btn-cancel" @click="cancelTournament">Annulla torneo</button>
           </div>
         </div>

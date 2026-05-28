@@ -84,7 +84,7 @@ export function useApi() {
       .from('tournaments')
       .select(`*, tournament_players ( player_id, players (*) )`)
       .eq('clan_id', clanId)
-      .in('status', ['active', 'paused'])
+      .eq('status', 'active')
       .order('started_at', { ascending: false })
       .limit(1)
       .maybeSingle()

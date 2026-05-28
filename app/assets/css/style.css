@@ -520,7 +520,6 @@ body.page-home #app {
   padding: 14px 16px;
   margin-bottom: 16px;
 }
-.status-bar.paused { border-color: var(--gold-dim); }
 
 .dot-live {
   width: 10px;
@@ -529,13 +528,6 @@ body.page-home #app {
   background: var(--green);
   box-shadow: 0 0 6px var(--green);
   animation: pulse 1.4s infinite;
-  flex-shrink: 0;
-}
-.dot-paused {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--gold-dim);
   flex-shrink: 0;
 }
 @keyframes pulse {
@@ -629,14 +621,6 @@ body.page-home #app {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.pause-msg {
-  text-align: center;
-  color: var(--muted);
-  font-style: italic;
-  margin-bottom: 20px;
-  line-height: 1.5;
 }
 
 .complete-view { text-align: center; }

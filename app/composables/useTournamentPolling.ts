@@ -1,11 +1,11 @@
 import { storeToRefs } from 'pinia'
 import type { Player } from '~~/shared/types/domain'
 
-const POLL_INTERVAL = 30_000        // 30s
-const AUTOPAUSE_DELAY = 10 * 60_000 // 10min senza nuove partite
+const POLL_INTERVAL = 30_000 // 30s
 const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
 
-// Polling battlelog + autopausa + timer + check completamento bracket.
+// Polling battlelog + timer + check completamento bracket.
+// Tornei senza partite da >2h vengono chiusi dal cron server-side (vedi docs/schema.sql).
 // Richiede clanId (per addPoints alla classifica del clan).
 export function useTournamentPolling(clanId: number) {
   const api = useApi()
@@ -17,39 +17,19 @@ export function useTournamentPolling(clanId: number) {
   const timerLabel = ref('0:00')
 
   let pollingTimer: ReturnType<typeof setInterval> | null = null
-  let autopauseTimer: ReturnType<typeof setTimeout> | null = null
   let timerInterval: ReturnType<typeof setInterval> | null = null
 
   function startPolling() {
     poll()
     pollingTimer = setInterval(poll, POLL_INTERVAL)
-    resetAutopause()
     startTimer()
   }
 
   function stopPolling() {
     if (pollingTimer) clearInterval(pollingTimer)
-    if (autopauseTimer) clearTimeout(autopauseTimer)
     if (timerInterval) clearInterval(timerInterval)
     pollingTimer = null
-    autopauseTimer = null
     timerInterval = null
-  }
-
-  function resetAutopause() {
-    if (autopauseTimer) clearTimeout(autopauseTimer)
-    autopauseTimer = setTimeout(autoPause, AUTOPAUSE_DELAY)
-  }
-
-  async function autoPause() {
-    stopPolling()
-    if (!activeTournament.value) return
-    try {
-      await api.updateTournamentStatus(activeTournament.value.id, 'paused')
-      activeTournament.value = { ...activeTournament.value, status: 'paused' }
-    } catch (err) {
-      console.error('Errore auto-pausa:', err)
-    }
   }
 
   function startTimer() {
@@ -121,7 +101,6 @@ export function useTournamentPolling(clanId: number) {
     }
 
     if (newBattlesFound) {
-      resetAutopause()
       tournamentMatches.value = await api.getTournamentMatches(t.id)
       await checkCompletion()
     }
