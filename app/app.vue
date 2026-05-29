@@ -5,6 +5,12 @@ const route = useRoute()
 // Bottom nav visibile solo nelle pagine di un clan attivo.
 const showNav = computed(() => /^\/clans\/[A-Z0-9]+(\/|$)/.test(route.path))
 
+// Attiva app-shell flex per pagine clan: rende bottom-nav figlio statico
+// invece di position:fixed, eliminando i bug di repaint fixed su iOS PWA.
+watchEffect(() => {
+  document.body.classList.toggle('clan-shell', showNav.value)
+})
+
 // Blocca pinch-zoom su iOS (ignora user-scalable=no dal iOS 10)
 onMounted(() => {
   document.addEventListener('touchmove', (e) => {

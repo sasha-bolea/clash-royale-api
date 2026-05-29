@@ -442,6 +442,71 @@ body.page-home #app {
   flex-direction: column;
 }
 
+/* ============================================================
+   CLAN SHELL (storico / statistiche / torneo)
+   Rende bottom-nav figlio flex statico invece di position:fixed,
+   eliminando i bug di repaint fixed su iOS PWA.
+   ============================================================ */
+body.clan-shell {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.clan-shell #__nuxt {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.clan-shell #app-root {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.clan-shell .app-footer { display: none; }
+
+/* Storico/statistiche: scroll sull'intero wrapper pagina */
+body.clan-shell .clan-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* Torneo senza torneo attivo (no page-home): wrapper scrollabile */
+body.clan-shell:not(.page-home) .tournament-page {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: none;
+}
+
+/* Torneo attivo: page-home gestisce il layout interno, clan-shell
+   contribuisce solo il wrapper flex */
+body.clan-shell.page-home .tournament-page {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Padding-bottom del main: non più necessario compensare la nav fixed */
+body.clan-shell:not(.page-home) main {
+  padding-bottom: 24px;
+}
+
+/* Bottom nav: figlio flex statico, translateZ non serve più */
+body.clan-shell .bottom-nav {
+  position: static;
+  transform: none;
+  -webkit-transform: none;
+  will-change: auto;
+  flex-shrink: 0;
+}
+
 .idle-view {
   flex: 1;
   min-height: 0;

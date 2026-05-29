@@ -87,7 +87,7 @@ onMounted(() => switchTab(activeTab.value))
 </script>
 
 <template>
-  <div>
+  <div class="clan-page">
     <header><div class="logo">Statistiche</div></header>
     <main>
       <div class="tabs">

@@ -31,7 +31,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div>
+  <div class="clan-page">
     <header><div class="logo">Storico</div></header>
     <main>
       <div id="tab-content">
