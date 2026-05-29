@@ -183,7 +183,7 @@ main {
 }
 .bn-center.active .bn-img-center { background-color: var(--gold); }
 
-.bn-item span { display: none; }
+.bn-item > span { display: none; }
 
 /* ============================================================
    LABEL DI SEZIONE
