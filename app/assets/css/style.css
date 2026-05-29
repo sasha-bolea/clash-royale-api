@@ -122,6 +122,15 @@ main {
   padding: 10px 0;
   padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
   z-index: 50;
+  /* Fix bug iOS/WebKit (PWA standalone): position:fixed a volte viene
+     posizionato male al primo paint (gap sotto la navbar), poi un repaint
+     lo "incolla". Forzare un compositing layer lo fa dipingere dal
+     compositor relativo al viewport fin dal primo frame, eliminando
+     l'intermittenza. translateZ(0) sull'elemento NON rompe il suo fixed
+     (rompe solo quello di eventuali discendenti, qui assenti). */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
 .bn-item {
