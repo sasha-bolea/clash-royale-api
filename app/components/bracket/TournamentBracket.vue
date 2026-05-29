@@ -6,15 +6,18 @@ const props = defineProps<{
   matches: TournamentMatch[]
   tournament: Tournament
   participants: Player[]
+  fullRanking: boolean
 }>()
 
 const VALID: BracketFormat[] = [2, 3, 4, 6, 8]
 const format = computed(() => props.participants.length as BracketFormat)
 const valid = computed(() => VALID.includes(format.value))
 
+// fullRanking è passato come prop primitivo separato (non estratto da tournament)
+// per garantire che Vue rilevi il cambio e ricalcoli la view immediatamente.
 const view = computed(() =>
   valid.value
-    ? buildBracketView(props.matches, props.participants, format.value, props.tournament.full_ranking)
+    ? buildBracketView(props.matches, props.participants, format.value, props.fullRanking)
     : null,
 )
 

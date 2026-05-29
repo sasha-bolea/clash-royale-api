@@ -308,6 +308,7 @@ async function cancelTournament() {
             :matches="tournamentMatches"
             :tournament="activeTournament"
             :participants="participants"
+            :full-ranking="activeTournament.full_ranking ?? false"
           />
           <details class="matches-detail">
             <summary>Partite rilevate ({{ tournamentMatches.length }})</summary>
