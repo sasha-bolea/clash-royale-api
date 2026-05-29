@@ -408,11 +408,16 @@ body.page-home main {
   flex-direction: column;
   padding-bottom: 0;
 }
-/* Desktop: card/bracket più larghi */
-@media (min-width: 768px) {
-  body.page-home main {
-    max-width: 760px;
-  }
+
+/* Vista selezione (idle) a piena larghezza a OGNI dimensione (mobile + desktop).
+   Agganciata a :has(.idle-view) e non a body.page-home: così resta affidabile
+   anche se il toggle JS della classe page-home non scatta. Vince sul cap
+   max-width:480px base del main per specificità (2 classi). Si toglie solo il
+   limite di larghezza e la centratura: il padding laterale standard di main
+   (20px) resta, così il contenuto non tocca i bordi. */
+.tournament-page main:has(.idle-view) {
+  max-width: none;
+  margin: 0;
 }
 
 body.page-home #app {
@@ -441,23 +446,6 @@ body.page-home #app {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-/* Mobile: card di selezione a tutta larghezza. Non si possono usare margini
-   negativi perché main ha overflow:hidden (li clippa). Si azzera invece il
-   padding orizzontale di main e lo si rimette solo sugli altri elementi. */
-@media (max-width: 767px) {
-  body.page-home main {
-    max-width: none;
-    padding-left: 0;
-    padding-right: 0;
-  }
-  body.page-home .players-manager,
-  body.page-home .section-label,
-  body.page-home .start-wrap {
-    padding-left: 20px;
-    padding-right: 20px;
-  }
-}
-
 /* Scrollbar personalizzata: lineetta gialla verticale dentro la card */
 .player-list-card {
   scrollbar-width: thin;                        /* Firefox */
