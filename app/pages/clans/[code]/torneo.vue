@@ -14,6 +14,7 @@ const { allPlayers, trophiesMap } = storeToRefs(playerStore)
 
 const showWelcome = ref(false)
 const showAddFromWelcome = ref(false)
+const showInfo = ref(false)
 
 const tournamentStore = useTournamentStore()
 const {
@@ -228,6 +229,8 @@ async function cancelTournament() {
               />
             </div>
           </div>
+          <button class="btn-info" @click="showInfo = true">ⓘ Come funziona</button>
+
           <div class="start-wrap">
             <p class="select-hint">Selezionati: {{ selectedCount }} (validi: 2, 3, 4, 6, 8)</p>
             <button
@@ -238,6 +241,45 @@ async function cancelTournament() {
               {{ starting ? '...' : 'AVVIA' }}
             </button>
           </div>
+
+          <Teleport to="body">
+            <div v-if="showInfo" class="info-overlay" @click.self="showInfo = false">
+              <div class="info-modal">
+                <button class="info-close" @click="showInfo = false">✕</button>
+                <div class="info-title">Come funziona</div>
+                <ol class="info-steps">
+                  <li>
+                    <span class="info-step-num">1</span>
+                    <div>
+                      <strong>Seleziona i giocatori</strong>
+                      <p>Tocca i giocatori del clan che parteciperanno al torneo. Puoi scegliere 2, 3, 4, 6 o 8 partecipanti.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="info-step-num">2</span>
+                    <div>
+                      <strong>Avvia il torneo</strong>
+                      <p>Premi AVVIA. Il torneo parte immediatamente e il rilevamento delle battaglie è attivo.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="info-step-num">3</span>
+                    <div>
+                      <strong>Gioca su Clash Royale</strong>
+                      <p>I partecipanti giocano le loro partite normalmente, senza fare nulla di speciale.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="info-step-num">4</span>
+                    <div>
+                      <strong>Risultati automatici</strong>
+                      <p>L'app monitora le battaglie in tempo reale e aggiorna la classifica in automatico, non serve inserire i punteggi a mano.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </Teleport>
         </div>
 
         <div v-else-if="view === 'active'" class="active-view">
