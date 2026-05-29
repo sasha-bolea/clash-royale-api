@@ -441,14 +441,19 @@ body.page-home #app {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
-/* Mobile: card a tutta larghezza (sborda il padding orizzontale di main) */
+/* Mobile: card di selezione a tutta larghezza. Non si possono usare margini
+   negativi perché main ha overflow:hidden (li clippa). Si azzera invece il
+   padding orizzontale di main e lo si rimette solo sugli altri elementi. */
 @media (max-width: 767px) {
-  .player-list-card {
-    margin-left: -20px;
-    margin-right: -20px;
-    border-left: none;
-    border-right: none;
-    border-radius: 0;
+  body.page-home main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  body.page-home .players-manager,
+  body.page-home .section-label,
+  body.page-home .start-wrap {
+    padding-left: 20px;
+    padding-right: 20px;
   }
 }
 
