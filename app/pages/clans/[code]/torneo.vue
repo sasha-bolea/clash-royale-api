@@ -34,11 +34,18 @@ const view = computed<'loading' | 'idle' | 'active' | 'complete'>(() => {
   return 'active'
 })
 
-// Blocco scroll (page-home) solo in selezione: il torneo attivo scrolla normalmente.
-useHead(() => ({
-  title: clan.value ? `${clan.value.name} — Torneo` : 'Torneo',
-  bodyAttrs: { class: view.value === 'idle' ? 'page-home' : '' },
-}))
+useHead(() => ({ title: clan.value ? `${clan.value.name} — Torneo` : 'Torneo' }))
+
+// Blocco scroll + layout fisso (page-home) SOLO in selezione; torneo attivo scrolla.
+// Toggle imperativo sul body: affidabile, indipendente da unhead.
+watchEffect(() => {
+  if (import.meta.client) {
+    document.body.classList.toggle('page-home', view.value === 'idle')
+  }
+})
+onBeforeUnmount(() => {
+  if (import.meta.client) document.body.classList.remove('page-home')
+})
 
 const participants = computed(() =>
   (activeTournament.value?.tournament_players ?? []).map(tp => tp.players),
