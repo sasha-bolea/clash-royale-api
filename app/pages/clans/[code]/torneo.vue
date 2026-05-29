@@ -70,7 +70,9 @@ async function toggleFullRanking(e: Event) {
   try {
     await api.setTournamentFullRanking(activeTournament.value.id, val)
     activeTournament.value = { ...activeTournament.value, full_ranking: val }
-    // Ricontrolla il completamento con la nuova modalità.
+    // Ri-carica le partite: quelle extra sono già salvate dal poll anche quando
+    // full_ranking era OFF, ma potrebbero non essere ancora nel client.
+    tournamentMatches.value = await api.getTournamentMatches(activeTournament.value.id)
     await polling?.recheck()
   } catch (err: any) {
     showError('Errore cambio modalità: ' + (err?.message ?? err))
