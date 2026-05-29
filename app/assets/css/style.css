@@ -368,6 +368,38 @@ body.page-home {
   overflow: hidden;
 }
 
+/* Catena flex completa: body → #__nuxt → #app-root → .tournament-page → main → #app.
+   Necessaria perché altrimenti main non è vincolato in altezza e le card
+   interne (es. lista giocatori) crescono col contenuto invece di scrollare.
+   #__nuxt è il mount target di Nuxt, wrapper tra body e #app-root. */
+body.page-home #__nuxt {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.page-home #app-root {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.page-home .tournament-page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+body.page-home .app-footer { display: none; }
+
+/* Active/complete view: scroll interno per non clippare bracket/podio */
+body.page-home .active-view,
+body.page-home .complete-view {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 body.page-home main {
   flex: 1;
   min-height: 0;
@@ -375,6 +407,12 @@ body.page-home main {
   display: flex;
   flex-direction: column;
   padding-bottom: 0;
+}
+/* Desktop: card/bracket più larghi */
+@media (min-width: 768px) {
+  body.page-home main {
+    max-width: 760px;
+  }
 }
 
 body.page-home #app {
@@ -402,6 +440,33 @@ body.page-home #app {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Scrollbar personalizzata: lineetta gialla verticale dentro la card */
+.player-list-card {
+  scrollbar-width: thin;                        /* Firefox */
+  scrollbar-color: var(--gold) transparent;
+}
+.player-list-card::-webkit-scrollbar {
+  width: 4px;                                   /* Chrome/Safari */
+}
+.player-list-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+.player-list-card::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 2px;
+}
+
+/* Nasconde la scrollbar nativa sulle altre aree con scroll interno */
+body.page-home .active-view,
+body.page-home .complete-view {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body.page-home .active-view::-webkit-scrollbar,
+body.page-home .complete-view::-webkit-scrollbar {
+  display: none;
 }
 
 .logo span { font-size: 22px; }

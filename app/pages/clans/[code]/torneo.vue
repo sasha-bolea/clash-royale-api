@@ -182,7 +182,7 @@ async function cancelTournament() {
 </script>
 
 <template>
-  <div>
+  <div class="tournament-page">
     <header class="header-with-actions">
       <NuxtLink to="/" class="header-action" aria-label="home">←</NuxtLink>
       <div class="logo">{{ clan?.name ?? 'Torneo' }}</div>
