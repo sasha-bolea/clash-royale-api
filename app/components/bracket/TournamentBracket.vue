@@ -50,7 +50,7 @@ const connected = computed(() => format.value === 4 || format.value === 8)
     </template>
 
     <!-- 2/3/4/8: albero principale a colonne -->
-    <div v-else class="bk-tree" :class="{ 'bk-connected': connected }">
+    <div v-else class="bk-tree" :class="{ 'bk-connected': connected, 'bk-stacked': view.format === 3 }">
       <div v-for="r in view.rounds" :key="r.id" class="bk-round">
         <div class="bk-round-title">{{ r.label }}</div>
         <div class="bk-round-matches">

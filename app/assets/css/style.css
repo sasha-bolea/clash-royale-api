@@ -1641,6 +1641,16 @@ main .landing-hero {
   flex-direction: column;
   min-width: 130px;
 }
+
+/* Formato 3 (scaletta): round impilati verticalmente */
+.bk-tree.bk-stacked {
+  flex-direction: column;
+  gap: 12px;
+}
+.bk-tree.bk-stacked .bk-round {
+  min-width: 0;
+  width: 100%;
+}
 .bk-round-title,
 .bk-group-title,
 .bk-extra-title {
