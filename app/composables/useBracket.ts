@@ -7,6 +7,88 @@ import type {
   CRBattle,
 } from '~~/shared/types/domain'
 
+// ====================================================================
+// Primitive pure di detection (riusate da analyze* e da useBracketView)
+// ====================================================================
+
+// Id del perdente di una partita.
+export const loserId = (m: TournamentMatch): number =>
+  m.player1_id === m.winner_id ? m.player2_id : m.player1_id
+
+// Trova la partita tra due specifici giocatori (in qualunque ordine).
+export const findMatch = (matches: TournamentMatch[], aId: number, bId: number) =>
+  matches.find(m =>
+    (m.player1_id === aId && m.player2_id === bId)
+    || (m.player1_id === bId && m.player2_id === aId),
+  )
+
+export const sortByPlayed = (matches: TournamentMatch[]) =>
+  [...matches].sort((a, b) => new Date(a.played_at).getTime() - new Date(b.played_at).getTime())
+
+// Matching greedy: partite disgiunte (ogni giocatore una sola volta) in ordine cronologico.
+// pool: limita ai giocatori ammessi. exclude: id partite da saltare. limit: max partite.
+export function greedyMatching(
+  matches: TournamentMatch[],
+  opts: { pool?: Set<number>; exclude?: Set<number>; limit?: number } = {},
+): TournamentMatch[] {
+  const { pool, exclude, limit } = opts
+  const used = new Set<number>()
+  const out: TournamentMatch[] = []
+  for (const m of sortByPlayed(matches)) {
+    if (exclude?.has(m.id)) continue
+    if (pool && (!pool.has(m.player1_id) || !pool.has(m.player2_id))) continue
+    if (used.has(m.player1_id) || used.has(m.player2_id)) continue
+    out.push(m)
+    used.add(m.player1_id)
+    used.add(m.player2_id)
+    if (limit && out.length === limit) break
+  }
+  return out
+}
+
+// Semifinali: prima partita + prima disgiunta.
+export function detectSemis(
+  matches: TournamentMatch[],
+): { semi1: TournamentMatch; semi2: TournamentMatch } | null {
+  const m = greedyMatching(matches, { limit: 2 })
+  if (m.length < 2) return null
+  return { semi1: m[0]!, semi2: m[1]! }
+}
+
+// Quarti (8 giocatori): prime 4 partite che accoppiano tutti.
+export function detectQuarters(matches: TournamentMatch[]): TournamentMatch[] {
+  return greedyMatching(matches, { limit: 4 })
+}
+
+// Due triangoli disgiunti (3 giocatori che si sono affrontati tutti) = i gironi del 6.
+export function detectTriangles(
+  matches: TournamentMatch[],
+  playerIds: number[],
+): [number[], number[]] | null {
+  const adj: Record<number, Set<number>> = {}
+  playerIds.forEach(id => { adj[id] = new Set() })
+  matches.forEach((m) => {
+    adj[m.player1_id]?.add(m.player2_id)
+    adj[m.player2_id]?.add(m.player1_id)
+  })
+  const isTriangle = (x: number, y: number, z: number) =>
+    !!adj[x]?.has(y) && !!adj[y]?.has(z) && !!adj[x]?.has(z)
+
+  for (let i = 0; i < playerIds.length; i++) {
+    for (let j = i + 1; j < playerIds.length; j++) {
+      for (let k = j + 1; k < playerIds.length; k++) {
+        const t1 = [playerIds[i]!, playerIds[j]!, playerIds[k]!]
+        if (!isTriangle(t1[0]!, t1[1]!, t1[2]!)) continue
+        const rest = playerIds.filter(id => !t1.includes(id))
+        if (rest.length === 3 && isTriangle(rest[0]!, rest[1]!, rest[2]!)) {
+          return [t1, rest]
+        }
+      }
+    }
+  }
+  return null
+}
+
 // Logica pura bracket + battle validation + parsing date CR.
 // Estratta da js/home.js (analyzeBracket3/4, isBattleValid, parseCRDate, makeBattleId).
 export function useBracket() {
@@ -42,37 +124,17 @@ export function useBracket() {
     return allTags.every(tag => participantTagMap[tag])
   }
 
-  const loserId = (m: TournamentMatch): number =>
-    m.player1_id === m.winner_id ? m.player2_id : m.player1_id
-
-  // Trova la partita tra due specifici giocatori (in qualunque ordine).
-  const findMatch = (matches: TournamentMatch[], aId: number, bId: number) =>
-    matches.find(m =>
-      (m.player1_id === aId && m.player2_id === bId)
-      || (m.player1_id === bId && m.player2_id === aId),
-    )
-
-  const sortByPlayed = (matches: TournamentMatch[]) =>
-    [...matches].sort((a, b) => new Date(a.played_at).getTime() - new Date(b.played_at).getTime())
-
-  // Bracket 4 giocatori: 2 semifinali + finale + 3/4 posto.
+  // Bracket 4 giocatori: 2 semifinali + finale (+ finalina 3°/4° se fullRanking).
+  // fullRanking OFF: i 2 perdenti delle semifinali restano a pari merito 3°.
   function analyzeBracket4(
     matches: TournamentMatch[],
     allPlayers: Player[],
+    fullRanking = true,
   ): BracketResult | null {
-    const sorted = [...matches].sort(
-      (a, b) => new Date(a.played_at).getTime() - new Date(b.played_at).getTime(),
-    )
-    if (sorted.length < 4) return null
-
-    const semi1 = sorted[0]!
-    const semi1Ids = new Set([semi1.player1_id, semi1.player2_id])
-    const semi2 = sorted.find(m =>
-      m.id !== semi1.id
-      && !semi1Ids.has(m.player1_id)
-      && !semi1Ids.has(m.player2_id),
-    )
-    if (!semi2) return null
+    const sorted = sortByPlayed(matches)
+    const sem = detectSemis(sorted)
+    if (!sem) return null
+    const { semi1, semi2 } = sem
 
     const s1Winner = semi1.winner_id
     const s1Loser = loserId(semi1)
@@ -85,21 +147,33 @@ export function useBracket() {
       const ids = new Set([m.player1_id, m.player2_id])
       return ids.has(s1Winner) && ids.has(s2Winner)
     })
+    if (!finalMatch) return null
+
+    const byId: Record<number, Player> = {}
+    allPlayers.forEach(p => { byId[p.id] = p })
+    const entry = (id: number, place: number): PodiumEntry =>
+      ({ player_id: id, username: byId[id]?.username, place })
+
+    const top: PodiumEntry[] = [
+      entry(finalMatch.winner_id, 1),
+      entry(loserId(finalMatch), 2),
+    ]
+
+    if (!fullRanking) {
+      // Senza finalina: perdenti semifinali a pari merito 3°.
+      return { positions: [...top, entry(s1Loser, 3), entry(s2Loser, 3)] }
+    }
+
     const thirdMatch = remaining.find(m => {
       const ids = new Set([m.player1_id, m.player2_id])
       return ids.has(s1Loser) && ids.has(s2Loser)
     })
-    if (!finalMatch || !thirdMatch) return null
-
-    const byId: Record<number, Player> = {}
-    allPlayers.forEach(p => { byId[p.id] = p })
-
+    if (!thirdMatch) return null
     return {
       positions: [
-        { player_id: finalMatch.winner_id, username: byId[finalMatch.winner_id]?.username },
-        { player_id: loserId(finalMatch), username: byId[loserId(finalMatch)]?.username },
-        { player_id: thirdMatch.winner_id, username: byId[thirdMatch.winner_id]?.username },
-        { player_id: loserId(thirdMatch), username: byId[loserId(thirdMatch)]?.username },
+        ...top,
+        entry(thirdMatch.winner_id, 3),
+        entry(loserId(thirdMatch), 4),
       ],
     }
   }
@@ -165,33 +239,10 @@ export function useBracket() {
     const sorted = sortByPlayed(matches)
     const ids = allPlayers.map(p => p.id)
 
-    // Adiacenza tra giocatori che si sono affrontati.
-    const adj: Record<number, Set<number>> = {}
-    ids.forEach(id => { adj[id] = new Set() })
-    sorted.forEach((m) => {
-      adj[m.player1_id]?.add(m.player2_id)
-      adj[m.player2_id]?.add(m.player1_id)
-    })
-    const isTriangle = (x: number, y: number, z: number) =>
-      adj[x]!.has(y) && adj[y]!.has(z) && adj[x]!.has(z)
-
-    // Trova 2 triangoli disgiunti che coprono tutti e 6 i giocatori = i gironi.
-    let gA: number[] | null = null
-    let gB: number[] | null = null
-    for (let i = 0; i < ids.length && !gA; i++) {
-      for (let j = i + 1; j < ids.length && !gA; j++) {
-        for (let k = j + 1; k < ids.length && !gA; k++) {
-          const t1 = [ids[i]!, ids[j]!, ids[k]!]
-          if (!isTriangle(t1[0]!, t1[1]!, t1[2]!)) continue
-          const rest = ids.filter(id => !t1.includes(id))
-          if (rest.length === 3 && isTriangle(rest[0]!, rest[1]!, rest[2]!)) {
-            gA = t1
-            gB = rest
-          }
-        }
-      }
-    }
-    if (!gA || !gB) return null
+    // Due triangoli disgiunti = i gironi.
+    const tris = detectTriangles(sorted, ids)
+    if (!tris) return null
+    const [gA, gB] = tris
 
     const byId: Record<number, Player> = {}
     allPlayers.forEach(p => { byId[p.id] = p })
@@ -249,15 +300,7 @@ export function useBracket() {
       ({ player_id: id, username: byId[id]?.username, place })
 
     // Quarti: prime 4 partite che accoppiano tutti gli 8 (matching perfetto).
-    const used = new Set<number>()
-    const qf: TournamentMatch[] = []
-    for (const m of sorted) {
-      if (used.has(m.player1_id) || used.has(m.player2_id)) continue
-      qf.push(m)
-      used.add(m.player1_id)
-      used.add(m.player2_id)
-      if (qf.length === 4) break
-    }
+    const qf = detectQuarters(sorted)
     if (qf.length < 4) return null
     const qfIds = new Set(qf.map(m => m.id))
     const qfWinners = qf.map(m => m.winner_id)
@@ -265,33 +308,31 @@ export function useBracket() {
     const winSet = new Set(qfWinners)
 
     // Semifinali: matching tra i 4 vincitori dei quarti.
-    const usedS = new Set<number>()
-    const semis: TournamentMatch[] = []
-    for (const m of sorted) {
-      if (qfIds.has(m.id)) continue
-      if (!winSet.has(m.player1_id) || !winSet.has(m.player2_id)) continue
-      if (usedS.has(m.player1_id) || usedS.has(m.player2_id)) continue
-      semis.push(m)
-      usedS.add(m.player1_id)
-      usedS.add(m.player2_id)
-      if (semis.length === 2) break
-    }
+    const semis = greedyMatching(sorted, { pool: winSet, exclude: qfIds, limit: 2 })
     if (semis.length < 2) return null
     const semiWinners = semis.map(m => m.winner_id)
     const semiLosers = semis.map(m => loserId(m))
 
     const finalM = findMatch(sorted, semiWinners[0]!, semiWinners[1]!)
-    const thirdM = findMatch(sorted, semiLosers[0]!, semiLosers[1]!)
-    if (!finalM || !thirdM) return null
+    if (!finalM) return null
 
+    if (!fullRanking) {
+      // Niente finalina: perdenti semifinali pari 3°, perdenti quarti pari 5°.
+      return {
+        positions: [
+          entry(finalM.winner_id, 1), entry(loserId(finalM), 2),
+          entry(semiLosers[0]!, 3), entry(semiLosers[1]!, 3),
+          ...qfLosers.map(id => entry(id, 5)),
+        ],
+      }
+    }
+
+    const thirdM = findMatch(sorted, semiLosers[0]!, semiLosers[1]!)
+    if (!thirdM) return null
     const top: PodiumEntry[] = [
       entry(finalM.winner_id, 1), entry(loserId(finalM), 2),
       entry(thirdM.winner_id, 3), entry(loserId(thirdM), 4),
     ]
-
-    if (!fullRanking) {
-      return { positions: [...top, ...qfLosers.map(id => entry(id, 5))] }
-    }
 
     // Consolazione: bracket a 4 tra i perdenti dei quarti → posizioni 5°-8°.
     const loserSet = new Set(qfLosers)

@@ -99,3 +99,35 @@ export interface PodiumEntry {
 export interface BracketResult {
   positions: PodiumEntry[]
 }
+
+// ---- Vista bracket progressiva (per il rendering ad albero) ----
+export type BracketFormat = 2 | 3 | 4 | 6 | 8
+
+export interface BracketSlot {
+  playerId?: number
+  username?: string
+}
+
+export interface BracketNode {
+  id: string
+  label?: string          // es. "Finale", "3°/4°", "perdente"
+  slotA: BracketSlot
+  slotB: BracketSlot
+  winnerId?: number
+}
+
+export interface BracketRound {
+  id: string
+  label: string
+  matches: BracketNode[]
+}
+
+export interface BracketView {
+  format: BracketFormat
+  fullRanking: boolean
+  rounds: BracketRound[]            // albero principale connesso (colonne)
+  // Partite fuori dall'albero principale: finalina 3°/4°, consolazione, incrocio gironi.
+  extras?: BracketRound[]
+  groups?: [BracketRound[], BracketRound[]] | null  // solo format 6: 2 gironi
+  groupsPending?: boolean           // 6: true se gironi non ancora identificati
+}

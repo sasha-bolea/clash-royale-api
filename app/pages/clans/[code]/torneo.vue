@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import TournamentBracket from '~/components/bracket/TournamentBracket.vue'
 
 definePageMeta({ middleware: ['clan-access'] })
 
@@ -44,10 +45,12 @@ const timerLabel = ref('0:00')
 
 // Taglie torneo valide.
 const VALID_SIZES = [2, 3, 4, 6, 8]
-// Modalità classifica completa (solo per 6 e 8): scontri extra per posizioni piene.
+// Modalità classifica completa (4, 6, 8): scontri extra per posizioni piene.
+// 4: finalina 3°/4°. 6/8: incroci per tutte le posizioni.
 const fullRankingMode = ref(false)
 const selectedCount = computed(() => selectedPlayerIds.value.size)
-const supportsFullRanking = computed(() => selectedCount.value === 6 || selectedCount.value === 8)
+const supportsFullRanking = computed(() =>
+  [4, 6, 8].includes(selectedCount.value))
 
 // Partite vinte per giocatore nel torneo corrente (per il podio).
 const podiumWins = computed<Record<number, number>>(() => {
@@ -229,15 +232,24 @@ async function cancelTournament() {
           <div class="participants-bar">
             <span v-for="p in participants" :key="p.id" class="pchip">{{ p.username }}</span>
           </div>
-          <div class="matches-list">
-            <p v-if="!tournamentMatches.length" class="empty-msg">In attesa della prima partita...</p>
-            <MatchRow
-              v-for="(m, i) in tournamentMatches"
-              :key="m.id"
-              :match="m"
-              :index="i"
-            />
-          </div>
+          <TournamentBracket
+            v-if="activeTournament"
+            :matches="tournamentMatches"
+            :tournament="activeTournament"
+            :participants="participants"
+          />
+          <details class="matches-detail">
+            <summary>Partite rilevate ({{ tournamentMatches.length }})</summary>
+            <div class="matches-list">
+              <p v-if="!tournamentMatches.length" class="empty-msg">In attesa della prima partita...</p>
+              <MatchRow
+                v-for="(m, i) in tournamentMatches"
+                :key="m.id"
+                :match="m"
+                :index="i"
+              />
+            </div>
+          </details>
           <div class="active-footer">
             <button class="btn-cancel" @click="cancelTournament">Annulla torneo</button>
           </div>

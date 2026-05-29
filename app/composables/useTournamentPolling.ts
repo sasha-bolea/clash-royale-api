@@ -124,9 +124,9 @@ export function useTournamentPolling(clanId: number) {
     switch (n) {
       case 2: needed = 1; break
       case 3: needed = 3; break
-      case 4: needed = 4; break
+      case 4: needed = fr ? 4 : 3; break
       case 6: needed = 6 + (fr ? 3 : 1); break
-      case 8: needed = fr ? 12 : 8; break
+      case 8: needed = fr ? 12 : 7; break
       default: return
     }
     if (matches.length < needed) return
@@ -134,7 +134,7 @@ export function useTournamentPolling(clanId: number) {
     switch (n) {
       case 2: result = bracket.analyzeBracket2(matches, allPlayers); break
       case 3: result = bracket.analyzeBracket3(matches, allPlayers); break
-      case 4: result = bracket.analyzeBracket4(matches, allPlayers); break
+      case 4: result = bracket.analyzeBracket4(matches, allPlayers, fr); break
       case 6: result = bracket.analyzeBracket6(matches, allPlayers, fr); break
       case 8: result = bracket.analyzeBracket8(matches, allPlayers, fr); break
       default: return

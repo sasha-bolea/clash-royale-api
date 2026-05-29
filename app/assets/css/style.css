@@ -675,6 +675,8 @@ body.page-home #app {
 .podio-row.rank-1 { border-color: var(--gold); box-shadow: 0 0 14px rgba(245, 200, 66, 0.15); }
 .podio-row.rank-2 { border-color: #aaa; }
 .podio-row.rank-3 { border-color: #c87d3e; }
+.podio-row.rank-4, .podio-row.rank-5, .podio-row.rank-6,
+.podio-row.rank-7, .podio-row.rank-8 { border-color: var(--bg3); }
 
 .medal { font-size: 24px; }
 
@@ -847,6 +849,8 @@ body.page-home #app {
 .leaderboard-row.rank-1 { border-color: var(--gold); box-shadow: 0 0 14px rgba(245, 200, 66, 0.15); }
 .leaderboard-row.rank-2 { border-color: #aaa; }
 .leaderboard-row.rank-3 { border-color: #c87d3e; }
+.leaderboard-row.rank-4, .leaderboard-row.rank-5, .leaderboard-row.rank-6,
+.leaderboard-row.rank-7, .leaderboard-row.rank-8 { border-color: var(--bg3); }
 
 .lb-rank { font-size: 22px; width: 32px; flex-shrink: 0; text-align: center; }
 .lb-name { flex: 1; font-family: 'Lilita One', cursive; font-size: 17px; }
@@ -1612,3 +1616,177 @@ main .landing-hero {
   text-decoration: underline;
 }
 /* Quando bottom-nav visibile, già copre 68px → footer padding-bottom basta */
+
+/* ============================ BRACKET ============================ */
+.bk-wrap {
+  margin: 12px 0;
+}
+.bk-pending {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  padding: 16px 0;
+}
+
+/* Albero principale: colonne affiancate, scroll orizzontale se largo */
+.bk-tree {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  align-items: stretch;
+}
+.bk-round {
+  display: flex;
+  flex-direction: column;
+  min-width: 130px;
+}
+.bk-round-title,
+.bk-group-title,
+.bk-extra-title {
+  font-family: 'Lilita One', cursive;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-align: center;
+}
+.bk-round-matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1;
+  gap: 12px;
+}
+.bk-cell { display: contents; }
+
+/* Match card */
+.bk-match {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.bk-match-label {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 3px;
+  text-align: center;
+}
+.bk-match-box {
+  background: var(--bg2);
+  border: 1px solid var(--bg3);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.bk-match-vs {
+  font-size: 9px;
+  color: var(--muted);
+  text-align: center;
+  padding: 1px 0;
+  border-top: 1px solid var(--bg3);
+  border-bottom: 1px solid var(--bg3);
+}
+
+/* Slot giocatore */
+.bk-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.bk-slot-name {
+  font-family: 'Lilita One', cursive;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bk-slot-empty .bk-slot-name { color: var(--muted); }
+.bk-slot-win { background: rgba(245, 200, 66, 0.12); }
+.bk-slot-win .bk-slot-name { color: var(--gold); }
+.bk-slot-lose { opacity: 0.55; }
+.bk-slot-check { font-size: 12px; }
+
+/* Connettori a gomito (alberi che dimezzano: 4 e 8) — tecnica CSS pura.
+   Ogni cella occupa uno slot verticale uguale (flex:1); le coppie adiacenti
+   disegnano "]" verso la cella del round successivo, centrata sul confine. */
+.bk-connected .bk-round-matches {
+  justify-content: stretch;
+  gap: 0;
+}
+.bk-connected .bk-cell {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  position: relative;
+  min-height: 96px;
+}
+.bk-connected .bk-cell > * { flex: 1; }
+
+/* Uscita (tutti i round tranne l'ultimo): mezzo segmento verticale + orizzontale */
+.bk-connected .bk-round:not(:last-child) .bk-cell::after {
+  content: '';
+  position: absolute;
+  left: 100%;
+  width: 12px;
+  height: 50%;
+  border-right: 2px solid var(--bg3);
+}
+.bk-connected .bk-round:not(:last-child) .bk-cell:nth-child(odd)::after {
+  top: 50%;
+  border-top: 2px solid var(--bg3);
+}
+.bk-connected .bk-round:not(:last-child) .bk-cell:nth-child(even)::after {
+  bottom: 50%;
+  border-bottom: 2px solid var(--bg3);
+}
+/* Entrata (tutti i round tranne il primo): stub orizzontale */
+.bk-connected .bk-round:not(:first-child) .bk-cell::before {
+  content: '';
+  position: absolute;
+  right: 100%;
+  width: 12px;
+  top: 50%;
+  border-top: 2px solid var(--bg3);
+}
+
+/* Gironi (format 6) */
+.bk-groups {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.bk-group { min-width: 150px; }
+.bk-chain {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Extra: finalina, consolazione, incrocio */
+.bk-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--bg3);
+}
+.bk-extra-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.matches-detail {
+  margin-top: 14px;
+}
+.matches-detail summary {
+  font-family: 'Lilita One', cursive;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px 0;
+}
