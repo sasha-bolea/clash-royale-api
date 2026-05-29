@@ -446,6 +446,7 @@ body.page-home #app {
    padding orizzontale di main e lo si rimette solo sugli altri elementi. */
 @media (max-width: 767px) {
   body.page-home main {
+    max-width: none;
     padding-left: 0;
     padding-right: 0;
   }
