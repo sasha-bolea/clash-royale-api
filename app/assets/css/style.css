@@ -407,12 +407,15 @@ body.page-home .tournament-page {
 }
 body.page-home .app-footer { display: none; }
 
-/* Active/complete view: scroll interno per non clippare bracket/podio */
+/* Active/complete view: scroll interno per non clippare bracket/podio.
+   overflow-x:clip (non crea scroll container) permette al bracket di
+   bucare il padding del main con margini negativi. */
 body.page-home .active-view,
 body.page-home .complete-view {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: clip;
 }
 
 body.page-home main {
@@ -1876,7 +1879,10 @@ main .landing-hero {
 
 /* ============================ BRACKET ============================ */
 .bk-wrap {
-  margin: 12px 0;
+  /* Buca il padding di main (20px) per usare tutta la larghezza schermo.
+     Funziona perché active-view ha overflow-x:clip (non scroll container). */
+  margin: 12px -20px 0;
+  padding: 0 12px;
 }
 .bk-pending {
   text-align: center;
@@ -1888,15 +1894,16 @@ main .landing-hero {
 /* Albero principale: colonne affiancate, scroll orizzontale se largo */
 .bk-tree {
   display: flex;
-  gap: 24px;
+  gap: 16px;
   overflow-x: auto;
   padding-bottom: 8px;
   align-items: stretch;
+  width: 100%;
 }
 .bk-round {
   display: flex;
   flex-direction: column;
-  min-width: 130px;
+  min-width: 110px;
 }
 
 /* Formato 3 (scaletta): round impilati verticalmente */
@@ -1959,9 +1966,9 @@ main .landing-hero {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
-  padding: 7px 10px;
-  font-size: 13px;
+  gap: 4px;
+  padding: 5px 8px;
+  font-size: 12px;
 }
 .bk-slot-name {
   font-family: 'Lilita One', cursive;
@@ -1987,7 +1994,7 @@ main .landing-hero {
   flex: 1 1 0;
   align-items: center;
   position: relative;
-  min-height: 96px;
+  min-height: 76px;
 }
 .bk-connected .bk-cell > * { flex: 1; }
 
