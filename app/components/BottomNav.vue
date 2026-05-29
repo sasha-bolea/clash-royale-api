@@ -21,12 +21,7 @@ const isActive = (suffix: string) => code.value
     </NuxtLink>
     <NuxtLink :to="`/clans/${code}/torneo`" class="bn-item bn-center" :class="{ active: isActive('torneo') }">
       <div class="bn-center-ring">
-        <svg class="bn-svg-center" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M8 21h8M12 17v4"/>
-          <path d="M17 3H7L5 9c0 3.31 3.13 6 7 6s7-2.69 7-6l-2-6z"/>
-          <path d="M5 9H3a2 2 0 0 0 0 4h2"/>
-          <path d="M19 9h2a2 2 0 0 1 0 4h-2"/>
-        </svg>
+        <span class="bn-img-center" aria-hidden="true"></span>
       </div>
       <span>ARENA</span>
     </NuxtLink>

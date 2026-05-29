@@ -169,13 +169,19 @@ main {
   box-shadow: 0 2px 14px rgba(245,200,66,.3);
 }
 
-.bn-svg-center {
+/* Icona centrale ARENA: PNG-trofeo usato come maschera alpha, colorato con
+   background-color così eredita gli stati come le altre icone (grigio a
+   riposo, oro quando attivo). L'immagine è bianca con alpha = sagoma. */
+.bn-img-center {
+  display: block;
   width: 26px;
   height: 26px;
-  color: var(--muted);
-  transition: color .15s;
+  background-color: var(--muted);
+  -webkit-mask: url('/images/ui/trophy-nav.png') center / contain no-repeat;
+  mask: url('/images/ui/trophy-nav.png') center / contain no-repeat;
+  transition: background-color .15s;
 }
-.bn-center.active .bn-svg-center { color: var(--gold); }
+.bn-center.active .bn-img-center { background-color: var(--gold); }
 
 .bn-item span { display: none; }
 

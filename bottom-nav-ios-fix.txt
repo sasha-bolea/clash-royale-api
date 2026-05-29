@@ -1,0 +1,52 @@
+RIASSUNTO PER ISTANZA FUTURA — bottom-nav fluttuante iOS PWA
+============================================================
+
+Repo: royal-arena-nuxt (Nuxt 4, SPA ssr:false, PWA). Branch main.
+
+SINTOMO
+-------
+.bottom-nav (position:fixed; bottom:0) su PWA iOS standalone (iPhone 16e,
+Chrome default) a volte fluttua con gap sotto, come ci fosse UI browser.
+Tutte le pagine con nav, INTERMITTENTE.
+
+DIAGNOSI (confermata col device 29/05/2026)
+-------------------------------------------
+- Dopo scroll giu' + ritorno in cima -> RESTA ATTACCATA = NON e' toolbar
+  browser, e' il BUG DI REPAINT iOS su position:fixed (primo paint mal
+  posizionato, un repaint lo incolla). L'intermittenza e' la firma esatta.
+- Antenati nav (#app-root, #__nuxt, body) senza transform/filter/contain
+  -> fixed corretto rispetto al viewport.
+- Lo "snap su scroll" era un workaround aggiunto dall'utente, non prova di
+  toolbar.
+
+FIX APPLICATO (commit 91661fb)
+------------------------------
+File: app/assets/css/style.css, su .bottom-nav (~riga 112). Aggiunto:
+
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+
+Forza un compositing layer -> dipinta dal compositor (relativo al viewport)
+dal primo frame, elimina l'intermittenza. translateZ sull'elemento NON rompe
+il suo fixed (romperebbe solo quello di discendenti, qui assenti).
+
+SE IL BUG TORNA ANCHE DOPO QUESTO FIX
+-------------------------------------
+Cura definitiva (refactor layout, PROPORRE + CONFERMARE prima di toccare):
+togliere position:fixed dalla nav e renderla figlio flex-shrink:0 di un
+app-shell flex a 100dvh (header / main scrollabile / nav) su tutte le pagine
+clan, generalizzando lo shell page-home gia' presente (vedi body.page-home in
+style.css, catena #__nuxt -> #app-root -> .tournament-page -> main -> #app).
+Un nav flex-child e' immune all'intera classe di bug fixed iOS.
+
+NOTE OPERATIVE
+--------------
+- Windows -> niente Safari Web Inspector. Diagnosi device via domande o
+  readout temporaneo a schermo:
+  matchMedia('(display-mode: standalone)').matches, navigator.standalone,
+  innerHeight vs screen.height, probe env(safe-area-inset-bottom).
+- Test sul telefono richiede deploy Vercel + update PWA (il service worker
+  cachea il CSS: accetta il prompt di update o disinstalla/reinstalla).
+- File: app/components/BottomNav.vue (template), app/assets/css/style.css
+  (.bottom-nav).
