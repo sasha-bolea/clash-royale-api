@@ -24,8 +24,6 @@ const {
   completedPositions,
 } = storeToRefs(tournamentStore)
 
-useHead(() => ({ title: clan.value ? `${clan.value.name} — Torneo` : 'Torneo' }))
-
 const loading = ref(true)
 const starting = ref(false)
 
@@ -35,6 +33,12 @@ const view = computed<'loading' | 'idle' | 'active' | 'complete'>(() => {
   if (!activeTournament.value) return 'idle'
   return 'active'
 })
+
+// Blocco scroll (page-home) solo in selezione: il torneo attivo scrolla normalmente.
+useHead(() => ({
+  title: clan.value ? `${clan.value.name} — Torneo` : 'Torneo',
+  bodyAttrs: { class: view.value === 'idle' ? 'page-home' : '' },
+}))
 
 const participants = computed(() =>
   (activeTournament.value?.tournament_players ?? []).map(tp => tp.players),

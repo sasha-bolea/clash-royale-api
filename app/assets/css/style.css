@@ -441,6 +441,16 @@ body.page-home #app {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+/* Mobile: card a tutta larghezza (sborda il padding orizzontale di main) */
+@media (max-width: 767px) {
+  .player-list-card {
+    margin-left: -20px;
+    margin-right: -20px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+}
 
 /* Scrollbar personalizzata: lineetta gialla verticale dentro la card */
 .player-list-card {

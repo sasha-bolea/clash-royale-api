@@ -5,16 +5,6 @@ const route = useRoute()
 // Bottom nav visibile solo nelle pagine di un clan attivo.
 const showNav = computed(() => /^\/clans\/[A-Z0-9]+(\/|$)/.test(route.path))
 
-const bodyClass = computed(() => {
-  // Pagina torneo applica blocco scroll (vedi CSS .page-home)
-  if (/^\/clans\/[A-Z0-9]+\/torneo$/.test(route.path)) return 'page-home'
-  return ''
-})
-
-useHead({
-  bodyAttrs: { class: bodyClass },
-})
-
 // Blocca pinch-zoom su iOS (ignora user-scalable=no dal iOS 10)
 onMounted(() => {
   document.addEventListener('touchmove', (e) => {
