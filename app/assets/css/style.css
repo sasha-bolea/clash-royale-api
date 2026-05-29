@@ -655,7 +655,7 @@ body.page-home .complete-view::-webkit-scrollbar {
 
 .start-wrap {
   flex-shrink: 0;
-  padding: 12px 0 calc(90px + max(12px, env(safe-area-inset-bottom)));
+  padding: 12px 0 16px;
 }
 
 .btn-start {
