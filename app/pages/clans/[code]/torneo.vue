@@ -45,12 +45,25 @@ const timerLabel = ref('0:00')
 
 // Taglie torneo valide.
 const VALID_SIZES = [2, 3, 4, 6, 8]
-// Modalità classifica completa (4, 6, 8): scontri extra per posizioni piene.
-// 4: finalina 3°/4°. 6/8: incroci per tutte le posizioni.
-const fullRankingMode = ref(false)
 const selectedCount = computed(() => selectedPlayerIds.value.size)
-const supportsFullRanking = computed(() =>
-  [4, 6, 8].includes(selectedCount.value))
+
+// Modalità classifica completa (4, 6, 8): toggle nel torneo in corso, cambiabile
+// in ogni momento. Le partite extra vengono comunque sempre rilevate e salvate.
+const activeSupportsFull = computed(() =>
+  [4, 6, 8].includes(activeTournament.value?.tournament_players?.length ?? 0))
+
+async function toggleFullRanking(e: Event) {
+  const val = (e.target as HTMLInputElement).checked
+  if (!activeTournament.value) return
+  try {
+    await api.setTournamentFullRanking(activeTournament.value.id, val)
+    activeTournament.value = { ...activeTournament.value, full_ranking: val }
+    // Ricontrolla il completamento con la nuova modalità.
+    await polling?.recheck()
+  } catch (err: any) {
+    showError('Errore cambio modalità: ' + (err?.message ?? err))
+  }
+}
 
 // Partite vinte per giocatore nel torneo corrente (per il podio).
 const podiumWins = computed<Record<number, number>>(() => {
@@ -138,11 +151,10 @@ async function startTournament() {
     showToast('Seleziona 2, 3, 4, 6 o 8 giocatori')
     return
   }
-  // La modalità completa vale solo per 6 e 8.
-  const fullRanking = supportsFullRanking.value && fullRankingMode.value
   starting.value = true
   try {
-    await api.createTournament(clanId.value, ids, 'amichevole', fullRanking)
+    // Default OFF: la modalità si attiva poi dal torneo in corso.
+    await api.createTournament(clanId.value, ids, 'amichevole', false)
     activeTournament.value = await api.getActiveTournament(clanId.value)
     tournamentMatches.value = []
     knownBattleIds.value = new Set()
@@ -205,12 +217,6 @@ async function cancelTournament() {
               />
             </div>
           </div>
-          <div v-if="supportsFullRanking" class="fullrank-toggle">
-            <label class="fullrank-label">
-              <input v-model="fullRankingMode" type="checkbox">
-              <span>Classifica completa (scontri per tutte le posizioni)</span>
-            </label>
-          </div>
           <div class="start-wrap">
             <p class="select-hint">Selezionati: {{ selectedCount }} (validi: 2, 3, 4, 6, 8)</p>
             <button
@@ -231,6 +237,16 @@ async function cancelTournament() {
           </div>
           <div class="participants-bar">
             <span v-for="p in participants" :key="p.id" class="pchip">{{ p.username }}</span>
+          </div>
+          <div v-if="activeSupportsFull" class="fullrank-toggle">
+            <label class="fullrank-label">
+              <input
+                type="checkbox"
+                :checked="activeTournament?.full_ranking"
+                @change="toggleFullRanking"
+              >
+              <span>Classifica completa (scontri per tutte le posizioni)</span>
+            </label>
           </div>
           <TournamentBracket
             v-if="activeTournament"

@@ -124,6 +124,12 @@ export function useApi() {
     if (error) throw error
   }
 
+  async function setTournamentFullRanking(tournamentId: number, value: boolean): Promise<void> {
+    const { error } = await $db
+      .from('tournaments').update({ full_ranking: value }).eq('id', tournamentId)
+    if (error) throw error
+  }
+
   async function getTournamentMatches(tournamentId: number): Promise<TournamentMatch[]> {
     const { data, error } = await $db
       .from('tournament_matches')
@@ -221,7 +227,7 @@ export function useApi() {
     getPlayers, addPlayer, removePlayer,
     // tournaments
     getActiveTournament, createTournament, updateTournamentStatus,
-    getTournamentMatches, saveTournamentMatch,
+    setTournamentFullRanking, getTournamentMatches, saveTournamentMatch,
     // standings
     getStandings, addWins, getTournamentsHistory,
     // cr api

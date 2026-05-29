@@ -152,5 +152,6 @@ export function useTournamentPolling(clanId: number) {
     timerLabel,
     startPolling,
     stopPolling,
+    recheck: checkCompletion,
   }
 }
