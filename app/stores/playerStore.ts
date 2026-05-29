@@ -19,7 +19,7 @@ export const usePlayerStore = defineStore('player', () => {
     ])
     allPlayers.value = players
     standingsMap.value = {}
-    standings.forEach((s) => { standingsMap.value[s.player_id] = s.points })
+    standings.forEach((s) => { standingsMap.value[s.player_id] = s.wins })
     loaded.value = true
 
     // Trofei CR caricati in background, non blocca UI.

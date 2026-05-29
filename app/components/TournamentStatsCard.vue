@@ -26,9 +26,6 @@ function dateLabel(d: string) {
     day: '2-digit', month: 'short', year: 'numeric',
   })
 }
-function pointsFor(pos: number) {
-  return POINTS_BY_PLACE[pos] ?? 0
-}
 </script>
 
 <template>
@@ -39,7 +36,7 @@ function pointsFor(pos: number) {
         <span>{{ stats.username }}</span>
       </span>
       <span class="ts-name-right">
-        <span class="ts-pts-preview">{{ stats.points }} pt</span>
+        <span class="ts-pts-preview">{{ stats.totalWins }} vinte</span>
         <span class="card-chevron">▾</span>
       </span>
     </div>
@@ -71,8 +68,8 @@ function pointsFor(pos: number) {
           <span class="ts-match-val loss">{{ stats.losses }}</span>
         </div>
         <div class="ts-match-row highlight">
-          <span class="ts-match-lbl">Punti torneo</span>
-          <span class="ts-match-val gold">{{ stats.points }} pt</span>
+          <span class="ts-match-lbl">Totale partite vinte</span>
+          <span class="ts-match-val gold">{{ stats.totalWins }}</span>
         </div>
         <div
           class="ts-match-row muted ts-trn-toggle"
@@ -88,7 +85,6 @@ function pointsFor(pos: number) {
           <div v-for="h in sortedHistory" :key="h.date" class="ts-trn-row">
             <span class="ts-trn-date">{{ dateLabel(h.date) }}</span>
             <span class="ts-trn-pos">{{ positionIcon(h.position) }}</span>
-            <span class="ts-trn-pts">+{{ pointsFor(h.position) }} pt</span>
           </div>
         </div>
       </div>

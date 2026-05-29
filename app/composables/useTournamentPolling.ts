@@ -1,12 +1,12 @@
 import { storeToRefs } from 'pinia'
-import type { Player } from '~~/shared/types/domain'
+import type { Player, BracketResult } from '~~/shared/types/domain'
 
 const POLL_INTERVAL = 30_000 // 30s
-const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
 
 // Polling battlelog + timer + check completamento bracket.
+// Punti = partite vinte: ogni match vinto assegna +1 alla classifica del clan.
 // Tornei senza partite da >2h vengono chiusi dal cron server-side (vedi docs/schema.sql).
-// Richiede clanId (per addPoints alla classifica del clan).
+// Richiede clanId (per assegnare le vittorie alla classifica del clan).
 export function useTournamentPolling(clanId: number) {
   const api = useApi()
   const bracket = useBracket()
@@ -93,6 +93,9 @@ export function useTournamentPolling(clanId: number) {
           if (saved) {
             knownBattleIds.value.add(crId)
             newBattlesFound = true
+            // 1 vittoria = +1 partita vinta in classifica
+            await api.addWins(clanId, [{ player_id: winnerId, wins: 1 }])
+            playerStore.standingsMap[winnerId] = (playerStore.standingsMap[winnerId] ?? 0) + 1
           }
         }
       } catch (err: any) {
@@ -111,29 +114,36 @@ export function useTournamentPolling(clanId: number) {
     if (!t || !t.tournament_players) return
 
     const n = t.tournament_players.length
-    const needed = n === 4 ? 4 : 3
-    if (tournamentMatches.value.length < needed) return
-
+    const fr = t.full_ranking
+    const matches = tournamentMatches.value
     const allPlayers = t.tournament_players.map(tp => tp.players)
-    const result = n === 4
-      ? bracket.analyzeBracket4(tournamentMatches.value, allPlayers)
-      : bracket.analyzeBracket3(tournamentMatches.value, allPlayers)
+
+    // Conteggio partite atteso + analyzer per dimensione torneo.
+    let needed: number
+    let result: BracketResult | null
+    switch (n) {
+      case 2: needed = 1; break
+      case 3: needed = 3; break
+      case 4: needed = 4; break
+      case 6: needed = 6 + (fr ? 3 : 1); break
+      case 8: needed = fr ? 12 : 8; break
+      default: return
+    }
+    if (matches.length < needed) return
+
+    switch (n) {
+      case 2: result = bracket.analyzeBracket2(matches, allPlayers); break
+      case 3: result = bracket.analyzeBracket3(matches, allPlayers); break
+      case 4: result = bracket.analyzeBracket4(matches, allPlayers); break
+      case 6: result = bracket.analyzeBracket6(matches, allPlayers, fr); break
+      case 8: result = bracket.analyzeBracket8(matches, allPlayers, fr); break
+      default: return
+    }
     if (!result) return
 
+    // Le vittorie sono già state assegnate per-match in poll().
     stopPolling()
     await api.updateTournamentStatus(t.id, 'finished')
-
-    const pointsEntries = result.positions.map((pos, i) => ({
-      player_id: pos.player_id,
-      points: POINTS_BY_PLACE[i + 1] ?? 0,
-    }))
-    await api.addPoints(clanId, pointsEntries)
-
-    pointsEntries.forEach(({ player_id, points }) => {
-      const current = playerStore.standingsMap[player_id] ?? 0
-      playerStore.standingsMap[player_id] = current + points
-    })
-
     store.completedPositions = result.positions
     activeTournament.value = { ...t, status: 'finished' }
   }
@@ -142,6 +152,5 @@ export function useTournamentPolling(clanId: number) {
     timerLabel,
     startPolling,
     stopPolling,
-    POINTS_BY_PLACE,
   }
 }

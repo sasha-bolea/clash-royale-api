@@ -49,6 +49,7 @@ CREATE TABLE tournaments (
   match_type  TEXT NOT NULL CHECK (match_type IN ('1v1','tripla','amichevole')),
   status      TEXT NOT NULL DEFAULT 'active'
               CHECK (status IN ('active','paused','finished','invalid')),
+  full_ranking BOOLEAN NOT NULL DEFAULT false,
   started_at  TIMESTAMPTZ DEFAULT NOW(),
   finished_at TIMESTAMPTZ
 );
@@ -75,7 +76,7 @@ CREATE TABLE tournament_matches (
 CREATE TABLE standings (
   clan_id   INT REFERENCES clans(id) ON DELETE CASCADE,
   player_id INT REFERENCES players(id) ON DELETE CASCADE,
-  points    INT DEFAULT 0,
+  wins      INT DEFAULT 0,
   PRIMARY KEY (clan_id, player_id)
 );
 

@@ -41,7 +41,22 @@ const participants = computed(() =>
 
 let polling: ReturnType<typeof useTournamentPolling> | null = null
 const timerLabel = ref('0:00')
-const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
+
+// Taglie torneo valide.
+const VALID_SIZES = [2, 3, 4, 6, 8]
+// Modalità classifica completa (solo per 6 e 8): scontri extra per posizioni piene.
+const fullRankingMode = ref(false)
+const selectedCount = computed(() => selectedPlayerIds.value.size)
+const supportsFullRanking = computed(() => selectedCount.value === 6 || selectedCount.value === 8)
+
+// Partite vinte per giocatore nel torneo corrente (per il podio).
+const podiumWins = computed<Record<number, number>>(() => {
+  const w: Record<number, number> = {}
+  tournamentMatches.value.forEach((m) => {
+    if (m.winner_id) w[m.winner_id] = (w[m.winner_id] ?? 0) + 1
+  })
+  return w
+})
 
 function ensurePolling() {
   if (!polling && clanId.value) {
@@ -104,8 +119,8 @@ function togglePlayer(id: number) {
   if (set.has(id)) {
     set.delete(id)
   } else {
-    if (set.size >= 4) {
-      showToast('Massimo 4 giocatori per torneo')
+    if (set.size >= 8) {
+      showToast('Massimo 8 giocatori per torneo')
       return
     }
     set.add(id)
@@ -116,13 +131,15 @@ function togglePlayer(id: number) {
 async function startTournament() {
   if (!clanId.value) return
   const ids = [...selectedPlayerIds.value]
-  if (ids.length < 3 || ids.length > 4) {
-    showToast('Seleziona 3 o 4 giocatori')
+  if (!VALID_SIZES.includes(ids.length)) {
+    showToast('Seleziona 2, 3, 4, 6 o 8 giocatori')
     return
   }
+  // La modalità completa vale solo per 6 e 8.
+  const fullRanking = supportsFullRanking.value && fullRankingMode.value
   starting.value = true
   try {
-    await api.createTournament(clanId.value, ids, 'amichevole')
+    await api.createTournament(clanId.value, ids, 'amichevole', fullRanking)
     activeTournament.value = await api.getActiveTournament(clanId.value)
     tournamentMatches.value = []
     knownBattleIds.value = new Set()
@@ -185,10 +202,17 @@ async function cancelTournament() {
               />
             </div>
           </div>
+          <div v-if="supportsFullRanking" class="fullrank-toggle">
+            <label class="fullrank-label">
+              <input v-model="fullRankingMode" type="checkbox">
+              <span>Classifica completa (scontri per tutte le posizioni)</span>
+            </label>
+          </div>
           <div class="start-wrap">
+            <p class="select-hint">Selezionati: {{ selectedCount }} (validi: 2, 3, 4, 6, 8)</p>
             <button
               class="btn-start"
-              :disabled="starting || allPlayers.length < 3"
+              :disabled="starting || !VALID_SIZES.includes(selectedCount)"
               @click="startTournament"
             >
               {{ starting ? '...' : 'AVVIA' }}
@@ -222,7 +246,7 @@ async function cancelTournament() {
         <Podium
           v-else-if="view === 'complete' && completedPositions"
           :positions="completedPositions"
-          :points-by-place="POINTS_BY_PLACE"
+          :wins="podiumWins"
         />
       </div>
     </main>

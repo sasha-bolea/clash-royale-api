@@ -25,6 +25,7 @@ export interface Tournament {
   clan_id: number
   match_type: MatchType
   status: TournamentStatus
+  full_ranking: boolean
   started_at: string
   finished_at: string | null
   tournament_players?: Array<{ player_id: number; players: Player }>
@@ -49,7 +50,7 @@ export interface TournamentMatch {
 export interface Standing {
   clan_id: number
   player_id: number
-  points: number
+  wins: number
   players?: Player
 }
 
@@ -91,6 +92,8 @@ export interface CRBattle {
 export interface PodiumEntry {
   player_id: number
   username: string | undefined
+  // Posizione finale (1-based). Pari merito condividono lo stesso valore.
+  place?: number
 }
 
 export interface BracketResult {

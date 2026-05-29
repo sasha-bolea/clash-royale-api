@@ -481,6 +481,29 @@ body.page-home #app {
   gap: 4px;
 }
 
+.fullrank-toggle {
+  margin-top: 12px;
+}
+.fullrank-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.fullrank-label input {
+  accent-color: var(--gold);
+  width: 16px;
+  height: 16px;
+}
+.select-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
 .start-wrap {
   flex-shrink: 0;
   padding: 12px 0 calc(90px + max(12px, env(safe-area-inset-bottom)));

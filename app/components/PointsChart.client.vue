@@ -17,18 +17,13 @@ let chart: Chart | null = null
 
 const empty = ref(false)
 
-function pointsInTournament(t: Tournament, username: string): number {
-  const participantUsernames = (t.tournament_players ?? []).map(tp => tp.players.username)
-  const winCounts: Record<string, number> = {}
-  participantUsernames.forEach((u) => { winCounts[u] = 0 })
+// Partite vinte dal giocatore in questo torneo.
+function winsInTournament(t: Tournament, username: string): number {
+  let wins = 0
   ;(t.tournament_matches ?? []).forEach((m) => {
-    if (m.winner && winCounts[m.winner.username] !== undefined) {
-      winCounts[m.winner.username]!++
-    }
+    if (m.winner?.username === username) wins++
   })
-  const ranked = [...participantUsernames].sort((a, b) => (winCounts[b] ?? 0) - (winCounts[a] ?? 0))
-  const pos = ranked.indexOf(username) + 1
-  return pos > 0 ? (POINTS_BY_PLACE[pos] ?? 0) : 0
+  return wins
 }
 
 function buildChart() {
@@ -69,7 +64,7 @@ function buildChart() {
     allSorted.filter(t => new Date(t.started_at) < cutoff!).forEach((t) => {
       const partSet = new Set((t.tournament_players ?? []).map(tp => tp.players.username))
       props.players.forEach((p) => {
-        if (partSet.has(p.username)) cumPoints[p.username]! += pointsInTournament(t, p.username)
+        if (partSet.has(p.username)) cumPoints[p.username]! += winsInTournament(t, p.username)
       })
     })
   }
@@ -84,7 +79,7 @@ function buildChart() {
   sorted.forEach((t) => {
     const partSet = new Set((t.tournament_players ?? []).map(tp => tp.players.username))
     props.players.forEach((p) => {
-      if (partSet.has(p.username)) cumPoints[p.username]! += pointsInTournament(t, p.username)
+      if (partSet.has(p.username)) cumPoints[p.username]! += winsInTournament(t, p.username)
       seriesData[p.username]!.push(cumPoints[p.username]!)
     })
   })

@@ -96,10 +96,11 @@ export function useApi() {
     clanId: number,
     playerIds: number[],
     matchType: MatchType,
+    fullRanking = false,
   ): Promise<Tournament> {
     const { data: tournament, error: tErr } = await $db
       .from('tournaments')
-      .insert({ clan_id: clanId, match_type: matchType, status: 'active' })
+      .insert({ clan_id: clanId, match_type: matchType, status: 'active', full_ranking: fullRanking })
       .select()
       .single()
     if (tErr) throw tErr
@@ -162,21 +163,21 @@ export function useApi() {
       .from('standings')
       .select('*, players (*)')
       .eq('clan_id', clanId)
-      .order('points', { ascending: false })
+      .order('wins', { ascending: false })
     if (error) throw error
     return (data as Standing[]) ?? []
   }
 
-  async function addPoints(
+  async function addWins(
     clanId: number,
-    entries: Array<{ player_id: number; points: number }>,
+    entries: Array<{ player_id: number; wins: number }>,
   ): Promise<void> {
-    for (const { player_id, points } of entries) {
+    for (const { player_id, wins } of entries) {
       const { data } = await $db
-        .from('standings').select('points')
+        .from('standings').select('wins')
         .eq('clan_id', clanId).eq('player_id', player_id).maybeSingle()
-      const current = (data as { points: number } | null)?.points ?? 0
-      await $db.from('standings').upsert({ clan_id: clanId, player_id, points: current + points })
+      const current = (data as { wins: number } | null)?.wins ?? 0
+      await $db.from('standings').upsert({ clan_id: clanId, player_id, wins: current + wins })
     }
   }
 
@@ -222,7 +223,7 @@ export function useApi() {
     getActiveTournament, createTournament, updateTournamentStatus,
     getTournamentMatches, saveTournamentMatch,
     // standings
-    getStandings, addPoints, getTournamentsHistory,
+    getStandings, addWins, getTournamentsHistory,
     // cr api
     getPlayerProfile, getBattlelog,
   }

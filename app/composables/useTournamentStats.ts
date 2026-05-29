@@ -8,11 +8,9 @@ export interface PlayerTournamentStats {
   wins: number
   losses: number
   tournamentsPlayed: number
-  points: number
+  totalWins: number
   tournamentHistory: Array<{ date: string; position: number }>
 }
-
-export const POINTS_BY_PLACE: Record<number, number> = { 1: 3, 2: 2, 3: 1, 4: 0 }
 
 // Calcola statistiche per giocatore aggregando tornei finished.
 // Ranking per torneo = numero vittorie nelle partite (winCounts).
@@ -31,7 +29,7 @@ export function computePlayerTournamentStats(
       wins: 0,
       losses: 0,
       tournamentsPlayed: 0,
-      points: standingsMap[p.id] ?? 0,
+      totalWins: standingsMap[p.id] ?? 0,
       tournamentHistory: [],
     }
   })

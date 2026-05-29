@@ -3,15 +3,15 @@ import type { PodiumEntry } from '~~/shared/types/domain'
 
 const props = defineProps<{
   positions: PodiumEntry[]
-  pointsByPlace: Record<number, number>
+  // Partite vinte per player_id nel torneo.
+  wins: Record<number, number>
 }>()
 
-const medals = ['🥇', '🥈', '🥉', '4°']
-function medal(i: number) {
-  return medals[i] ?? `${i + 1}°`
-}
-function points(i: number) {
-  return props.pointsByPlace[i + 1] ?? 0
+const medals = ['🥇', '🥈', '🥉']
+// Posizione finale: usa place (pari merito condivisi) o indice.
+function medal(pos: PodiumEntry, i: number) {
+  const place = pos.place ?? i + 1
+  return medals[place - 1] ?? `${place}°`
 }
 </script>
 
@@ -23,11 +23,11 @@ function points(i: number) {
         v-for="(pos, i) in positions"
         :key="pos.player_id"
         class="podio-row"
-        :class="`rank-${i + 1}`"
+        :class="`rank-${pos.place ?? i + 1}`"
       >
-        <span class="medal">{{ medal(i) }}</span>
+        <span class="medal">{{ medal(pos, i) }}</span>
         <span class="podio-name">{{ pos.username }}</span>
-        <span class="podio-pts">+{{ points(i) }} pt</span>
+        <span class="podio-pts">{{ wins[pos.player_id] ?? 0 }} vinte</span>
       </div>
     </div>
     <div class="complete-footer">

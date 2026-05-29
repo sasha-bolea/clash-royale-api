@@ -139,7 +139,7 @@ onMounted(() => switchTab(activeTab.value))
                   </div>
                 </div>
                 <div class="ts-chart-header">
-                  <span class="ts-chart-title">Andamento punti</span>
+                  <span class="ts-chart-title">Andamento vittorie</span>
                   <div class="ts-filter-btns">
                     <button class="ts-filter-btn" :class="{ active: chartFilter === '1m' }" @click="chartFilter = '1m'">1M</button>
                     <button class="ts-filter-btn" :class="{ active: chartFilter === '3m' }" @click="chartFilter = '3m'">3M</button>
