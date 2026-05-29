@@ -158,10 +158,11 @@ function build6(
 ): BracketView {
   const ids = players.map(p => p.id)
   const tris = detectTriangles(sorted, ids)
-  if (!tris) {
-    return { format: 6, fullRanking, rounds: [], groups: null, groupsPending: true }
-  }
-  const [gA, gB] = tris
+  // Gruppi reali appena detectTriangles li trova; altrimenti layout preliminare
+  // (prime 3 / ultime 3 per ordine) così la struttura è visibile da subito.
+  // groupsPending=true solo quando ci sono partite ma i gironi non sono ancora determinabili.
+  const preliminary = !tris
+  const [gA, gB] = tris ?? [ids.slice(0, 3), ids.slice(3, 6)]
 
   // Costruisce le 3 partite scaletta di un girone + ranking interno.
   const groupRounds = (gIds: number[], prefix: string): { rounds: BracketRound[]; rank: number[] } => {
@@ -207,6 +208,8 @@ function build6(
     rounds: [],
     groups: [a.rounds, b.rounds],
     extras,
+    // Segnala che i gironi sono provvisori (partite in corso ma triangoli non ancora formati).
+    groupsPending: preliminary && sorted.length > 0,
   }
 }
 

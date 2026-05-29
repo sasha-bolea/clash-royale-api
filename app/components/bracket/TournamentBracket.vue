@@ -27,9 +27,9 @@ const connected = computed(() => format.value === 4 || format.value === 8)
     <!-- 6: gironi affiancati -->
     <template v-if="view.format === 6">
       <p v-if="view.groupsPending" class="bk-pending">
-        In attesa di partite per identificare i gironi…
+        Gironi in definizione…
       </p>
-      <div v-else-if="view.groups" class="bk-groups">
+      <div v-if="view.groups" class="bk-groups">
         <div class="bk-group">
           <div class="bk-group-title">Girone A</div>
           <div class="bk-chain">
