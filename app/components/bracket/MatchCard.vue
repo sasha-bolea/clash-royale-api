@@ -2,7 +2,7 @@
 import type { BracketNode } from '~~/shared/types/domain'
 import Slot from './Slot.vue'
 
-const props = defineProps<{ node: BracketNode }>()
+const props = defineProps<{ node: BracketNode; hideLabel?: boolean }>()
 
 const aWin = computed(() => props.node.winnerId != null && props.node.winnerId === props.node.slotA.playerId)
 const bWin = computed(() => props.node.winnerId != null && props.node.winnerId === props.node.slotB.playerId)
@@ -11,8 +11,7 @@ const decided = computed(() => props.node.winnerId != null)
 
 <template>
   <div class="bk-match" :class="{ 'bk-suggested': node.suggested }">
-    <span v-if="node.suggested" class="bk-match-label bk-suggested-tag">🎲 consigliato</span>
-    <span v-else-if="node.label" class="bk-match-label">{{ node.label }}</span>
+    <span v-if="!hideLabel && node.label" class="bk-match-label">{{ node.label }}</span>
     <div class="bk-match-box">
       <Slot :slot="node.slotA" :winner="aWin" :loser="decided && !aWin" />
       <div class="bk-match-vs">vs</div>

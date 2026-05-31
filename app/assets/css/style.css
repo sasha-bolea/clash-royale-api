@@ -1903,6 +1903,16 @@ main .landing-hero {
   margin: 12px -20px 0;
   padding: 0 12px;
 }
+/* Tornei 4 e 6: bracket piccolo. Le card extra (finalina/incrocio) NON a tutta
+   larghezza schermo ma larghe quanto il bracket principale. Griglia a colonna
+   unica max-content centrata: tree/gironi ed extra condividono la stessa
+   larghezza (gli item grid si allungano alla colonna = larghezza del bracket). */
+.bk-wrap.bk-f4,
+.bk-wrap.bk-f6 {
+  display: grid;
+  grid-template-columns: minmax(0, max-content);
+  justify-content: center;
+}
 .bk-pending {
   text-align: center;
   color: var(--muted);
@@ -2011,7 +2021,6 @@ main .landing-hero {
   opacity: 0.78;
 }
 .bk-suggested .bk-slot-name { font-style: italic; color: var(--gold); }
-.bk-suggested-tag { color: var(--gold); opacity: 0.85; }
 
 /* Connettori a gomito (alberi che dimezzano: 4 e 8) — tecnica CSS pura.
    Ogni cella occupa uno slot verticale uguale (flex:1); le coppie adiacenti

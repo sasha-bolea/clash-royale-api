@@ -31,7 +31,7 @@ const connected = computed(() => format.value === 4 || format.value === 8)
 </script>
 
 <template>
-  <div v-if="view" class="bk-wrap">
+  <div v-if="view" class="bk-wrap" :class="`bk-f${view.format}`">
     <!-- 6: gironi affiancati -->
     <template v-if="view.format === 6">
       <p v-if="view.groupsPending" class="bk-pending">
@@ -63,7 +63,7 @@ const connected = computed(() => format.value === 4 || format.value === 8)
         <div class="bk-round-title">{{ r.label }}</div>
         <div class="bk-round-matches">
           <div v-for="m in r.matches" :key="m.id" class="bk-cell">
-            <MatchCard :node="m" />
+            <MatchCard :node="m" hide-label />
           </div>
         </div>
       </div>
@@ -74,7 +74,12 @@ const connected = computed(() => format.value === 4 || format.value === 8)
       <div v-for="ex in view.extras" :key="ex.id" class="bk-extra">
         <div class="bk-extra-title">{{ ex.label }}</div>
         <div class="bk-extra-matches">
-          <MatchCard v-for="m in ex.matches" :key="m.id" :node="m" />
+          <MatchCard
+            v-for="m in ex.matches"
+            :key="m.id"
+            :node="m"
+            :hide-label="ex.matches.length === 1"
+          />
         </div>
       </div>
     </div>
