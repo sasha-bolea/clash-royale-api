@@ -22,7 +22,6 @@ onMounted(() => {
 <template>
   <div id="app-root">
     <NuxtPage />
-    <AppFooter />
     <BottomNav v-if="showNav" />
     <Toast />
     <PwaUpdatePrompt />

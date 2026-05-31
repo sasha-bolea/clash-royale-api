@@ -38,6 +38,8 @@ const showJoin = ref(false)
       </template>
     </main>
 
+    <AppFooter />
+
     <CreateClanModal
       v-if="showCreate"
       @close="showCreate = false"

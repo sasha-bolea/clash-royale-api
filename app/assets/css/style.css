@@ -405,7 +405,6 @@ body.page-home .tournament-page {
   display: flex;
   flex-direction: column;
 }
-body.page-home .app-footer { display: none; }
 
 /* Active/complete view: scroll interno per non clippare bracket/podio.
    overflow-x:clip (non crea scroll container) permette al bracket di
@@ -469,7 +468,6 @@ body.clan-shell #app-root {
   flex-direction: column;
   overflow: hidden;
 }
-body.clan-shell .app-footer { display: none; }
 
 /* Storico/statistiche: scroll sull'intero wrapper pagina */
 body.clan-shell .clan-page {

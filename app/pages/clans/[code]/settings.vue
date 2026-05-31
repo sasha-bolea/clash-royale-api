@@ -154,6 +154,8 @@ async function confirmLeave(removePlayerId: number | null) {
           Il clan viene eliminato automaticamente quando l'ultimo giocatore viene rimosso, o se resta vuoto per più di 24 ore senza tornei.
         </p>
       </section>
+
+      <AppFooter />
     </main>
 
     <LeaveClanDialog
