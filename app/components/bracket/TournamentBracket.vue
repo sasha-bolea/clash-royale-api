@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { BracketFormat, Player, Tournament, TournamentMatch } from '~~/shared/types/domain'
+import type { SuggestedPair } from '~/composables/useSuggestions'
+import { applySuggestions } from '~/composables/useSuggestions'
 import MatchCard from './MatchCard.vue'
 
 const props = defineProps<{
@@ -7,6 +9,7 @@ const props = defineProps<{
   tournament: Tournament
   participants: Player[]
   fullRanking: boolean
+  suggestions?: SuggestedPair[]
 }>()
 
 const VALID: BracketFormat[] = [2, 3, 4, 6, 8]
@@ -15,11 +18,13 @@ const valid = computed(() => VALID.includes(format.value))
 
 // fullRanking è passato come prop primitivo separato (non estratto da tournament)
 // per garantire che Vue rilevi il cambio e ricalcoli la view immediatamente.
-const view = computed(() =>
-  valid.value
-    ? buildBracketView(props.matches, props.participants, format.value, props.fullRanking)
-    : null,
-)
+const view = computed(() => {
+  if (!valid.value) return null
+  const v = buildBracketView(props.matches, props.participants, format.value, props.fullRanking)
+  // Sovrappone gli accoppiamenti consigliati ai soli slot vuoti del primo round.
+  if (props.suggestions?.length) applySuggestions(v, props.suggestions, props.participants)
+  return v
+})
 
 // Albero connesso solo quando i round dimezzano (4: 2→1, 8: 4→2→1).
 const connected = computed(() => format.value === 4 || format.value === 8)

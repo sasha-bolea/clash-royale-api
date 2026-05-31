@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
+import type { BracketFormat } from '~~/shared/types/domain'
 import TournamentBracket from '~/components/bracket/TournamentBracket.vue'
+import { computeSuggestions, type SuggestedPair } from '~/composables/useSuggestions'
 
 definePageMeta({ middleware: ['clan-access'] })
 
@@ -52,6 +54,38 @@ onBeforeUnmount(() => {
 const participants = computed(() =>
   (activeTournament.value?.tournament_players ?? []).map(tp => tp.players),
 )
+
+// ---- Suggerimento accoppiamenti per il primo round ----
+// Stato puramente visivo (nessuna scrittura su DB): riempie gli slot vuoti del
+// primo round del bracket con coppie casuali tra i partecipanti non ancora
+// impegnati in una partita reale.
+const suggestActive = ref(false)
+const suggestedPairs = ref<SuggestedPair[]>([])
+const activeFormat = computed(() => participants.value.length as BracketFormat)
+// Il 2 mostra già entrambi i finalisti: niente da consigliare.
+const canSuggest = computed(() => activeFormat.value !== 2)
+
+// Attiva/azzera il consiglio. All'attivazione genera coppie casuali fresche.
+function toggleSuggest() {
+  if (suggestActive.value) {
+    suggestActive.value = false
+    suggestedPairs.value = []
+  } else {
+    suggestActive.value = true
+    suggestedPairs.value = computeSuggestions(
+      tournamentMatches.value, participants.value, activeFormat.value, [],
+    )
+  }
+}
+
+// Quando arrivano partite reali, aggiorna il consiglio: le coppie ancora valide
+// restano, solo i giocatori "rubati" da una partita reale vengono ri-accoppiati.
+watch(tournamentMatches, () => {
+  if (!suggestActive.value) return
+  suggestedPairs.value = computeSuggestions(
+    tournamentMatches.value, participants.value, activeFormat.value, suggestedPairs.value,
+  )
+})
 
 let polling: ReturnType<typeof useTournamentPolling> | null = null
 const timerLabel = ref('0:00')
@@ -346,6 +380,14 @@ async function cancelTournament() {
               <span>Classifica completa (scontri per tutte le posizioni)</span>
             </label>
           </div>
+          <button
+            v-if="canSuggest"
+            class="btn-suggest"
+            :class="{ 'btn-suggest-active': suggestActive }"
+            @click="toggleSuggest"
+          >
+            {{ suggestActive ? '✕ Pulisci suggerimenti' : '🎲 Suggerisci accoppiamenti' }}
+          </button>
           <TournamentBracket
             v-if="activeTournament"
             :key="`bracket-${activeTournament.full_ranking}`"
@@ -353,6 +395,7 @@ async function cancelTournament() {
             :tournament="activeTournament"
             :participants="participants"
             :full-ranking="activeTournament.full_ranking ?? false"
+            :suggestions="suggestActive ? suggestedPairs : []"
           />
           <details class="matches-detail">
             <summary>Partite rilevate ({{ tournamentMatches.length }})</summary>

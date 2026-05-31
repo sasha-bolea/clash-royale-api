@@ -210,6 +210,7 @@ function build6(
     fullRanking,
     rounds: [],
     groups: [a.rounds, b.rounds],
+    groupIds: [gA, gB],
     extras,
     // Segnala che i gironi sono provvisori (partite in corso ma triangoli non ancora formati).
     groupsPending: preliminary && sorted.length > 0,

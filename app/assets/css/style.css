@@ -664,6 +664,29 @@ body.page-home .complete-view::-webkit-scrollbar {
 }
 .btn-info:active { opacity: 0.7; }
 
+/* Bottone "Suggerisci accoppiamenti" nel torneo in corso */
+.btn-suggest {
+  display: block;
+  width: 100%;
+  margin: 4px 0 12px;
+  background: rgba(245, 200, 66, 0.12);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-family: 'Lilita One', cursive;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-suggest:active { opacity: 0.8; }
+.btn-suggest-active {
+  background: rgba(231, 76, 60, 0.14);
+  border-color: var(--red);
+  color: var(--red);
+}
+
 .info-overlay {
   position: fixed;
   inset: 0;
@@ -1980,6 +2003,15 @@ main .landing-hero {
 .bk-slot-win .bk-slot-name { color: var(--gold); }
 .bk-slot-lose { opacity: 0.55; }
 .bk-slot-check { font-size: 12px; }
+
+/* Accoppiamento consigliato (non ancora giocato): bordo tratteggiato gold, attenuato */
+.bk-suggested .bk-match-box {
+  border-style: dashed;
+  border-color: var(--gold);
+  opacity: 0.78;
+}
+.bk-suggested .bk-slot-name { font-style: italic; color: var(--gold); }
+.bk-suggested-tag { color: var(--gold); opacity: 0.85; }
 
 /* Connettori a gomito (alberi che dimezzano: 4 e 8) — tecnica CSS pura.
    Ogni cella occupa uno slot verticale uguale (flex:1); le coppie adiacenti

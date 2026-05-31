@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BracketFormat, Player, Tournament, TournamentMatch } from '~~/shared/types/domain'
 import TournamentBracket from '~/components/bracket/TournamentBracket.vue'
+import { computeSuggestions, type SuggestedPair } from '~/composables/useSuggestions'
 
 // Pagina di sviluppo per verificare il riempimento progressivo del bracket.
 // Solo dev: in produzione non renderizza nulla.
@@ -80,6 +81,15 @@ const tournament = computed<Tournament>(() => ({
   full_ranking: full.value, started_at: '', finished_at: null,
 }))
 
+// Toggle suggerimenti: ricalcola le coppie a ogni step (preservando le valide).
+const suggest = ref(false)
+const suggestedPairs = ref<SuggestedPair[]>([])
+watchEffect(() => {
+  suggestedPairs.value = suggest.value
+    ? computeSuggestions(shown.value, participants.value, format.value, suggestedPairs.value)
+    : []
+})
+
 watch([format, full], () => { step.value = 0 })
 function advance() { if (step.value < fullSeq.value.length) step.value++ }
 function reset() { step.value = 0 }
@@ -98,11 +108,18 @@ function fill() { step.value = fullSeq.value.length }
         <option :value="8">8</option>
       </select>
       <label><input v-model="full" type="checkbox"> full_ranking</label>
+      <label><input v-model="suggest" type="checkbox"> suggerimenti</label>
       <button @click="advance">Avanza ({{ step }}/{{ fullSeq.length }})</button>
       <button @click="fill">Completa</button>
       <button @click="reset">Reset</button>
     </div>
-    <TournamentBracket :matches="shown" :tournament="tournament" :participants="participants" />
+    <TournamentBracket
+      :matches="shown"
+      :tournament="tournament"
+      :participants="participants"
+      :full-ranking="full"
+      :suggestions="suggest ? suggestedPairs : []"
+    />
   </main>
   <main v-else style="padding:16px">Solo in sviluppo.</main>
 </template>

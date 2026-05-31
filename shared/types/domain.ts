@@ -114,6 +114,7 @@ export interface BracketNode {
   slotA: BracketSlot
   slotB: BracketSlot
   winnerId?: number
+  suggested?: boolean     // true se gli slot sono un accoppiamento consigliato (non ancora giocato)
 }
 
 export interface BracketRound {
@@ -129,5 +130,6 @@ export interface BracketView {
   // Partite fuori dall'albero principale: finalina 3°/4°, consolazione, incrocio gironi.
   extras?: BracketRound[]
   groups?: [BracketRound[], BracketRound[]] | null  // solo format 6: 2 gironi
+  groupIds?: [number[], number[]]   // solo format 6: id giocatori per girone (per i suggerimenti)
   groupsPending?: boolean           // 6: true se gironi non ancora identificati
 }
