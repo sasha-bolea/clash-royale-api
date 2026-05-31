@@ -2053,10 +2053,17 @@ main .landing-hero {
   border-top: 1px solid var(--bg3);
   justify-content: center;
 }
+/* Ogni gruppo extra occupa la riga intera, card a piena larghezza */
+.bk-extra {
+  flex: 1 1 100%;
+}
 .bk-extra-matches {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+.bk-extras .bk-match {
+  width: 100%;
 }
 
 .matches-detail {
