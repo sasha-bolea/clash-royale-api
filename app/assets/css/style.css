@@ -1891,7 +1891,9 @@ main .landing-hero {
   padding: 16px 0;
 }
 
-/* Albero principale: colonne affiancate, scroll orizzontale se largo */
+/* Albero principale: colonne affiancate, scroll orizzontale se largo.
+   safe center: centra quando entra nello schermo, allinea a sinistra
+   (senza tagliare) quando il contenuto eccede e va in scroll. */
 .bk-tree {
   display: flex;
   gap: 16px;
@@ -1899,6 +1901,7 @@ main .landing-hero {
   padding-bottom: 8px;
   align-items: stretch;
   width: 100%;
+  justify-content: safe center;
 }
 .bk-round {
   display: flex;
@@ -2031,6 +2034,7 @@ main .landing-hero {
   gap: 16px;
   overflow-x: auto;
   padding-bottom: 8px;
+  justify-content: safe center;
 }
 .bk-group { min-width: 150px; }
 .bk-chain {
@@ -2047,6 +2051,7 @@ main .landing-hero {
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid var(--bg3);
+  justify-content: center;
 }
 .bk-extra-matches {
   display: flex;
