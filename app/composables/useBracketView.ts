@@ -120,23 +120,25 @@ function build4(
   if (semi1 && semi2) {
     const w1 = semi1.winner_id
     const w2 = semi2.winner_id
-    const l1 = loserId(semi1)
-    const l2 = loserId(semi2)
     const finalM = findMatch(rest, w1, w2)
     finalNode = finalM ? fromMatch('f', finalM, 'Finale') : node('f', w1, w2, 'Finale')
-
-    if (fullRanking) {
-      const thirdM = findMatch(rest, l1, l2)
-      extras.push({
-        id: 'third',
-        label: 'Finalina 3°/4°',
-        matches: [thirdM ? fromMatch('t', thirdM, '3°/4°') : node('t', l1, l2, '3°/4°')],
-      })
-    }
-    // OFF: nessuna finalina, perdenti semifinali pari merito 3° (no card extra).
   } else {
     finalNode = node('f', undefined, undefined, 'Finale')
   }
+
+  // Finalina 3°/4°: appare appena fullRanking è ON, anche senza semifinali
+  // ancora giocate (slot vuoti). Sparisce quando fullRanking è OFF.
+  if (fullRanking) {
+    const l1 = semi1 ? loserId(semi1) : undefined
+    const l2 = semi2 ? loserId(semi2) : undefined
+    const thirdM = (l1 != null && l2 != null) ? findMatch(rest, l1, l2) : undefined
+    extras.push({
+      id: 'third',
+      label: 'Finalina 3°/4°',
+      matches: [thirdM ? fromMatch('t', thirdM, '3°/4°') : node('t', l1, l2, '3°/4°')],
+    })
+  }
+  // OFF: nessuna finalina, perdenti semifinali pari merito 3° (no card extra).
 
   return {
     format: 4,
