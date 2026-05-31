@@ -10,7 +10,7 @@ const showJoin = ref(false)
 </script>
 
 <template>
-  <div>
+  <div class="index-root">
     <header><div class="logo">Royal Arena</div></header>
 
     <main>
@@ -52,3 +52,17 @@ const showJoin = ref(false)
     />
   </div>
 </template>
+
+<style scoped>
+.index-root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+/* footer subito dopo l'ultimo clan;
+   quando il contenuto è corto, margin-top:auto lo spinge a 20px dal fondo */
+.index-root :deep(.app-footer) {
+  margin-top: auto;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+</style>
