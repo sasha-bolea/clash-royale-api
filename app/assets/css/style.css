@@ -655,7 +655,7 @@ body.page-home .complete-view::-webkit-scrollbar {
   width: 100%;
   background: none;
   border: none;
-  color: var(--muted);
+  color: var(--gold);
   font-family: 'Lilita One', cursive;
   font-size: 13px;
   letter-spacing: 1px;
