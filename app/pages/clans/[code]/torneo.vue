@@ -15,6 +15,7 @@ const { allPlayers, trophiesMap } = storeToRefs(playerStore)
 const showWelcome = ref(false)
 const showAddFromWelcome = ref(false)
 const showInfo = ref(false)
+const showActiveInfo = ref(false)
 
 const tournamentStore = useTournamentStore()
 const {
@@ -293,6 +294,48 @@ async function cancelTournament() {
           <div class="participants-bar">
             <span v-for="p in participants" :key="p.id" class="pchip">{{ p.username }}</span>
           </div>
+
+          <button class="btn-info" @click="showActiveInfo = true">ⓘ Come si popola il tabellone</button>
+
+          <Teleport to="body">
+            <div v-if="showActiveInfo" class="info-overlay" @click.self="showActiveInfo = false">
+              <div class="info-modal">
+                <button class="info-close" @click="showActiveInfo = false">✕</button>
+                <div class="info-title">Tabellone automatico</div>
+                <ol class="info-steps">
+                  <li>
+                    <span class="info-step-num">1</span>
+                    <div>
+                      <strong>Giocate liberamente</strong>
+                      <p>Il tabellone parte vuoto. Ogni partecipante sfida chi vuole, nell'ordine che preferisce: non c'è un calendario imposto.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="info-step-num">2</span>
+                    <div>
+                      <strong>Le prime partite definiscono il tabellone</strong>
+                      <p>Appena due partecipanti si scontrano, l'app rileva la battaglia e la inserisce al posto giusto. Sono i primi incontri a determinare chi affronta chi nei turni successivi.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="info-step-num">3</span>
+                    <div>
+                      <strong>Aggiornamento in tempo reale</strong>
+                      <p>Ogni nuova partita compare automaticamente nel tabellone entro pochi secondi, con vincitore e corone. Non devi inserire nulla a mano.</p>
+                    </div>
+                  </li>
+                  <li>
+                    <span class="info-step-num">4</span>
+                    <div>
+                      <strong>Chiusura automatica</strong>
+                      <p>Quando tutti gli incontri necessari sono stati giocati, il torneo si conclude da solo e mostra la classifica finale.</p>
+                    </div>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </Teleport>
+
           <div v-if="activeSupportsFull" class="fullrank-toggle">
             <label class="fullrank-label">
               <input
