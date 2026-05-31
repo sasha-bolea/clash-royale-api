@@ -305,6 +305,7 @@ async function cancelTournament() {
           </div>
           <TournamentBracket
             v-if="activeTournament"
+            :key="`bracket-${activeTournament.full_ranking}`"
             :matches="tournamentMatches"
             :tournament="activeTournament"
             :participants="participants"
