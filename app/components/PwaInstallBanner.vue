@@ -30,8 +30,7 @@ function openModal() {
     <!-- Banner -->
     <div v-if="showBanner" class="install-banner" @click.self="openModal">
       <button class="install-banner__cta" @click="openModal">
-        <span class="install-banner__icon">📲</span>
-        <span>Aggiungi alla schermata Home</span>
+        Aggiungi alla schermata Home
       </button>
       <button class="install-banner__close" aria-label="Chiudi" @click.stop="dismiss">✕</button>
     </div>
@@ -48,38 +47,18 @@ function openModal() {
           <!-- iOS -->
           <template v-if="isIos">
             <ol class="install-modal__steps">
-              <li>
-                <span class="step-icon">1</span>
-                Tocca il pulsante <strong>Condividi</strong>
-                <span class="share-icon">⬆</span> in basso nella barra di Safari
-              </li>
-              <li>
-                <span class="step-icon">2</span>
-                Scorri e scegli <strong>«Aggiungi alla schermata Home»</strong>
-              </li>
-              <li>
-                <span class="step-icon">3</span>
-                Tocca <strong>Aggiungi</strong> in alto a destra
-              </li>
+              <li>Tocca il pulsante <strong>Condividi ⬆</strong> in basso nella barra di Safari</li>
+              <li>Scorri e scegli <strong>«Aggiungi alla schermata Home»</strong></li>
+              <li>Tocca <strong>Aggiungi</strong> in alto a destra</li>
             </ol>
           </template>
 
           <!-- Android / Desktop -->
           <template v-else>
             <ol class="install-modal__steps">
-              <li>
-                <span class="step-icon">1</span>
-                Tocca il menu <strong>⋮</strong> in alto a destra in Chrome
-              </li>
-              <li>
-                <span class="step-icon">2</span>
-                Seleziona <strong>«Aggiungi alla schermata Home»</strong>
-                <br><small>(oppure «Installa app» se disponibile)</small>
-              </li>
-              <li>
-                <span class="step-icon">3</span>
-                Conferma toccando <strong>Installa</strong>
-              </li>
+              <li>Tocca il menu <strong>⋮</strong> in alto a destra in Chrome</li>
+              <li>Seleziona <strong>«Aggiungi alla schermata Home»</strong> (oppure <strong>«Installa app»</strong> se disponibile)</li>
+              <li>Conferma toccando <strong>Installa</strong></li>
             </ol>
           </template>
 
@@ -120,11 +99,6 @@ function openModal() {
   cursor: pointer;
   padding: 0;
   letter-spacing: 0.3px;
-}
-
-.install-banner__icon {
-  font-size: 18px;
-  line-height: 1;
 }
 
 .install-banner__close {
@@ -200,41 +174,9 @@ function openModal() {
 }
 
 .install-modal__steps li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
   font-size: 14px;
   color: var(--text);
-  line-height: 1.5;
-}
-
-.step-icon {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: var(--gold-dim);
-  color: var(--gold);
-  font-family: 'Lilita One', cursive;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1px;
-}
-
-.share-icon {
-  display: inline-block;
-  background: var(--bg3);
-  border-radius: 6px;
-  padding: 1px 6px;
-  font-size: 13px;
-  margin-left: 4px;
-}
-
-.install-modal__steps small {
-  color: var(--muted);
-  font-size: 12px;
+  line-height: 1.6;
 }
 
 .install-modal__btn {
