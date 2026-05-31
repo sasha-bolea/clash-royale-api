@@ -96,7 +96,7 @@ async function confirmLeave(removePlayerId: number | null) {
 </script>
 
 <template>
-  <div>
+  <div class="clan-page">
     <header class="header-with-actions">
       <NuxtLink v-if="clan" :to="`/clans/${clan.code}/torneo`" class="header-action">←</NuxtLink>
       <div class="logo">Settings</div>
