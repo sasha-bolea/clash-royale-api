@@ -26,5 +26,6 @@ onMounted(() => {
     <BottomNav v-if="showNav" />
     <Toast />
     <PwaUpdatePrompt />
+    <PwaInstallBanner />
   </div>
 </template>
