@@ -29,3 +29,10 @@ onMounted(() => {
     <PwaInstallBanner />
   </div>
 </template>
+
+<style>
+#app-root {
+  padding-top: var(--install-banner-height, 0px);
+  transition: padding-top 0.2s ease;
+}
+</style>

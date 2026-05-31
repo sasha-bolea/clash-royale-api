@@ -1,7 +1,10 @@
 <script setup lang="ts">
+type Platform = 'ios-safari' | 'ios-other' | 'chrome' | 'other'
+
 const showBanner = ref(false)
 const showModal = ref(false)
-const isIos = ref(false)
+const platform = ref<Platform>('other')
+const bannerEl = ref<HTMLElement | null>(null)
 
 onMounted(() => {
   const standalone =
@@ -11,8 +14,29 @@ onMounted(() => {
   if (standalone) return
   if (sessionStorage.getItem('pwa-banner-dismissed')) return
 
-  isIos.value = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  const ua = navigator.userAgent
+  const isIosDevice = /iPad|iPhone|iPod/.test(ua)
+
+  if (isIosDevice) {
+    const isIosSafari = /Safari\//.test(ua) && !/CriOS|FxiOS|OPiOS|mercury/.test(ua)
+    platform.value = isIosSafari ? 'ios-safari' : 'ios-other'
+  } else if (/Chrome\//.test(ua)) {
+    platform.value = 'chrome'
+  } else {
+    platform.value = 'other'
+  }
+
   showBanner.value = true
+})
+
+watch(showBanner, async (val) => {
+  if (val) {
+    await nextTick()
+    const h = bannerEl.value?.offsetHeight ?? 48
+    document.documentElement.style.setProperty('--install-banner-height', `${h}px`)
+  } else {
+    document.documentElement.style.setProperty('--install-banner-height', '0px')
+  }
 })
 
 function dismiss() {
@@ -28,7 +52,7 @@ function openModal() {
 <template>
   <Teleport to="body">
     <!-- Banner -->
-    <div v-if="showBanner" class="install-banner" @click.self="openModal">
+    <div v-if="showBanner" ref="bannerEl" class="install-banner" @click.self="openModal">
       <button class="install-banner__cta" @click="openModal">
         Aggiungi alla schermata Home
       </button>
@@ -44,16 +68,38 @@ function openModal() {
           <h2 class="install-modal__title">Aggiungi alla schermata Home</h2>
           <p class="install-modal__sub">Usa l'app in modalità standalone, senza barra del browser.</p>
 
-          <!-- iOS -->
-          <template v-if="isIos">
+          <!-- iOS Safari -->
+          <template v-if="platform === 'ios-safari'">
             <ol class="install-modal__steps">
-              <li>Tocca il pulsante <strong>Condividi ⬆</strong> in basso nella barra di Safari</li>
+              <li>
+                Tocca il pulsante <strong>Condividi</strong>
+                <svg class="share-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                  <polyline points="16 6 12 2 8 6"/>
+                  <line x1="12" y1="2" x2="12" y2="15"/>
+                </svg>
+                in basso nella barra di Safari
+              </li>
               <li>Scorri e scegli <strong>«Aggiungi alla schermata Home»</strong></li>
               <li>Tocca <strong>Aggiungi</strong> in alto a destra</li>
             </ol>
           </template>
 
-          <!-- Android / Desktop -->
+          <!-- iOS con browser diverso da Safari (Chrome, Firefox…) -->
+          <template v-else-if="platform === 'ios-other'">
+            <p class="install-modal__note">
+              Su iOS solo <strong>Safari</strong> può installare app alla schermata Home.<br>
+              Apri questa pagina in Safari, poi tocca il pulsante
+              <svg class="share-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                <polyline points="16 6 12 2 8 6"/>
+                <line x1="12" y1="2" x2="12" y2="15"/>
+              </svg>
+              e scegli <strong>«Aggiungi alla schermata Home»</strong>.
+            </p>
+          </template>
+
+          <!-- Chrome su Android o Desktop -->
           <template v-else>
             <ol class="install-modal__steps">
               <li>Tocca il menu <strong>⋮</strong> in alto a destra in Chrome</li>
@@ -113,6 +159,17 @@ function openModal() {
   cursor: pointer;
   padding: 4px 8px;
   line-height: 1;
+}
+
+/* ── SVG share icon ── */
+.share-svg {
+  display: inline-block;
+  vertical-align: middle;
+  width: 15px;
+  height: 15px;
+  margin: 0 2px;
+  position: relative;
+  top: -1px;
 }
 
 /* ── Overlay ── */
@@ -177,6 +234,13 @@ function openModal() {
   font-size: 14px;
   color: var(--text);
   line-height: 1.6;
+}
+
+.install-modal__note {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+  margin: 0 0 24px;
 }
 
 .install-modal__btn {
