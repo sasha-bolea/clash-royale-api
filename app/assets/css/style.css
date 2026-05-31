@@ -1860,9 +1860,8 @@ main .landing-hero {
 /* AppFooter — disclaimer Supercell IP */
 .app-footer {
   max-width: 480px;
-  margin: 24px auto 0;
-  padding: 16px 20px;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  margin: 8px auto 0;
+  padding: 12px 20px calc(16px + env(safe-area-inset-bottom));
   font-size: 10px;
   line-height: 1.5;
   color: var(--muted);
@@ -1873,7 +1872,6 @@ main .landing-hero {
   color: var(--gold);
   text-decoration: underline;
 }
-/* Quando bottom-nav visibile, già copre 68px → footer padding-bottom basta */
 
 /* ============================ BRACKET ============================ */
 .bk-wrap {
