@@ -189,20 +189,21 @@ function build6(
   const a = groupRounds(gA, 'A')
   const b = groupRounds(gB, 'B')
 
-  // Incrocio per posizione (richiede ranking interni completi).
+  // Incrocio per posizione. Le card appaiono sempre (slot vuoti finché i
+  // ranking interni non sono completi); il numero di card cambia col toggle
+  // fullRanking: solo 1°A vs 1°B in OFF, anche 2° e 3° in ON.
   const extras: BracketRound[] = []
-  if (a.rank.length === 3 && b.rank.length === 3) {
-    const pairs = fullRanking
-      ? [[0, '1°A vs 1°B'], [1, '2°A vs 2°B'], [2, '3°A vs 3°B']] as const
-      : [[0, '1°A vs 1°B']] as const
-    const crossNodes: BracketNode[] = pairs.map(([i, label]) => {
-      const aId = a.rank[i]!
-      const bId = b.rank[i]!
-      const m = findMatch(sorted, aId, bId)
-      return m ? fromMatch(`x${i}`, m, label) : node(`x${i}`, aId, bId, label)
-    })
-    extras.push({ id: 'cross', label: 'Incrocio', matches: crossNodes })
-  }
+  const ranksReady = a.rank.length === 3 && b.rank.length === 3
+  const pairs = fullRanking
+    ? [[0, '1°A vs 1°B'], [1, '2°A vs 2°B'], [2, '3°A vs 3°B']] as const
+    : [[0, '1°A vs 1°B']] as const
+  const crossNodes: BracketNode[] = pairs.map(([i, label]) => {
+    const aId = ranksReady ? a.rank[i] : undefined
+    const bId = ranksReady ? b.rank[i] : undefined
+    const m = (aId != null && bId != null) ? findMatch(sorted, aId, bId) : undefined
+    return m ? fromMatch(`x${i}`, m, label) : node(`x${i}`, aId, bId, label)
+  })
+  extras.push({ id: 'cross', label: 'Incrocio', matches: crossNodes })
 
   return {
     format: 6,
@@ -228,6 +229,12 @@ function build8(
   let finalNode: BracketNode = node('f', undefined, undefined, 'Finale')
   let qfOrdered = qf
 
+  // Dati per gli extra fullRanking, popolati man mano che le partite arrivano.
+  let semiLoser0: number | undefined
+  let semiLoser1: number | undefined
+  let consMatches: TournamentMatch[] = []
+  let consSemis: TournamentMatch[] = []
+
   if (qf.length === 4) {
     const qfIds = new Set(qf.map(m => m.id))
     const qfWinners = qf.map(m => m.winner_id)
@@ -237,61 +244,71 @@ function build8(
 
     semis.forEach((m, i) => { semiNodes[i] = fromMatch(`s${i}`, m) })
 
-    // Riordina i quarti perché le coppie feeder siano adiacenti (connettori corretti):
-    // i 2 quarti i cui vincitori giocano la semi 0 vanno per primi.
     if (semis.length === 2) {
+      // Riordina i quarti perché le coppie feeder siano adiacenti (connettori corretti):
+      // i 2 quarti i cui vincitori giocano la semi 0 vanno per primi.
       const semiOf = (winnerId: number) =>
         semis.findIndex(s => s.player1_id === winnerId || s.player2_id === winnerId)
       qfOrdered = [...qf].sort((a, b) => semiOf(a.winner_id) - semiOf(b.winner_id))
-    }
 
-    if (semis.length === 2) {
       const sw = semis.map(m => m.winner_id)
       const sl = semis.map(m => loserId(m))
+      semiLoser0 = sl[0]
+      semiLoser1 = sl[1]
       const semiIds = new Set(semis.map(m => m.id))
       const rest = sorted.filter(m => !qfIds.has(m.id) && !semiIds.has(m.id))
       const finalM = findMatch(rest, sw[0]!, sw[1]!)
       finalNode = finalM ? fromMatch('f', finalM, 'Finale') : node('f', sw[0], sw[1], 'Finale')
-
-      if (fullRanking) {
-        const thirdM = findMatch(rest, sl[0]!, sl[1]!)
-        extras.push({
-          id: 'third',
-          label: 'Finalina 3°/4°',
-          matches: [thirdM ? fromMatch('t', thirdM, '3°/4°') : node('t', sl[0], sl[1], '3°/4°')],
-        })
-      }
-      // OFF: nessuna finalina (perdenti semi pari 3°, no card extra).
     }
 
-    // Consolazione 5°-8° (solo fullRanking): bracket a 4 tra i perdenti dei quarti.
-    if (fullRanking) {
-      const loserSet = new Set(qfLosers)
-      const consMatches = sorted.filter(m =>
-        loserSet.has(m.player1_id) && loserSet.has(m.player2_id))
-      const consSemis = greedyMatching(consMatches, { limit: 2 })
-      const consSemiNodes: BracketNode[] = [
-        consSemis[0] ? fromMatch('cs0', consSemis[0]) : node('cs0'),
-        consSemis[1] ? fromMatch('cs1', consSemis[1]) : node('cs1'),
-      ]
-      extras.push({ id: 'cons-semi', label: 'Consolazione', matches: consSemiNodes })
-      if (consSemis.length === 2) {
-        const cw = consSemis.map(m => m.winner_id)
-        const cl = consSemis.map(m => loserId(m))
-        const consIds = new Set(consSemis.map(m => m.id))
-        const consRest = consMatches.filter(m => !consIds.has(m.id))
-        const cFinal = findMatch(consRest, cw[0]!, cw[1]!)
-        const cThird = findMatch(consRest, cl[0]!, cl[1]!)
-        extras.push({
-          id: 'cons-final',
-          label: '5°/6° — 7°/8°',
-          matches: [
-            cFinal ? fromMatch('cf', cFinal, '5°/6°') : node('cf', cw[0], cw[1], '5°/6°'),
-            cThird ? fromMatch('ct', cThird, '7°/8°') : node('ct', cl[0], cl[1], '7°/8°'),
-          ],
-        })
-      }
+    // Partite consolazione (tra i 4 perdenti dei quarti) per gli extra fullRanking.
+    const loserSet = new Set(qfLosers)
+    consMatches = sorted.filter(m =>
+      loserSet.has(m.player1_id) && loserSet.has(m.player2_id))
+    consSemis = greedyMatching(consMatches, { limit: 2 })
+  }
+
+  // Extra fullRanking: appaiono col toggle anche senza partite (slot vuoti),
+  // e spariscono quando il flag è OFF. I perdenti delle semifinali non si sono
+  // mai incontrati prima, quindi findMatch su sorted individua solo la card cercata.
+  if (fullRanking) {
+    // Finalina 3°/4° tra i perdenti delle semifinali.
+    const thirdM = (semiLoser0 != null && semiLoser1 != null)
+      ? findMatch(sorted, semiLoser0, semiLoser1) : undefined
+    extras.push({
+      id: 'third',
+      label: 'Finalina 3°/4°',
+      matches: [thirdM ? fromMatch('t', thirdM, '3°/4°') : node('t', semiLoser0, semiLoser1, '3°/4°')],
+    })
+
+    // Consolazione 5°-8°: 2 semifinali tra i perdenti dei quarti.
+    const consSemiNodes: BracketNode[] = [
+      consSemis[0] ? fromMatch('cs0', consSemis[0]) : node('cs0'),
+      consSemis[1] ? fromMatch('cs1', consSemis[1]) : node('cs1'),
+    ]
+    extras.push({ id: 'cons-semi', label: 'Consolazione', matches: consSemiNodes })
+
+    // Finali consolazione: 5°/6° (vincitori semi cons.) e 7°/8° (perdenti).
+    let cw0: number | undefined, cw1: number | undefined
+    let cl0: number | undefined, cl1: number | undefined
+    if (consSemis.length === 2) {
+      cw0 = consSemis[0]!.winner_id
+      cw1 = consSemis[1]!.winner_id
+      cl0 = loserId(consSemis[0]!)
+      cl1 = loserId(consSemis[1]!)
     }
+    const consIds = new Set(consSemis.map(m => m.id))
+    const consRest = consMatches.filter(m => !consIds.has(m.id))
+    const cFinal = (cw0 != null && cw1 != null) ? findMatch(consRest, cw0, cw1) : undefined
+    const cThird = (cl0 != null && cl1 != null) ? findMatch(consRest, cl0, cl1) : undefined
+    extras.push({
+      id: 'cons-final',
+      label: '5°/6° — 7°/8°',
+      matches: [
+        cFinal ? fromMatch('cf', cFinal, '5°/6°') : node('cf', cw0, cw1, '5°/6°'),
+        cThird ? fromMatch('ct', cThird, '7°/8°') : node('ct', cl0, cl1, '7°/8°'),
+      ],
+    })
   }
 
   const qfNodes: BracketNode[] = []
