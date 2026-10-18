@@ -7,6 +7,9 @@ const props = defineProps<{
   wins: Record<number, number>
 }>()
 
+// Clan code from the route, needed to build clan-scoped links.
+const { code } = useActiveClan()
+
 const medals = ['🥇', '🥈', '🥉']
 // Posizione finale: usa place (pari merito condivisi) o indice.
 function medal(pos: PodiumEntry, i: number) {
@@ -31,7 +34,7 @@ function medal(pos: PodiumEntry, i: number) {
       </div>
     </div>
     <div class="complete-footer">
-      <NuxtLink to="/storico" class="btn-link">Vedi storico →</NuxtLink>
+      <NuxtLink :to="`/clans/${code}/storico`" class="btn-link">Vedi storico →</NuxtLink>
     </div>
   </div>
 </template>
