@@ -7,6 +7,11 @@ const props = defineProps<{
   wins: Record<number, number>
 }>()
 
+const emit = defineEmits<{
+  // User asked to go back to player selection for a new tournament.
+  newTournament: []
+}>()
+
 // Clan code from the route, needed to build clan-scoped links.
 const { code } = useActiveClan()
 
@@ -34,6 +39,7 @@ function medal(pos: PodiumEntry, i: number) {
       </div>
     </div>
     <div class="complete-footer">
+      <button class="btn-start" @click="emit('newTournament')">NUOVO TORNEO</button>
       <NuxtLink :to="`/clans/${code}/storico`" class="btn-link">Vedi storico →</NuxtLink>
     </div>
   </div>

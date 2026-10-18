@@ -215,6 +215,15 @@ async function startTournament() {
   }
 }
 
+// Leave the podium and go back to player selection, keeping the last
+// tournament's players pre-selected for a quick rematch.
+function startNewTournament() {
+  const lastPlayerIds = participants.value.map(p => p.id)
+  tournamentStore.reset()
+  tournamentStore.clanId = clanId.value
+  selectedPlayerIds.value = new Set(lastPlayerIds)
+}
+
 async function cancelTournament() {
   if (!activeTournament.value) return
   if (!confirm('Annullare il torneo in corso?')) return
@@ -418,6 +427,7 @@ async function cancelTournament() {
           v-else-if="view === 'complete' && completedPositions"
           :positions="completedPositions"
           :wins="podiumWins"
+          @new-tournament="startNewTournament"
         />
       </div>
     </main>

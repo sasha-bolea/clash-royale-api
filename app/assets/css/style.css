@@ -974,7 +974,13 @@ body.page-home .complete-view::-webkit-scrollbar {
   color: var(--gold);
 }
 
-.complete-footer { margin-top: 8px; }
+.complete-footer {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
 
 /* ============================================================
    STATISTICHE (statistiche.html)
