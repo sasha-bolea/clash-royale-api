@@ -11,6 +11,6 @@ defineProps<{
 <template>
   <div class="bk-slot" :class="{ 'bk-slot-win': winner, 'bk-slot-lose': loser, 'bk-slot-empty': slot.playerId == null }">
     <span class="bk-slot-name">{{ slot.username ?? '?' }}</span>
-    <span v-if="winner" class="bk-slot-check">👑</span>
+    <img v-if="winner" class="bk-slot-check" src="/images/ui/blue-crown.png" alt="vince">
   </div>
 </template>

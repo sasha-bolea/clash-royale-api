@@ -279,8 +279,11 @@ html,
   background: linear-gradient(180deg, #2a62e0, #173fa8);
   box-shadow: var(--ra-bevel), 0 3px 0 var(--ra-stroke), 0 0 0 2px var(--ra-gold-400), 0 0 16px rgba(255, 210, 63, .4);
 }
+.ra-chip__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .ra-chip__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ra-chip__tag { font-family: ui-monospace, monospace; font-size: 12px; color: var(--ra-text-muted); }
+.ra-chip__tag { font-family: ui-monospace, monospace; font-size: 11px; color: var(--ra-text-muted); }
+.ra-chip.is-selected .ra-chip__tag { color: var(--ra-blue-300); }
+.ra-chip__trophies { display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--ra-gold-200); }
 .ra-chip__check {
   width: 26px;
   height: 26px;
@@ -316,6 +319,7 @@ html,
   border-radius: 12px;
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, .4);
 }
+.ra-avatar--sm { width: 26px; height: 26px; font-size: 13px; border-radius: 8px; -webkit-text-stroke-width: 2px; }
 .ra-avatar--red { background: linear-gradient(160deg, #ffb0b0, var(--ra-red-400) 55%, var(--ra-red-600)); }
 .ra-avatar--gold { background: linear-gradient(160deg, var(--ra-gold-200), var(--ra-gold-400) 55%, var(--ra-gold-500)); }
 
@@ -652,6 +656,154 @@ html,
 }
 .ra-toast.is-visible { opacity: 1; transform: translate(-50%, 0) scale(1); }
 
+/* ---------- Dialogo con passaggi numerati (InfoDialog.vue) ---------- */
+.ra-info { position: relative; padding-top: 26px; }
+.ra-info__close { position: absolute; top: 12px; right: 12px; }
+.ra-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+.ra-steps__item { display: flex; gap: 12px; align-items: flex-start; }
+.ra-steps__num {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  font-family: 'Lilita One', cursive;
+  font-size: 16px;
+  color: var(--ra-text);
+  -webkit-text-stroke: 3px var(--ra-gold-900);
+  paint-order: stroke fill;
+  background: linear-gradient(180deg, var(--ra-gold-400), var(--ra-gold-500));
+  border: 2px solid var(--ra-stroke);
+  border-radius: 50%;
+}
+.ra-steps__title { display: block; font-family: 'Lilita One', cursive; font-size: 16px; font-weight: 400; color: var(--ra-text); margin-bottom: 2px; }
+.ra-steps p { font-size: 14px; color: var(--ra-text-soft); }
+
+/* ---------- Arena: selezione giocatori ---------- */
+.ra-arena__label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 14px 0 10px; }
+.ra-arena__hint-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.ra-arena__hint-row .select-hint { margin: 0; text-align: left; font-family: system-ui, -apple-system, sans-serif; font-size: 12px; color: var(--ra-text-muted); }
+
+/* ---------- Arena: torneo in corso ---------- */
+.ra-live { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
+.ra-live__text { flex: 1; font-family: 'Lilita One', cursive; font-size: 15px; }
+.ra-live__timer {
+  font-family: 'Lilita One', cursive;
+  font-size: 20px;
+  color: var(--ra-gold-400);
+  -webkit-text-stroke: 4px var(--ra-stroke);
+  paint-order: stroke fill;
+  font-variant-numeric: tabular-nums;
+}
+.ra-live__players { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.ra-live__player {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 3px;
+  font-family: 'Lilita One', cursive;
+  font-size: 13px;
+  background: rgba(3, 6, 26, .45);
+  border: 2px solid var(--ra-stroke);
+  border-radius: 999px;
+}
+.ra-live__tools { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+
+/* ---------- Interruttore on/off ---------- */
+.ra-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  color: var(--ra-text-soft);
+  cursor: pointer;
+}
+.ra-toggle input { position: absolute; opacity: 0; pointer-events: none; }
+.ra-toggle__track {
+  position: relative;
+  flex-shrink: 0;
+  width: 50px;
+  height: 30px;
+  background: var(--ra-navy-950);
+  border: 2px solid var(--ra-stroke);
+  border-radius: 999px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, .5);
+  transition: background .2s;
+}
+.ra-toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(180deg, #fff, #c9d3f5);
+  border: 2px solid var(--ra-stroke);
+  border-radius: 50%;
+  transition: transform .25s var(--ra-ease-pop);
+}
+.ra-toggle input:checked + .ra-toggle__track { background: var(--ra-green-600); }
+.ra-toggle input:checked + .ra-toggle__track::after { transform: translateX(20px); }
+.ra-toggle input:focus-visible + .ra-toggle__track { box-shadow: 0 0 0 2px var(--ra-gold-400); }
+
+/* ---------- Sezione richiudibile ---------- */
+.ra-details { margin: 16px 0; }
+.ra-details__summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-family: 'Lilita One', cursive;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ra-blue-300);
+  list-style: none;
+  cursor: pointer;
+}
+.ra-details__summary::-webkit-details-marker { display: none; }
+.ra-details__summary::before { content: '▸'; transition: transform .2s; }
+.ra-details[open] > .ra-details__summary::before { transform: rotate(90deg); }
+.ra-details__body { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+
+/* ---------- Fine torneo (Podium.vue) ---------- */
+.ra-final { display: flex; flex-direction: column; gap: 18px; padding: 8px 0 16px; text-align: center; }
+.ra-final__title { color: var(--ra-gold-400); animation: ra-pop-in .5s var(--ra-ease-pop) both; }
+.ra-final__stage { overflow: hidden; padding-top: 24px; }
+/* Raggi dorati che ruotano lentamente dietro al vincitore */
+.ra-final__rays {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  width: 360px;
+  height: 360px;
+  margin-left: -180px;
+  margin-top: -180px;
+  background: repeating-conic-gradient(rgba(255, 210, 63, .16) 0deg 10deg, transparent 10deg 24deg);
+  border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, #000 20%, transparent 70%);
+  mask: radial-gradient(circle, #000 20%, transparent 70%);
+  animation: ra-spin 18s linear infinite;
+  pointer-events: none;
+}
+.ra-final__stage .ra-podium { position: relative; }
+.ra-final__others { display: flex; flex-direction: column; gap: 8px; }
+.ra-final__row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, var(--ra-navy-700), var(--ra-navy-800));
+  border: 2px solid var(--ra-stroke);
+  border-radius: 12px;
+  box-shadow: var(--ra-bevel), 0 3px 0 var(--ra-stroke);
+}
+.ra-final__place { width: 30px; font-family: 'Lilita One', cursive; font-size: 18px; color: var(--ra-text-muted); }
+.ra-final__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; font-family: 'Lilita One', cursive; font-size: 16px; }
+.ra-final__actions { display: grid; gap: 10px; }
+
 /* ---------- Entrata a cascata per liste ---------- */
 .ra-pop-in { animation: ra-pop-in .45s var(--ra-ease-pop) both; }
 
@@ -672,6 +824,9 @@ html,
   0%, 100% { transform: translateY(0) rotate(-4deg); }
   50% { transform: translateY(-6px) rotate(4deg); }
 }
+@keyframes ra-spin {
+  to { transform: rotate(360deg); }
+}
 @keyframes ra-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: .3; }
@@ -684,5 +839,7 @@ html,
   .ra-podium__step,
   .ra-pop-in,
   .ra-hero__logo,
+  .ra-final__rays,
+  .ra-final__title,
   .ra-badge--live::before { animation: none; }
 }
