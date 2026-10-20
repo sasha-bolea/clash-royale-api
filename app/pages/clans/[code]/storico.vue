@@ -38,20 +38,18 @@ onMounted(async () => {
         <p v-if="loading" class="loading">Caricamento...</p>
         <p v-else-if="error" class="error-msg">Errore: {{ error }}</p>
         <template v-else>
-          <div class="storico-toolbar">
-            <button
-              class="toggle-invalid"
-              :class="{ active: hideInvalid }"
-              @click="hideInvalid = !hideInvalid"
-            >
-              {{ hideInvalid ? 'Mostra annullati' : 'Nascondi annullati' }}
-            </button>
-          </div>
+          <label class="ra-toggle">
+            <input v-model="hideInvalid" type="checkbox" :true-value="false" :false-value="true">
+            <span class="ra-toggle__track" aria-hidden="true" />
+            <span>Mostra tornei annullati</span>
+          </label>
           <p v-if="!visibleList.length" class="empty-msg">Nessun torneo concluso.</p>
           <div v-else class="storico-list">
             <TournamentHistoryCard
-              v-for="t in visibleList"
+              v-for="(t, i) in visibleList"
               :key="t.id"
+              class="ra-pop-in"
+              :style="{ animationDelay: `${Math.min(i, 8) * 50}ms` }"
               :tournament="t"
             />
           </div>

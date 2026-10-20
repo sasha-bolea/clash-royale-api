@@ -53,7 +53,6 @@ body {
   overflow-x: hidden;
 }
 
-
 /* ============================================================
    MAIN
    ============================================================ */
@@ -63,44 +62,6 @@ main {
   max-width: 480px;
   margin: 0 auto;
 }
-
-/* ============================================================
-   LABEL DI SEZIONE
-   ============================================================ */
-.section-label {
-  font-family: 'Lilita One', cursive;
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-
-/* ============================================================
-   TABS (usate in classifiche + statistiche)
-   ============================================================ */
-.tabs {
-  display: flex;
-  margin-bottom: 24px;
-  border: 1px solid var(--bg3);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.tab-btn {
-  flex: 1;
-  background: var(--bg2);
-  border: none;
-  color: var(--muted);
-  font-family: 'Lilita One', cursive;
-  font-size: 13px;
-  letter-spacing: 1px;
-  padding: 14px;
-  cursor: pointer;
-  transition: background .15s, color .15s;
-  -webkit-tap-highlight-color: transparent;
-}
-.tab-btn + .tab-btn { border-left: 1px solid var(--bg3); }
-.tab-btn.active { background: var(--bg3); color: var(--gold); }
 
 /* ============================================================
    SPINNER
@@ -131,55 +92,6 @@ main {
   color: var(--red);
   text-align: center;
   padding: 20px 0;
-}
-
-/* ============================================================
-   BATTLE ROWS (usate in partite + classifiche)
-   ============================================================ */
-.battles-list { display: flex; flex-direction: column; gap: 8px; }
-
-.battle-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--bg2);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-  border-left: 4px solid transparent;
-}
-.battle-win  { border-left-color: var(--green); }
-.battle-loss { border-left-color: var(--red); }
-
-.battle-result-badge {
-  font-family: 'Lilita One', cursive;
-  font-size: 13px;
-  font-weight: 700;
-  width: 22px;
-  flex-shrink: 0;
-  text-align: center;
-}
-.battle-win  .battle-result-badge { color: var(--green); }
-.battle-loss .battle-result-badge { color: var(--red); }
-
-.battle-info { flex: 1; min-width: 0; }
-
-.battle-players {
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-.our-side  { color: var(--text); font-weight: 600; }
-.battle-vs { color: var(--muted); font-size: 13px; }
-.opp-side  { color: var(--muted); }
-
-.battle-meta {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 4px;
-  font-size: 13px;
-  color: var(--muted);
 }
 
 /* ============================================================
@@ -363,7 +275,6 @@ body.page-home .complete-view::-webkit-scrollbar {
   display: none;
 }
 
-
 .player-list {
   display: flex;
   flex-direction: column;
@@ -371,48 +282,7 @@ body.page-home .complete-view::-webkit-scrollbar {
   padding: 2px 2px 6px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Bottone "Suggerisci accoppiamenti" nel torneo in corso */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .select-hint {
   text-align: center;
@@ -426,37 +296,10 @@ body.page-home .complete-view::-webkit-scrollbar {
   padding: 12px 0 16px;
 }
 
-
-
-
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.4; }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .active-footer {
   display: flex;
@@ -466,70 +309,9 @@ body.page-home .complete-view::-webkit-scrollbar {
 
 .complete-view { text-align: center; }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ============================================================
    STATISTICHE (statistiche.html)
    ============================================================ */
-#stats-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.stat-card {
-  background: var(--bg2);
-  border: 1px solid var(--bg3);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-.stat-card.expanded .card-top {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--bg3);
-}
-
-.card-name {
-  font-family: 'Lilita One', cursive;
-  font-size: 17px;
-  color: var(--gold);
-}
-.card-chevron {
-  color: var(--muted);
-  font-size: 16px;
-  transition: transform .2s;
-  display: inline-block;
-}
-.stat-card.expanded .card-chevron { transform: rotate(180deg); }
-
-.card-body { display: none; padding: 14px 16px; }
-.stat-card.expanded .card-body { display: block; }
-
 .loading-inline {
   display: flex;
   align-items: center;
@@ -540,364 +322,20 @@ body.page-home .complete-view::-webkit-scrollbar {
   min-height: 48px;
 }
 
-.level-trophy-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-
-.level-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.level-num-plain {
-  font-family: 'Lilita One', cursive;
-  font-size: 14px;
-  color: var(--muted);
-  background: var(--bg3);
-  border-radius: 6px;
-  padding: 4px 10px;
-}
-
-.trophy-block { display: flex; align-items: baseline; gap: 6px; }
-.trophy-icon  { font-size: 18px; }
-.trophy-val {
-  font-family: 'Lilita One', cursive;
-  font-size: 22px;
-  color: var(--gold);
-}
-.trophy-best { font-size: 13px; color: var(--muted); }
-
-.stats-grid-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.stat-box {
-  background: var(--bg3);
-  border-radius: 8px;
-  padding: 10px 12px;
-  text-align: center;
-}
-.stat-box.highlight { border: 1px solid var(--gold-dim); }
-
-.stat-box-val {
-  font-family: 'Lilita One', cursive;
-  font-size: 20px;
-  line-height: 1.2;
-}
-.stat-box.highlight .stat-box-val { color: var(--gold); }
-.stat-box-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 0;
-  border-top: 1px solid var(--bg3);
-  font-size: 15px;
-}
-.stat-row.muted { opacity: 0.7; }
-.stat-lbl  { color: var(--muted); }
-.clan-name { color: var(--gold); font-style: italic; }
-
 .error-inline { color: var(--red); font-size: 14px; padding: 8px 0; }
 
-.level-img-old {
-  height: 18px;
-  width: auto;
-  vertical-align: middle;
-  margin-right: 2px;
-}
-
-.arena-val { display: flex; align-items: center; gap: 6px; }
-
 /* ============================================================
-   CLASSIFICHE (classifiche.html)
+   STORICO
    ============================================================ */
-.leaderboard {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.leaderboard-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--bg2);
-  border-radius: var(--radius);
-  padding: 14px 18px;
-  border: 1px solid var(--bg3);
-}
-.leaderboard-row.rank-1 { border-color: var(--gold); box-shadow: 0 0 14px rgba(245, 200, 66, 0.15); }
-.leaderboard-row.rank-2 { border-color: #aaa; }
-.leaderboard-row.rank-3 { border-color: #c87d3e; }
-.leaderboard-row.rank-4, .leaderboard-row.rank-5, .leaderboard-row.rank-6,
-.leaderboard-row.rank-7, .leaderboard-row.rank-8 { border-color: var(--bg3); }
-
-.lb-rank { font-size: 22px; width: 32px; flex-shrink: 0; text-align: center; }
-.lb-name { flex: 1; font-family: 'Lilita One', cursive; font-size: 17px; }
-.lb-pts  { font-family: 'Lilita One', cursive; font-size: 16px; color: var(--gold); }
-
 .storico-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.tournament-card {
-  background: var(--bg2);
-  border: 1px solid var(--bg3);
-  border-radius: var(--radius);
-  padding: 16px;
-  overflow: hidden;
-}
-.tournament-card.invalid { opacity: 0.6; border-style: dashed; }
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.card-date  { font-family: 'Lilita One', cursive; font-size: 13px; }
-.card-badge { font-family: 'Lilita One', cursive; font-size: 11px; letter-spacing: 1px; color: var(--gold); }
-.badge-invalid { color: var(--muted); font-style: italic; }
-
-.card-players { font-size: 15px; color: var(--muted); margin-bottom: 10px; font-style: italic; }
-
-.card-matches { display: flex; flex-direction: column; gap: 4px; }
-
-.hist-match {
-  font-size: 15px;
-  padding: 4px 0;
-  border-top: 1px solid var(--bg3);
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-.hist-match:first-child { border-top: none; }
-.hist-match strong { color: var(--gold); }
-
-.storico-toolbar { display: flex; justify-content: flex-start; margin-bottom: 10px; }
-.toggle-invalid {
-  background: transparent;
-  border: 1px solid var(--bg3);
-  color: var(--text);
-  border-radius: 20px;
-  padding: 5px 14px;
-  font-family: 'Lilita One', cursive;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background .15s, color .15s, border-color .15s;
-}
-.toggle-invalid.active {
-  background: var(--bg3);
-  border-color: var(--text);
-  color: var(--text);
-}
-
 /* ============================================================
    STATISTICHE TORNEO
    ============================================================ */
-.ts-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-
-.ts-card {
-  background: var(--bg2);
-  border: 1px solid var(--bg3);
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.ts-card.ts-card-generale {
-  border-color: var(--gold);
-}
-
-.ts-name {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: 'Lilita One', cursive;
-  font-size: 16px;
-  color: var(--gold);
-  font-weight: 700;
-  padding: 14px 16px;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-.ts-card.expanded .ts-name {
-  border-bottom: 1px solid var(--bg3);
-}
-.ts-card.expanded .ts-name .card-chevron { transform: rotate(180deg); }
-
-.ts-name-left  { display: flex; align-items: center; gap: 6px; }
-.ts-name-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.ts-medal      { font-size: 18px; line-height: 1; }
-.ts-pts-preview {
-  font-family: 'Lilita One', cursive;
-  font-size: 13px;
-  color: var(--gold);
-  opacity: 0.85;
-}
-
-.ts-body { display: none; padding: 16px; }
-.ts-card.expanded .ts-body { display: block; }
-
-.ts-podium {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.ts-place {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--bg3);
-  border-radius: 8px;
-  padding: 8px 4px;
-  gap: 2px;
-}
-
-.ts-place-icon { font-size: 20px; }
-.ts-place-val  { font-family: 'Lilita One', cursive; font-size: 20px; color: var(--text); font-weight: 700; }
-.ts-place-pct  { font-size: 11px; color: var(--muted); }
-
-.ts-matches { display: flex; flex-direction: column; gap: 0; }
-
-.ts-match-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 13px;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--bg3);
-}
-.ts-match-row:last-child { border-bottom: none; }
-.ts-match-row.muted .ts-match-lbl,
-.ts-match-row.muted .ts-match-val { color: var(--muted); }
-
-.ts-trn-toggle { cursor: pointer; }
-.ts-trn-toggle-right { display: flex; align-items: center; gap: 6px; }
-.ts-trn-chevron {
-  font-size: 11px;
-  display: inline-block;
-  transition: transform 0.2s;
-}
-.ts-trn-toggle.open .ts-trn-chevron { transform: rotate(180deg); }
-
-.ts-trn-history {
-  display: none;
-  flex-direction: column;
-  gap: 0;
-  overflow: hidden;
-}
-.ts-trn-history.open { display: flex; }
-
-.ts-trn-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 5px 8px;
-  font-size: 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  background: rgba(0,0,0,0.15);
-}
-.ts-trn-row:last-child { border-bottom: none; }
-.ts-trn-date { color: var(--muted); font-family: 'Lilita One', cursive; }
-.ts-trn-pos { font-family: 'Lilita One', cursive; font-size: 13px; }
-.ts-trn-pts { font-family: 'Lilita One', cursive; font-size: 12px; color: var(--gold); margin-left: auto; padding-left: 10px; }
-
-.ts-match-lbl { color: var(--text); }
-.ts-match-val {
-  font-family: 'Lilita One', cursive;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-.ts-match-val.win  { color: #7ef7a0; }
-.ts-match-val.loss { color: #f77e7e; }
-.ts-match-val.gold { color: var(--gold); }
-
-.ts-summary {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-.ts-summary-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: var(--bg3);
-  border-radius: 8px;
-  padding: 10px 6px;
-  gap: 4px;
-}
-.ts-summary-val {
-  font-family: 'Lilita One', cursive;
-  font-size: 22px;
-  color: var(--gold);
-  font-weight: 700;
-  line-height: 1;
-}
-.ts-summary-date {
-  font-size: 12px;
-  text-align: center;
-  line-height: 1.3;
-}
-.ts-summary-lbl {
-  font-size: 11px;
-  color: var(--muted);
-  text-align: center;
-}
-
-.ts-chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.ts-chart-title {
-  font-family: 'Lilita One', cursive;
-  font-size: 14px;
-  color: var(--text);
-  font-weight: 600;
-}
-
-.ts-filter-btns { display: flex; gap: 4px; }
-
-.ts-filter-btn {
-  background: var(--bg3);
-  border: 1px solid var(--bg3);
-  color: var(--muted);
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 12px;
-  font-family: 'Lilita One', cursive;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-.ts-filter-btn.active {
-  background: var(--gold);
-  color: #0a0f2e;
-  border-color: var(--gold);
-}
 
 .ts-chart-wrap {
   position: relative;
@@ -912,14 +350,7 @@ body.page-home .complete-view::-webkit-scrollbar {
 .players-manager {
   padding: 0;
 }
-.player-form {
-  margin-bottom: 12px;
-}
-.player-form-row {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6px;
-}
+
 .player-form-found {
   font-size: 12px;
   color: var(--muted);
@@ -929,133 +360,12 @@ body.page-home .complete-view::-webkit-scrollbar {
   color: var(--gold);
   font-family: 'Lilita One', cursive;
 }
-.player-form-row input {
-  background: var(--bg2);
-  color: #fff;
-  border: 1px solid var(--bg3);
-  border-radius: 6px;
-  padding: 8px 10px;
-  font-family: inherit;
-  font-size: 13px;
-  min-width: 0;
-}
-.player-form-row input:focus { outline: none; border-color: var(--gold); }
-.players-list-admin {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.players-list-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--bg2);
-  border: 1px solid var(--bg3);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-}
-.players-name { flex: 1; }
-.players-tag { color: var(--muted); font-family: 'Lilita One', cursive; font-size: 12px; }
+
 /* Settings */
-.settings-block {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--bg3);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.settings-h {
-  font-family: 'Lilita One', cursive;
-  font-size: 13px;
-  letter-spacing: 1.5px;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin: 0;
-}
-.settings-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-.settings-row-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-.invite-code {
-  font-family: 'Lilita One', cursive;
-  font-size: 18px;
-  letter-spacing: 3px;
-  color: var(--gold);
-}
-.members-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.members-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--bg2);
-  border: 1px solid var(--bg3);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-}
-.members-id {
-  flex: 1;
-  font-family: 'Lilita One', cursive;
-  color: #ccd;
-}
-.radio-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  cursor: pointer;
-}
 
 /* Settings — help text */
-.settings-help {
-  font-size: 12px;
-  color: var(--muted);
-  margin: 0;
-  line-height: 1.5;
-}
 
 /* PlayerForm — nome read-only */
-.player-form-name {
-  display: flex;
-  align-items: center;
-  padding: 8px 10px;
-  background: var(--bg);
-  border: 1px solid var(--bg3);
-  border-radius: 6px;
-  font-size: 13px;
-  min-width: 0;
-  overflow: hidden;
-}
-.player-form-name-val {
-  color: var(--gold);
-  font-family: 'Lilita One', cursive;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.player-form-name-placeholder {
-  color: var(--muted);
-  font-style: italic;
-}
 
 /* AddPlayerModal */
 .add-player-btn {
@@ -1116,44 +426,8 @@ body.page-home .complete-view::-webkit-scrollbar {
 }
 
 /* LeaveClanDialog */
-.leave-clan-players {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 240px;
-  overflow-y: auto;
-  border: 1px solid var(--bg3);
-  border-radius: 6px;
-  padding: 8px;
-}
-.leave-clan-players .players-tag {
-  margin-left: 8px;
-}
 
 /* WelcomeClanDialog */
-.welcome-players {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 240px;
-  overflow-y: auto;
-  border: 1px solid var(--bg3);
-  border-radius: 6px;
-  padding: 8px 12px;
-}
-.welcome-players li {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: 13px;
-}
-.welcome-players strong {
-  color: var(--gold);
-  font-family: 'Lilita One', cursive;
-}
 
 /* ============================ BRACKET ============================ */
 .bk-wrap {
@@ -1366,6 +640,4 @@ body.page-home .complete-view::-webkit-scrollbar {
 .bk-extras .bk-match {
   width: 100%;
 }
-
-
 

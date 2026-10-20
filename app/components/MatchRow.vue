@@ -5,8 +5,9 @@ import type { TournamentMatch } from '~~/shared/types/domain'
 // Props: match; index — position in the list (unused in the layout, kept for callers).
 const props = defineProps<{ match: TournamentMatch; index: number }>()
 
-const p1Winner = computed(() => props.match.winner_id === props.match.player1?.id)
-const p2Winner = computed(() => props.match.winner_id === props.match.player2?.id)
+// Compare on the raw ids: history queries embed players without their id.
+const p1Winner = computed(() => props.match.winner_id === props.match.player1_id)
+const p2Winner = computed(() => props.match.winner_id === props.match.player2_id)
 </script>
 
 <template>

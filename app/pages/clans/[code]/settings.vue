@@ -12,7 +12,7 @@ const { showToast, showError } = useToast()
 const playerStore = usePlayerStore()
 const { allPlayers } = storeToRefs(playerStore)
 
-useHead(() => ({ title: clan.value ? `${clan.value.name} — Settings` : 'Settings' }))
+useHead(() => ({ title: clan.value ? `${clan.value.name} — Impostazioni` : 'Impostazioni' }))
 
 const regenerating = ref(false)
 const loadingPlayers = ref(true)
@@ -99,57 +99,58 @@ async function confirmLeave(removePlayerId: number | null) {
   <div class="clan-page">
     <PageHeader title="Impostazioni" :back-to="clan ? `/clans/${clan.code}/torneo` : '/'" />
 
-    <main v-if="clan">
-      <section class="settings-block">
-        <h3 class="settings-h">Nome clan</h3>
-        <div class="settings-row">
-          <span>{{ clan.name }}</span>
-        </div>
+    <main v-if="clan" class="ra-settings">
+      <section class="ra-panel ra-settings__block">
+        <p class="ra-label">Clan</p>
+        <p class="ra-display ra-display--md">{{ clan.name }}</p>
       </section>
 
-      <section class="settings-block">
-        <h3 class="settings-h">Codice clan</h3>
-        <div class="settings-row">
-          <span class="invite-code">{{ clan.code }}</span>
-          <button class="ra-btn ra-btn--ghost" @click="copyCode">Copia</button>
+      <section class="ra-panel ra-settings__block">
+        <p class="ra-label">Codice di invito</p>
+        <div class="ra-settings__code-row">
+          <span class="ra-settings__code">{{ clan.code }}</span>
+          <button class="ra-btn ra-btn--sm" @click="copyCode">Copia</button>
         </div>
-        <button class="ra-btn ra-btn--ghost" :disabled="regenerating" @click="regen">
+        <button class="ra-btn ra-btn--ghost ra-btn--sm ra-btn--block" :disabled="regenerating" @click="regen">
           {{ regenerating ? '...' : 'Rigenera codice' }}
         </button>
-        <p class="settings-help">
+        <p class="ra-settings__help">
           Il codice precedente diventa invalido. Condividi il nuovo con chi vuoi.
         </p>
       </section>
 
-      <section class="settings-block">
-        <h3 class="settings-h">Giocatori ({{ allPlayers.length }})</h3>
+      <section class="ra-panel ra-settings__block">
+        <div class="ra-arena__label-row">
+          <p class="ra-label">Giocatori</p>
+          <span class="ra-badge">{{ allPlayers.length }}</span>
+        </div>
         <p v-if="loadingPlayers" class="loading">Caricamento...</p>
         <p v-else-if="!allPlayers.length" class="empty-msg">
-          Nessun giocatore. Aggiungi il primo dalla pagina Torneo.
+          Nessun giocatore. Aggiungi il primo dalla pagina Arena.
         </p>
-        <ul v-else class="players-list-admin">
-          <li v-for="p in allPlayers" :key="p.id" class="players-list-row">
-            <span class="players-name">{{ p.username }}</span>
-            <span class="players-tag">{{ p.cr_tag }}</span>
-            <button class="ra-btn ra-btn--red ra-btn--round ra-btn--sm" @click="removePlayer(p.id)">×</button>
+        <ul v-else class="ra-settings__players">
+          <li v-for="p in allPlayers" :key="p.id" class="ra-settings__player">
+            <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
+            <span class="ra-settings__player-name">{{ p.username }}</span>
+            <span class="ra-chip__tag">{{ p.cr_tag }}</span>
+            <button class="ra-btn ra-btn--red ra-btn--round ra-btn--sm" :aria-label="`Rimuovi ${p.username}`" @click="removePlayer(p.id)">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>
+            </button>
           </li>
         </ul>
       </section>
 
-      <section class="settings-block">
-        <h3 class="settings-h">Esci dal clan</h3>
-        <p class="settings-help">
-          Rimuove il clan dai tuoi clan salvati nel browser. Il clan resta operativo per gli altri.
+      <section class="ra-panel ra-settings__block">
+        <p class="ra-label">Esci dal clan</p>
+        <p class="ra-settings__help">
+          Rimuove il clan dai tuoi clan salvati sul telefono. Il clan resta attivo per gli altri.
         </p>
         <button class="ra-btn ra-btn--red ra-btn--block" @click="showLeave = true">Esci dal clan</button>
       </section>
 
-      <section class="settings-block">
-        <h3 class="settings-h">Eliminazione automatica</h3>
-        <p class="settings-help">
-          Il clan viene eliminato automaticamente quando l'ultimo giocatore viene rimosso, o se resta vuoto per più di 24 ore senza tornei.
-        </p>
-      </section>
+      <p class="ra-settings__help ra-settings__note">
+        Il clan viene eliminato automaticamente quando l'ultimo giocatore viene rimosso, o se resta vuoto per più di 24 ore senza tornei.
+      </p>
 
       <AppFooter />
     </main>

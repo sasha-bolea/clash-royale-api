@@ -319,7 +319,7 @@ async function cancelTournament() {
             <span class="ra-live__timer">{{ timerLabel }}</span>
           </div>
           <div class="ra-live__players">
-            <span v-for="p in participants" :key="p.id" class="ra-live__player">
+            <span v-for="p in participants" :key="p.id" class="ra-pill">
               <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
               {{ p.username }}
             </span>

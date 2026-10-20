@@ -17,7 +17,7 @@ defineEmits<{
     <div class="ra-modal ra-pop-in">
       <h2 class="ra-modal__title">Benvenuto in {{ clanName }}</h2>
 
-      <p class="settings-help">
+      <p class="ra-settings__help">
         <template v-if="players.length">
           Questi sono i giocatori del clan. Se non sei tra loro, aggiungiti.
         </template>
@@ -26,10 +26,11 @@ defineEmits<{
         </template>
       </p>
 
-      <ul v-if="players.length" class="welcome-players">
-        <li v-for="p in players" :key="p.id">
-          <strong>{{ p.username }}</strong>
-          <span class="players-tag">{{ p.cr_tag }}</span>
+      <ul v-if="players.length" class="ra-settings__players ra-settings__players--scroll">
+        <li v-for="p in players" :key="p.id" class="ra-settings__player">
+          <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
+          <span class="ra-settings__player-name">{{ p.username }}</span>
+          <span class="ra-chip__tag">{{ p.cr_tag }}</span>
         </li>
       </ul>
 
