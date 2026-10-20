@@ -241,16 +241,16 @@ async function cancelTournament() {
 
 <template>
   <div class="tournament-page">
-    <header class="header-with-actions">
-      <NuxtLink to="/" class="header-action" aria-label="home">←</NuxtLink>
-      <div class="logo">{{ clan?.name ?? 'Torneo' }}</div>
-      <NuxtLink
-        v-if="clan"
-        :to="`/clans/${clan.code}/settings`"
-        class="header-action"
-        aria-label="settings"
-      >⚙</NuxtLink>
-    </header>
+    <PageHeader :title="clan?.name ?? 'Torneo'" back-to="/">
+      <template #action>
+        <NuxtLink
+          v-if="clan"
+          :to="`/clans/${clan.code}/settings`"
+          class="ra-btn ra-btn--round ra-btn--sm"
+          aria-label="Impostazioni"
+        ><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg></NuxtLink>
+      </template>
+    </PageHeader>
 
     <main>
       <div id="app">
@@ -280,7 +280,7 @@ async function cancelTournament() {
           <div class="start-wrap">
             <p class="select-hint">Selezionati: {{ selectedCount }} (validi: 2, 3, 4, 6, 8)</p>
             <button
-              class="btn-start"
+              class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block"
               :disabled="starting || !VALID_SIZES.includes(selectedCount)"
               @click="startTournament"
             >
@@ -419,7 +419,7 @@ async function cancelTournament() {
             </div>
           </details>
           <div class="active-footer">
-            <button class="btn-cancel" @click="cancelTournament">Annulla torneo</button>
+            <button class="ra-btn ra-btn--red ra-btn--block" @click="cancelTournament">Annulla torneo</button>
           </div>
         </div>
 

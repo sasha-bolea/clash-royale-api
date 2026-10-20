@@ -18,7 +18,7 @@ function onAdded(player: Player) {
 
 <template>
   <div class="players-manager">
-    <button class="btn-gold add-player-btn" @click="showAdd = true">
+    <button class="ra-btn ra-btn--block add-player-btn" @click="showAdd = true">
       + Aggiungi giocatore
     </button>
 

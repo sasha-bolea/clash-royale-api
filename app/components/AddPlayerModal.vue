@@ -57,9 +57,9 @@ async function submit() {
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <form class="modal" @submit.prevent="submit">
-      <h2 class="modal-title">Aggiungi giocatore</h2>
+  <div class="ra-modal-overlay" @click.self="$emit('close')">
+    <form class="ra-modal ra-pop-in" @submit.prevent="submit">
+      <h2 class="ra-modal__title">Aggiungi giocatore</h2>
 
       <label>
         <span>Tag Clash Royale</span>
@@ -97,11 +97,11 @@ async function submit() {
         </p>
       </details>
 
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" @click="$emit('close')">Annulla</button>
+      <div class="ra-modal__actions">
+        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Annulla</button>
         <button
           type="submit"
-          class="btn-gold"
+          class="ra-btn ra-btn--gold"
           :disabled="adding || checking || !fetchedName"
         >
           {{ adding ? '...' : 'AGGIUNGI' }}

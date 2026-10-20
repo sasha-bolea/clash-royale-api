@@ -33,7 +33,7 @@ export default defineNuxtConfig({
         { name: 'viewport', content: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
-        { name: 'theme-color', content: '#082d4d' },
+        { name: 'theme-color', content: '#040820' },
       ],
       link: [
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
@@ -60,8 +60,8 @@ export default defineNuxtConfig({
       display: 'standalone',
       orientation: 'portrait',
       lang: 'it',
-      background_color: '#082d4d',
-      theme_color: '#082d4d',
+      background_color: '#040820',
+      theme_color: '#040820',
       icons: [
         { src: '/images/ui/icon-192.png', sizes: '192x192', type: 'image/png' },
         { src: '/images/ui/icon-512.png', sizes: '512x512', type: 'image/png' },

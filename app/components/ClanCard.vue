@@ -5,10 +5,9 @@ defineProps<{ clan: SavedClan }>()
 </script>
 
 <template>
-  <NuxtLink :to="`/clans/${clan.code}/torneo`" class="clan-card">
-    <div class="clan-card-name">{{ clan.name }}</div>
-    <div class="clan-card-meta">
-      <span class="clan-code">#{{ clan.code }}</span>
-    </div>
+  <NuxtLink :to="`/clans/${clan.code}/torneo`" class="ra-panel ra-panel--interactive ra-clan-card">
+    <img class="ra-clan-card__icon" src="/images/ui/crown-shield.png" alt="" width="40" height="48">
+    <span class="ra-clan-card__name ra-display ra-display--md">{{ clan.name }}</span>
+    <span class="ra-badge">#{{ clan.code }}</span>
   </NuxtLink>
 </template>

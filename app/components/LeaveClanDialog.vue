@@ -12,9 +12,9 @@ const selected = ref<number | null>(null)
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal">
-      <h2 class="modal-title">Esci dal clan</h2>
+  <div class="ra-modal-overlay" @click.self="$emit('close')">
+    <div class="ra-modal ra-pop-in">
+      <h2 class="ra-modal__title">Esci dal clan</h2>
       <p class="settings-help">
         Vuoi rimuovere anche il tuo giocatore dal clan? Lo storico delle partite passate resta.
       </p>
@@ -35,9 +35,9 @@ const selected = ref<number | null>(null)
         </label>
       </div>
 
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" @click="$emit('close')">Annulla</button>
-        <button type="button" class="btn-gold" @click="$emit('confirm', selected)">Esci</button>
+      <div class="ra-modal__actions">
+        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Annulla</button>
+        <button type="button" class="ra-btn ra-btn--gold" @click="$emit('confirm', selected)">Esci</button>
       </div>
     </div>
   </div>

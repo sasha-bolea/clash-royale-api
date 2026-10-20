@@ -39,8 +39,8 @@ function medal(pos: PodiumEntry, i: number) {
       </div>
     </div>
     <div class="complete-footer">
-      <button class="btn-start" @click="emit('newTournament')">NUOVO TORNEO</button>
-      <NuxtLink :to="`/clans/${code}/storico`" class="btn-link">Vedi storico →</NuxtLink>
+      <button class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block" @click="emit('newTournament')">NUOVO TORNEO</button>
+      <NuxtLink :to="`/clans/${code}/storico`" class="ra-btn ra-btn--ghost">Vedi storico →</NuxtLink>
     </div>
   </div>
 </template>

@@ -97,11 +97,7 @@ async function confirmLeave(removePlayerId: number | null) {
 
 <template>
   <div class="clan-page">
-    <header class="header-with-actions">
-      <NuxtLink v-if="clan" :to="`/clans/${clan.code}/torneo`" class="header-action">←</NuxtLink>
-      <div class="logo">Settings</div>
-      <span class="header-action" style="visibility:hidden">x</span>
-    </header>
+    <PageHeader title="Impostazioni" :back-to="clan ? `/clans/${clan.code}/torneo` : '/'" />
 
     <main v-if="clan">
       <section class="settings-block">
@@ -115,9 +111,9 @@ async function confirmLeave(removePlayerId: number | null) {
         <h3 class="settings-h">Codice clan</h3>
         <div class="settings-row">
           <span class="invite-code">{{ clan.code }}</span>
-          <button class="btn-link" @click="copyCode">Copia</button>
+          <button class="ra-btn ra-btn--ghost" @click="copyCode">Copia</button>
         </div>
-        <button class="btn-link" :disabled="regenerating" @click="regen">
+        <button class="ra-btn ra-btn--ghost" :disabled="regenerating" @click="regen">
           {{ regenerating ? '...' : 'Rigenera codice' }}
         </button>
         <p class="settings-help">
@@ -135,7 +131,7 @@ async function confirmLeave(removePlayerId: number | null) {
           <li v-for="p in allPlayers" :key="p.id" class="players-list-row">
             <span class="players-name">{{ p.username }}</span>
             <span class="players-tag">{{ p.cr_tag }}</span>
-            <button class="btn-cancel btn-mini" @click="removePlayer(p.id)">×</button>
+            <button class="ra-btn ra-btn--red ra-btn--round ra-btn--sm" @click="removePlayer(p.id)">×</button>
           </li>
         </ul>
       </section>
@@ -145,7 +141,7 @@ async function confirmLeave(removePlayerId: number | null) {
         <p class="settings-help">
           Rimuove il clan dai tuoi clan salvati nel browser. Il clan resta operativo per gli altri.
         </p>
-        <button class="btn-cancel btn-danger" @click="showLeave = true">Esci dal clan</button>
+        <button class="ra-btn ra-btn--red ra-btn--block" @click="showLeave = true">Esci dal clan</button>
       </section>
 
       <section class="settings-block">

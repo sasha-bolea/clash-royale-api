@@ -4,6 +4,7 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 
 - Token e componenti: [`app/assets/css/ui.css`](../app/assets/css/ui.css) (prefisso `ra-`).
 - Vetrina live con dati finti: pagina `/design` ([`app/pages/design.vue`](../app/pages/design.vue)), non linkata dal sito.
+- Colore di sistema (theme-color, splash PWA): `#040820`, uguale al fondo della tab bar.
 - Il vecchio CSS ([`app/assets/css/style.css`](../app/assets/css/style.css)) viene sostituito pagina per pagina durante il redesign; i nuovi elementi usano **solo** classi `ra-`.
 
 ## Regole vincolanti
@@ -32,9 +33,17 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 | Riga partita | `ra-match` (+ `__side.is-winner`, `__score`, `__crown`) | Partita blu vs rosso con corone | [`design.vue:96`](../app/pages/design.vue#L96) |
 | Tile statistica | `ra-stat` (+ `__icon`, `__value`, `__label`) | Numeri chiave in griglia da 3 | [`design.vue:116`](../app/pages/design.vue#L116) |
 | Podio | `ra-podium` > `__place--1/2/3` (+ `__crown`, `__name`, `__wins`, `__step`) | Fine torneo; gradini che salgono, corona che fluttua | [`design.vue:140`](../app/pages/design.vue#L140) |
-| Tab bar | `ra-tabbar` > `__item.is-active`, `__center` | Navigazione in basso delle pagine clan; centro rialzato per ARENA | [`design.vue:164`](../app/pages/design.vue#L164) |
+| Tab bar | componente `BottomNav` → `bottom-nav ra-tabbar` > `__item.is-active`, `__center` | Navigazione in basso delle pagine clan; centro rialzato per ARENA | [`BottomNav.vue:14`](../app/components/BottomNav.vue#L14) |
 | Badge | `ra-badge`, `--live`, `--gold` | Codici clan, contatori, stato LIVE pulsante | [`design.vue:94`](../app/pages/design.vue#L94) |
 | Entrata a cascata | `ra-pop-in` + `animation-delay` | Liste che compaiono (60ms tra un elemento e l'altro) | [`design.vue:79`](../app/pages/design.vue#L79) |
+| Pulsante piccolo | `ra-btn--sm` (anche con `--round`) | Azioni in intestazione e nelle righe di lista (rimuovi, copia) | [`PageHeader.vue:13`](../app/components/PageHeader.vue#L13) |
+| Intestazione pagina | componente `PageHeader` (`title`, `backTo`, slot `action`) → `ra-header` | In cima a **ogni** pagina: nastro + indietro a sinistra + azione a destra | [`torneo.vue:244`](../app/pages/clans/[code]/torneo.vue#L244) |
+| Finestra di dialogo | `ra-modal-overlay` > `ra-modal ra-pop-in` (+ `__title`, `__actions`) | Tutti i dialoghi; azioni in griglia 2 colonne: secondaria `ghost` a sinistra, principale a destra | [`JoinByCodeModal.vue:43`](../app/components/JoinByCodeModal.vue#L43) |
+| Campo di testo | `ra-input` (automatico per `input[type=text]` dentro `ra-modal`) | Input incassato con anello oro al focus | [`JoinByCodeModal.vue:48`](../app/components/JoinByCodeModal.vue#L48) |
+| Home | `ra-home`, `ra-hero` (+ `__logo`, `__sub`, `__cta`) | Landing senza clan (logo che fluttua) e lista clan | [`index.vue:14`](../app/pages/index.vue#L14) |
+| Card clan | componente `ClanCard` → `ra-panel--interactive ra-clan-card` | Un clan salvato: scudo, nome, codice | [`ClanCard.vue:8`](../app/components/ClanCard.vue#L8) |
+| Footer disclaimer | componente `AppFooter` → `ra-footer` | Solo in home; testo legale Supercell, non rimuovere | [`AppFooter.vue:7`](../app/components/AppFooter.vue#L7) |
+| Toast | componente `Toast` → `ra-toast.is-visible` | Messaggi brevi, sopra la tab bar | [`Toast.vue:6`](../app/components/Toast.vue#L6) |
 
 ## Font e immagini
 

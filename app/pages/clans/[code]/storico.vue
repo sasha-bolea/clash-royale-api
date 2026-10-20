@@ -32,7 +32,7 @@ onMounted(async () => {
 
 <template>
   <div class="clan-page">
-    <header><div class="logo">Storico</div></header>
+    <PageHeader title="Storico" />
     <main>
       <div id="tab-content">
         <p v-if="loading" class="loading">Caricamento...</p>

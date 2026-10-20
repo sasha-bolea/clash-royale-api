@@ -35,17 +35,17 @@ async function submit() {
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <form class="modal" @submit.prevent="submit">
-      <h2 class="modal-title">Nuovo clan</h2>
+  <div class="ra-modal-overlay" @click.self="$emit('close')">
+    <form class="ra-modal ra-pop-in" @submit.prevent="submit">
+      <h2 class="ra-modal__title">Nuovo clan</h2>
       <label>
         <span>Nome clan</span>
         <input v-model="name" type="text" maxlength="40" required autofocus />
       </label>
       <p v-if="error" class="error-msg">{{ error }}</p>
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" @click="$emit('close')">Annulla</button>
-        <button type="submit" class="btn-gold" :disabled="submitting">
+      <div class="ra-modal__actions">
+        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Annulla</button>
+        <button type="submit" class="ra-btn ra-btn--gold" :disabled="submitting">
           {{ submitting ? '...' : 'CREA' }}
         </button>
       </div>

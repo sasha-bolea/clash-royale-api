@@ -3,7 +3,8 @@ const year = new Date().getFullYear()
 </script>
 
 <template>
-  <footer class="app-footer">
+  <!-- Supercell Fan Content Policy disclaimer: must stay visible on the home page -->
+  <footer class="ra-footer">
     <p>
       © {{ year }} Royal Arena ·
       Not affiliated with, endorsed, sponsored, or specifically approved by Supercell.
