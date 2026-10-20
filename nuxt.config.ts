@@ -12,7 +12,7 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
   ],
 
-  css: ['~/assets/css/style.css'],
+  css: ['~/assets/css/style.css', '~/assets/css/ui.css'],
 
   runtimeConfig: {
     // server-only — proxy CR API
