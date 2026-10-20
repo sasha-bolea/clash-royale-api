@@ -26,6 +26,8 @@ onMounted(() => {
     <Toast />
     <PwaUpdatePrompt />
     <PwaInstallBanner />
+    <!-- TEMPORARY: iOS band diagnostic, remove after the fix -->
+    <DiagBadge />
   </div>
 </template>
 
