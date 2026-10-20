@@ -20,21 +20,21 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 
 | Elemento | Classe | Uso | Esempio |
 |---|---|---|---|
-| Sfondo arena | `ra-bg` | Riflettore dall'alto + vignetta + rombi; sul contenitore radice della pagina | [`design.vue:38`](../app/pages/design.vue#L38) |
-| Testo display | `ra-display` + `--xl/--lg/--md`, `--gold` | Titoli di stato ("TORNEO CONCLUSO"), numeri importanti | [`design.vue:46`](../app/pages/design.vue#L46) |
-| Etichetta sezione | `ra-label` | Titoletto maiuscolo azzurro sopra un gruppo | [`design.vue:45`](../app/pages/design.vue#L45) |
-| Nastro titolo | `ra-ribbon` | Titolo pagina in alto, uno per pagina; riflesso animato | [`design.vue:40`](../app/pages/design.vue#L40) |
-| Pannello | `ra-panel`, `--interactive`, `--gold` | Card generiche; `--gold` per il vincitore/evidenza; `--interactive` se cliccabile | [`design.vue:162`](../app/pages/design.vue#L162) |
-| Pulsante 3D | `ra-btn` + `--gold/--red/--green/--ghost`, `--lg`, `--block`, `--round` | Azioni; vedi regola 2 | [`design.vue:53`](../app/pages/design.vue#L53) |
-| Tab | `ra-tabs` > `ra-tab.is-active` | Scelta tra 2–3 viste nella stessa pagina | [`design.vue:68`](../app/pages/design.vue#L68) |
-| Chip giocatore | `ra-chip.is-selected` (+ `__name`, `__tag`, `__check`) | Selezione giocatori per il torneo | [`design.vue:80`](../app/pages/design.vue#L80) |
-| Avatar | `ra-avatar`, `--red`, `--gold` | Iniziale del giocatore; blu = lato sinistro, rosso = avversario | [`design.vue:88`](../app/pages/design.vue#L88) |
-| Riga partita | `ra-match` (+ `__side.is-winner`, `__score`, `__crown`) | Partita blu vs rosso con corone | [`design.vue:101`](../app/pages/design.vue#L101) |
-| Tile statistica | `ra-stat` (+ `__icon`, `__value`, `__label`) | Numeri chiave in griglia da 3 | [`design.vue:121`](../app/pages/design.vue#L121) |
-| Podio | `ra-podium` > `__place--1/2/3` (+ `__crown`, `__name`, `__wins`, `__step`) | Fine torneo; gradini che salgono, corona che fluttua | [`design.vue:144`](../app/pages/design.vue#L144) |
-| Tab bar | `ra-tabbar` > `__item.is-active`, `__center` | Navigazione in basso delle pagine clan; centro rialzato per ARENA | [`design.vue:172`](../app/pages/design.vue#L172) |
-| Badge | `ra-badge`, `--live`, `--gold` | Codici clan, contatori, stato LIVE pulsante | [`design.vue:107`](../app/pages/design.vue#L107) |
-| Entrata a cascata | `ra-pop-in` + `animation-delay` | Liste che compaiono (60ms tra un elemento e l'altro) | [`design.vue:82`](../app/pages/design.vue#L82) |
+| Sfondo arena | `ra-bg` | Riflettore dall'alto + vignetta + rombi; sul contenitore radice della pagina | [`design.vue:35`](../app/pages/design.vue#L35) |
+| Testo display | `ra-display` + `--xl/--lg/--md`, `--gold` | Titoli di stato ("TORNEO CONCLUSO"), numeri importanti | [`design.vue:43`](../app/pages/design.vue#L43) |
+| Etichetta sezione | `ra-label` | Titoletto maiuscolo azzurro sopra un gruppo | [`design.vue:42`](../app/pages/design.vue#L42) |
+| Nastro titolo | `ra-ribbon` | Titolo pagina in alto, uno per pagina; riflesso animato | [`design.vue:37`](../app/pages/design.vue#L37) |
+| Pannello | `ra-panel`, `--interactive`, `--gold` | Card generiche; `--gold` per il vincitore/evidenza; `--interactive` se cliccabile | [`design.vue:154`](../app/pages/design.vue#L154) |
+| Pulsante 3D | `ra-btn` + `--gold/--red/--green/--ghost`, `--lg`, `--block`, `--round` | Azioni; vedi regola 2 | [`design.vue:50`](../app/pages/design.vue#L50) |
+| Tab | `ra-tabs` > `ra-tab.is-active` | Scelta tra 2–3 viste nella stessa pagina | [`design.vue:65`](../app/pages/design.vue#L65) |
+| Chip giocatore | `ra-chip.is-selected` (+ `__name`, `__tag`, `__check`) | Selezione giocatori per il torneo | [`design.vue:79`](../app/pages/design.vue#L79) |
+| Avatar | `ra-avatar`, `--red`, `--gold` | Iniziale del giocatore; blu = lato sinistro, rosso = avversario | [`design.vue:84`](../app/pages/design.vue#L84) |
+| Riga partita | `ra-match` (+ `__side.is-winner`, `__score`, `__crown`) | Partita blu vs rosso con corone | [`design.vue:96`](../app/pages/design.vue#L96) |
+| Tile statistica | `ra-stat` (+ `__icon`, `__value`, `__label`) | Numeri chiave in griglia da 3 | [`design.vue:116`](../app/pages/design.vue#L116) |
+| Podio | `ra-podium` > `__place--1/2/3` (+ `__crown`, `__name`, `__wins`, `__step`) | Fine torneo; gradini che salgono, corona che fluttua | [`design.vue:140`](../app/pages/design.vue#L140) |
+| Tab bar | `ra-tabbar` > `__item.is-active`, `__center` | Navigazione in basso delle pagine clan; centro rialzato per ARENA | [`design.vue:164`](../app/pages/design.vue#L164) |
+| Badge | `ra-badge`, `--live`, `--gold` | Codici clan, contatori, stato LIVE pulsante | [`design.vue:94`](../app/pages/design.vue#L94) |
+| Entrata a cascata | `ra-pop-in` + `animation-delay` | Liste che compaiono (60ms tra un elemento e l'altro) | [`design.vue:79`](../app/pages/design.vue#L79) |
 
 ## Font e immagini
 
