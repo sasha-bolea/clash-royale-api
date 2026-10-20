@@ -39,10 +39,7 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/png', sizes: '96x96', href: '/favicon-96x96.png' },
-        {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Lilita+One&display=swap',
-        },
+        { rel: 'preload', href: '/fonts/lilita-one-latin.woff2', as: 'font', type: 'font/woff2', crossorigin: '' },
       ],
     },
   },
