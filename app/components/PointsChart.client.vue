@@ -84,7 +84,8 @@ function buildChart() {
     })
   })
 
-  const colors = ['#f5c842', '#7eb8f7', '#f77e7e', '#7ef7a0', '#f7a07e', '#c07ef7']
+  // Series colours from the UI kit palette (gold, blue, red, green, bronze, violet).
+  const colors = ['#ffd23f', '#8cc4ff', '#ff5c5c', '#4be08a', '#e08a4a', '#c07ef7']
   const datasets = props.players
     .filter(p => activeInPeriod.has(p.username))
     .map((p) => {
@@ -95,8 +96,11 @@ function buildChart() {
         data: seriesData[p.username]!,
         borderColor: col,
         backgroundColor: col + '33',
-        borderWidth: 2,
+        borderWidth: 3,
         pointRadius: 4,
+        pointBorderColor: '#03061a',
+        pointBorderWidth: 2,
+        pointBackgroundColor: col,
         tension: 0.3,
         fill: false,
       }
@@ -111,7 +115,7 @@ function buildChart() {
       plugins: {
         legend: {
           labels: {
-            color: '#e8d9c0',
+            color: '#c9d3f5',
             boxWidth: 12,
             font: { family: 'Lilita One, serif', size: 11 },
           },
@@ -119,12 +123,12 @@ function buildChart() {
       },
       scales: {
         x: {
-          ticks: { color: '#8a7f6e', maxRotation: 45, font: { family: 'Lilita One, serif', size: 10 } },
-          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#8a96c8', maxRotation: 45, font: { family: 'Lilita One, serif', size: 10 } },
+          grid: { color: 'rgba(140,196,255,0.08)' },
         },
         y: {
-          ticks: { color: '#8a7f6e', stepSize: 1, font: { family: 'Lilita One, serif', size: 10 } },
-          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { color: '#8a96c8', stepSize: 1, font: { family: 'Lilita One, serif', size: 10 } },
+          grid: { color: 'rgba(140,196,255,0.08)' },
           beginAtZero: true,
         },
       },

@@ -11,29 +11,36 @@ const showJoin = ref(false)
 
 <template>
   <div class="index-root">
-    <header><div class="logo">Royal Arena</div></header>
-
-    <main>
+    <main class="ra-home">
       <template v-if="!savedClans.length">
-        <div class="landing-hero">
-          <h1 class="landing-title">Royal Arena</h1>
-          <p class="landing-sub">
+        <section class="ra-hero">
+          <img class="ra-hero__logo" src="/images/ui/icon-512.png" alt="" width="148" height="148">
+          <h1 class="ra-display ra-display--xl">Royal Arena</h1>
+          <p class="ra-hero__sub">
             Crea un clan, condividi il codice con gli amici, traccia ogni torneo di Clash Royale.
           </p>
-          <div class="landing-cta">
-            <button class="btn-gold" @click="showCreate = true">CREA CLAN</button>
-            <button class="btn-link" @click="showJoin = true">Ho un codice</button>
+          <div class="ra-hero__cta">
+            <button class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block" @click="showCreate = true">CREA CLAN</button>
+            <button class="ra-btn ra-btn--ghost ra-btn--block" @click="showJoin = true">Ho un codice</button>
           </div>
-        </div>
+        </section>
       </template>
 
       <template v-else>
-        <div class="clans-actions">
-          <button class="btn-gold" @click="showCreate = true">+ Nuovo clan</button>
-          <button class="btn-link" @click="showJoin = true">Entra con codice</button>
+        <PageHeader title="Royal Arena" />
+        <div class="ra-home__actions">
+          <button class="ra-btn ra-btn--gold ra-btn--block" @click="showCreate = true">+ Nuovo clan</button>
+          <button class="ra-btn ra-btn--ghost ra-btn--block" @click="showJoin = true">Entra con codice</button>
         </div>
-        <div class="clans-list">
-          <ClanCard v-for="c in savedClans" :key="c.clan_id" :clan="c" />
+        <p class="ra-label">I tuoi clan</p>
+        <div class="ra-home__list">
+          <ClanCard
+            v-for="(c, i) in savedClans"
+            :key="c.clan_id"
+            :clan="c"
+            class="ra-pop-in"
+            :style="{ animationDelay: `${i * 60}ms` }"
+          />
         </div>
       </template>
     </main>
@@ -61,7 +68,7 @@ const showJoin = ref(false)
 }
 /* footer subito dopo l'ultimo clan;
    quando il contenuto è corto, margin-top:auto lo spinge a 20px dal fondo */
-.index-root :deep(.app-footer) {
+.index-root :deep(.ra-footer) {
   margin-top: auto;
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }

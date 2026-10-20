@@ -3,5 +3,5 @@ const { message, visible } = useToast()
 </script>
 
 <template>
-  <div id="toast" :class="{ show: visible }">{{ message }}</div>
+  <div class="ra-toast" :class="{ 'is-visible': visible }" role="status">{{ message }}</div>
 </template>

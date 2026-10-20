@@ -13,11 +13,11 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal">
-      <h2 class="modal-title">Benvenuto in {{ clanName }}</h2>
+  <div class="ra-modal-overlay" @click.self="$emit('close')">
+    <div class="ra-modal ra-pop-in">
+      <h2 class="ra-modal__title">Benvenuto in {{ clanName }}</h2>
 
-      <p class="settings-help">
+      <p class="ra-settings__help">
         <template v-if="players.length">
           Questi sono i giocatori del clan. Se non sei tra loro, aggiungiti.
         </template>
@@ -26,16 +26,17 @@ defineEmits<{
         </template>
       </p>
 
-      <ul v-if="players.length" class="welcome-players">
-        <li v-for="p in players" :key="p.id">
-          <strong>{{ p.username }}</strong>
-          <span class="players-tag">{{ p.cr_tag }}</span>
+      <ul v-if="players.length" class="ra-settings__players ra-settings__players--scroll">
+        <li v-for="p in players" :key="p.id" class="ra-settings__player">
+          <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
+          <span class="ra-settings__player-name">{{ p.username }}</span>
+          <span class="ra-chip__tag">{{ p.cr_tag }}</span>
         </li>
       </ul>
 
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" @click="$emit('close')">Più tardi</button>
-        <button type="button" class="btn-gold" @click="$emit('add')">Aggiungiti</button>
+      <div class="ra-modal__actions">
+        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Più tardi</button>
+        <button type="button" class="ra-btn ra-btn--gold" @click="$emit('add')">Aggiungiti</button>
       </div>
     </div>
   </div>

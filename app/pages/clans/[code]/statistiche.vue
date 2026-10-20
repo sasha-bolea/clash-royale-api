@@ -36,7 +36,6 @@ const playerStats = computed(() => {
   return list.sort((a, b) => b.firstPlaces - a.firstPlaces || b.wins - a.wins)
 })
 
-const medals = ['🥇', '🥈', '🥉']
 
 const totalMatches = computed(() =>
   finishedTournaments.value.reduce((sum, t) => sum + (t.tournament_matches?.length ?? 0), 0),
@@ -48,11 +47,10 @@ const lastDateLabel = computed(() => {
     new Date(t.started_at) > new Date(latest.started_at) ? t : latest,
   )
   return new Date(last.started_at).toLocaleDateString('it-IT', {
-    day: '2-digit', month: 'long', year: 'numeric',
+    day: '2-digit', month: 'short',
   })
 })
 
-const generaleExpanded = ref(false)
 
 async function ensurePlayers() {
   if (!clanId.value) return
@@ -88,19 +86,19 @@ onMounted(() => switchTab(activeTab.value))
 
 <template>
   <div class="clan-page">
-    <header><div class="logo">Statistiche</div></header>
+    <PageHeader title="Statistiche" />
     <main>
-      <div class="tabs">
+      <div class="ra-tabs">
         <button
-          class="tab-btn"
-          :class="{ active: activeTab === 'giocatori' }"
+          class="ra-tab"
+          :class="{ 'is-active': activeTab === 'giocatori' }"
           @click="switchTab('giocatori')"
         >GIOCATORI</button>
         <button
-          class="tab-btn"
-          :class="{ active: activeTab === 'torneo' }"
+          class="ra-tab"
+          :class="{ 'is-active': activeTab === 'torneo' }"
           @click="switchTab('torneo')"
-        >TORNEO</button>
+        >TORNEI</button>
       </div>
 
       <div id="tab-content">
@@ -109,7 +107,7 @@ onMounted(() => switchTab(activeTab.value))
         <template v-else-if="activeTab === 'giocatori'">
           <p v-if="loadingPlayers" class="loading">Caricamento giocatori...</p>
           <p v-else-if="!allPlayers.length" class="empty-msg">Nessun giocatore nel clan.</p>
-          <div v-else id="stats-grid">
+          <div v-else class="ra-stack">
             <PlayerStatsCard v-for="p in allPlayers" :key="p.id" :player="p" />
           </div>
         </template>
@@ -117,48 +115,49 @@ onMounted(() => switchTab(activeTab.value))
         <template v-else>
           <p v-if="loadingTournaments" class="loading">Caricamento...</p>
           <p v-else-if="!finishedTournaments.length" class="empty-msg">Nessun torneo concluso.</p>
-          <div v-else class="ts-list">
-            <div class="ts-card ts-card-generale" :class="{ expanded: generaleExpanded }">
-              <div class="ts-name" @click="generaleExpanded = !generaleExpanded">
-                <span>GENERALE</span>
-                <span class="card-chevron">▾</span>
+          <div v-else class="ra-stack">
+            <div class="ra-stats-summary">
+              <div class="ra-stat">
+                <img class="ra-stat__icon" src="/images/ui/tournament.png" alt="">
+                <span class="ra-stat__value">{{ finishedTournaments.length }}</span>
+                <span class="ra-stat__label">Tornei</span>
               </div>
-              <div class="ts-body">
-                <div class="ts-summary">
-                  <div class="ts-summary-item">
-                    <span class="ts-summary-val">{{ finishedTournaments.length }}</span>
-                    <span class="ts-summary-lbl">Tornei</span>
-                  </div>
-                  <div class="ts-summary-item">
-                    <span class="ts-summary-val">{{ totalMatches }}</span>
-                    <span class="ts-summary-lbl">Partite</span>
-                  </div>
-                  <div class="ts-summary-item">
-                    <span class="ts-summary-val ts-summary-date">{{ lastDateLabel }}</span>
-                    <span class="ts-summary-lbl">Ultimo torneo</span>
-                  </div>
-                </div>
-                <div class="ts-chart-header">
-                  <span class="ts-chart-title">Andamento vittorie</span>
-                  <div class="ts-filter-btns">
-                    <button class="ts-filter-btn" :class="{ active: chartFilter === '1m' }" @click="chartFilter = '1m'">1M</button>
-                    <button class="ts-filter-btn" :class="{ active: chartFilter === '3m' }" @click="chartFilter = '3m'">3M</button>
-                    <button class="ts-filter-btn" :class="{ active: chartFilter === 'sempre' }" @click="chartFilter = 'sempre'">Sempre</button>
-                  </div>
-                </div>
-                <PointsChart
-                  :tournaments="finishedTournaments"
-                  :players="allPlayers"
-                  :filter="chartFilter"
-                />
+              <div class="ra-stat">
+                <img class="ra-stat__icon" src="/images/ui/battle.png" alt="">
+                <span class="ra-stat__value">{{ totalMatches }}</span>
+                <span class="ra-stat__label">Partite</span>
+              </div>
+              <div class="ra-stat">
+                <img class="ra-stat__icon" src="/images/ui/trophy.png" alt="">
+                <span class="ra-stat__value ra-stat__value--sm">{{ lastDateLabel }}</span>
+                <span class="ra-stat__label">Ultimo</span>
               </div>
             </div>
 
+            <div class="ra-panel ra-chart">
+              <div class="ra-chart__head">
+                <p class="ra-label">Andamento vittorie</p>
+                <div class="ra-tabs ra-tabs--sm">
+                  <button class="ra-tab" :class="{ 'is-active': chartFilter === '1m' }" @click="chartFilter = '1m'">1M</button>
+                  <button class="ra-tab" :class="{ 'is-active': chartFilter === '3m' }" @click="chartFilter = '3m'">3M</button>
+                  <button class="ra-tab" :class="{ 'is-active': chartFilter === 'sempre' }" @click="chartFilter = 'sempre'">TUTTO</button>
+                </div>
+              </div>
+              <PointsChart
+                :tournaments="finishedTournaments"
+                :players="allPlayers"
+                :filter="chartFilter"
+              />
+            </div>
+
+            <p class="ra-label">Classifica del clan</p>
             <TournamentStatsCard
               v-for="(s, i) in playerStats"
               :key="s.username"
               :stats="s"
-              :medal="medals[i]"
+              class="ra-pop-in"
+              :style="{ animationDelay: `${Math.min(i, 8) * 50}ms` }"
+              :rank="i + 1"
             />
           </div>
         </template>

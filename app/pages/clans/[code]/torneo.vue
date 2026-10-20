@@ -92,6 +92,20 @@ const timerLabel = ref('0:00')
 
 // Taglie torneo valide.
 const VALID_SIZES = [2, 3, 4, 6, 8]
+
+// Steps shown in the "Come funziona" dialogs (setup and live bracket).
+const SETUP_STEPS = [
+  { title: 'Seleziona i giocatori', text: 'Tocca i giocatori del clan che parteciperanno al torneo. Puoi scegliere 2, 3, 4, 6 o 8 partecipanti.' },
+  { title: 'Avvia il torneo', text: 'Premi AVVIA TORNEO. Il torneo parte immediatamente e il rilevamento delle battaglie è attivo.' },
+  { title: 'Gioca su Clash Royale', text: 'I partecipanti giocano le loro partite normalmente, senza fare nulla di speciale.' },
+  { title: 'Risultati automatici', text: "L'app monitora le battaglie in tempo reale e aggiorna la classifica in automatico, non serve inserire i punteggi a mano." },
+]
+const BRACKET_STEPS = [
+  { title: 'Giocate liberamente', text: "Il tabellone parte vuoto. Ogni partecipante sfida chi vuole, nell'ordine che preferisce: non c'è un calendario imposto." },
+  { title: 'Le prime partite definiscono il tabellone', text: "Appena due partecipanti si scontrano, l'app rileva la battaglia e la inserisce al posto giusto. Sono i primi incontri a determinare chi affronta chi nei turni successivi." },
+  { title: 'Aggiornamento in tempo reale', text: 'Ogni nuova partita compare automaticamente nel tabellone entro pochi secondi, con vincitore e corone. Non devi inserire nulla a mano.' },
+  { title: 'Chiusura automatica', text: 'Quando tutti gli incontri necessari sono stati giocati, il torneo si conclude da solo e mostra la classifica finale.' },
+]
 const selectedCount = computed(() => selectedPlayerIds.value.size)
 
 // Modalità classifica completa (4, 6, 8): toggle nel torneo in corso, cambiabile
@@ -241,16 +255,16 @@ async function cancelTournament() {
 
 <template>
   <div class="tournament-page">
-    <header class="header-with-actions">
-      <NuxtLink to="/" class="header-action" aria-label="home">←</NuxtLink>
-      <div class="logo">{{ clan?.name ?? 'Torneo' }}</div>
-      <NuxtLink
-        v-if="clan"
-        :to="`/clans/${clan.code}/settings`"
-        class="header-action"
-        aria-label="settings"
-      >⚙</NuxtLink>
-    </header>
+    <PageHeader :title="clan?.name ?? 'Torneo'" back-to="/">
+      <template #action>
+        <NuxtLink
+          v-if="clan"
+          :to="`/clans/${clan.code}/settings`"
+          class="ra-btn ra-btn--round ra-btn--sm"
+          aria-label="Impostazioni"
+        ><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></svg></NuxtLink>
+      </template>
+    </PageHeader>
 
     <main>
       <div id="app">
@@ -259,15 +273,20 @@ async function cancelTournament() {
         <div v-else-if="view === 'idle'" class="idle-view">
           <PlayersManager v-if="clanId" :clan-id="clanId" />
 
-          <div class="section-label">SELEZIONA PARTECIPANTI</div>
+          <div class="ra-arena__label-row">
+            <p class="ra-label">Seleziona partecipanti</p>
+            <span class="ra-badge" :class="{ 'ra-badge--gold': VALID_SIZES.includes(selectedCount) }">{{ selectedCount }} selezionati</span>
+          </div>
           <div class="player-list-card">
             <div class="player-list">
               <p v-if="!allPlayers.length" class="empty-msg">
                 Aggiungi giocatori per avviare un torneo
               </p>
               <PlayerChip
-                v-for="p in allPlayers"
+                v-for="(p, i) in allPlayers"
                 :key="p.id"
+                class="ra-pop-in"
+                :style="{ animationDelay: `${i * 40}ms` }"
                 :player="p"
                 :trophies="trophiesMap[p.id] ?? '—'"
                 :selected="selectedPlayerIds.has(p.id)"
@@ -275,128 +294,60 @@ async function cancelTournament() {
               />
             </div>
           </div>
-          <button class="btn-info" @click="showInfo = true">ⓘ Come funziona</button>
 
           <div class="start-wrap">
-            <p class="select-hint">Selezionati: {{ selectedCount }} (validi: 2, 3, 4, 6, 8)</p>
+            <div class="ra-arena__hint-row">
+              <p class="select-hint">Validi: 2, 3, 4, 6 o 8 giocatori</p>
+              <button class="ra-btn ra-btn--ghost ra-btn--sm" @click="showInfo = true">ⓘ Come funziona</button>
+            </div>
             <button
-              class="btn-start"
+              class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block"
               :disabled="starting || !VALID_SIZES.includes(selectedCount)"
               @click="startTournament"
             >
-              {{ starting ? '...' : 'AVVIA' }}
+              {{ starting ? '...' : 'AVVIA TORNEO' }}
             </button>
           </div>
 
-          <Teleport to="body">
-            <div v-if="showInfo" class="info-overlay" @click.self="showInfo = false">
-              <div class="info-modal">
-                <button class="info-close" @click="showInfo = false">✕</button>
-                <div class="info-title">Come funziona</div>
-                <ol class="info-steps">
-                  <li>
-                    <span class="info-step-num">1</span>
-                    <div>
-                      <strong>Seleziona i giocatori</strong>
-                      <p>Tocca i giocatori del clan che parteciperanno al torneo. Puoi scegliere 2, 3, 4, 6 o 8 partecipanti.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="info-step-num">2</span>
-                    <div>
-                      <strong>Avvia il torneo</strong>
-                      <p>Premi AVVIA. Il torneo parte immediatamente e il rilevamento delle battaglie è attivo.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="info-step-num">3</span>
-                    <div>
-                      <strong>Gioca su Clash Royale</strong>
-                      <p>I partecipanti giocano le loro partite normalmente, senza fare nulla di speciale.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="info-step-num">4</span>
-                    <div>
-                      <strong>Risultati automatici</strong>
-                      <p>L'app monitora le battaglie in tempo reale e aggiorna la classifica in automatico, non serve inserire i punteggi a mano.</p>
-                    </div>
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </Teleport>
+          <InfoDialog v-if="showInfo" title="Come funziona" :steps="SETUP_STEPS" @close="showInfo = false" />
         </div>
 
         <div v-else-if="view === 'active'" class="active-view">
-          <div class="status-bar">
-            <span class="dot-live"></span>
-            <span class="status-text">Rilevamento</span>
-            <span class="timer">{{ timerLabel }}</span>
+          <div class="ra-panel ra-live">
+            <span class="ra-badge ra-badge--live">LIVE</span>
+            <span class="ra-live__text">Rilevamento partite</span>
+            <span class="ra-live__timer">{{ timerLabel }}</span>
           </div>
-          <div class="participants-bar">
-            <span v-for="p in participants" :key="p.id" class="pchip">{{ p.username }}</span>
+          <div class="ra-live__players">
+            <span v-for="p in participants" :key="p.id" class="ra-pill">
+              <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
+              {{ p.username }}
+            </span>
           </div>
 
-          <button class="btn-info" @click="showActiveInfo = true">ⓘ Come si popola il tabellone</button>
-
-          <Teleport to="body">
-            <div v-if="showActiveInfo" class="info-overlay" @click.self="showActiveInfo = false">
-              <div class="info-modal">
-                <button class="info-close" @click="showActiveInfo = false">✕</button>
-                <div class="info-title">Tabellone automatico</div>
-                <ol class="info-steps">
-                  <li>
-                    <span class="info-step-num">1</span>
-                    <div>
-                      <strong>Giocate liberamente</strong>
-                      <p>Il tabellone parte vuoto. Ogni partecipante sfida chi vuole, nell'ordine che preferisce: non c'è un calendario imposto.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="info-step-num">2</span>
-                    <div>
-                      <strong>Le prime partite definiscono il tabellone</strong>
-                      <p>Appena due partecipanti si scontrano, l'app rileva la battaglia e la inserisce al posto giusto. Sono i primi incontri a determinare chi affronta chi nei turni successivi.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="info-step-num">3</span>
-                    <div>
-                      <strong>Aggiornamento in tempo reale</strong>
-                      <p>Ogni nuova partita compare automaticamente nel tabellone entro pochi secondi, con vincitore e corone. Non devi inserire nulla a mano.</p>
-                    </div>
-                  </li>
-                  <li>
-                    <span class="info-step-num">4</span>
-                    <div>
-                      <strong>Chiusura automatica</strong>
-                      <p>Quando tutti gli incontri necessari sono stati giocati, il torneo si conclude da solo e mostra la classifica finale.</p>
-                    </div>
-                  </li>
-                </ol>
-              </div>
-            </div>
-          </Teleport>
-
-          <div v-if="activeSupportsFull" class="fullrank-toggle">
-            <label class="fullrank-label">
-              <input
-                type="checkbox"
-                :checked="activeTournament?.full_ranking"
-                @change="toggleFullRanking"
-              >
-              <span>Classifica completa (scontri per tutte le posizioni)</span>
-            </label>
+          <div class="ra-live__tools">
+            <button class="ra-btn ra-btn--ghost ra-btn--sm" @click="showActiveInfo = true">ⓘ Come funziona</button>
+            <button
+              v-if="canSuggest"
+              class="ra-btn ra-btn--sm"
+              :class="{ 'ra-btn--red': suggestActive }"
+              @click="toggleSuggest"
+            >
+              {{ suggestActive ? '✕ Pulisci' : '🎲 Suggerisci' }}
+            </button>
           </div>
-          <button
-            v-if="canSuggest"
-            class="btn-suggest"
-            :class="{ 'btn-suggest-active': suggestActive }"
-            @click="toggleSuggest"
-          >
-            {{ suggestActive ? '✕ Pulisci suggerimenti' : '🎲 Suggerisci accoppiamenti' }}
-          </button>
+
+          <InfoDialog v-if="showActiveInfo" title="Tabellone automatico" :steps="BRACKET_STEPS" @close="showActiveInfo = false" />
+
+          <label v-if="activeSupportsFull" class="ra-toggle">
+            <input
+              type="checkbox"
+              :checked="activeTournament?.full_ranking"
+              @change="toggleFullRanking"
+            >
+            <span class="ra-toggle__track" aria-hidden="true" />
+            <span>Classifica completa (scontri per tutte le posizioni)</span>
+          </label>
           <TournamentBracket
             v-if="activeTournament"
             :key="`bracket-${activeTournament.full_ranking}`"
@@ -406,9 +357,9 @@ async function cancelTournament() {
             :full-ranking="activeTournament.full_ranking ?? false"
             :suggestions="suggestActive ? suggestedPairs : []"
           />
-          <details class="matches-detail">
-            <summary>Partite rilevate ({{ tournamentMatches.length }})</summary>
-            <div class="matches-list">
+          <details class="ra-details">
+            <summary class="ra-details__summary">Partite rilevate ({{ tournamentMatches.length }})</summary>
+            <div class="ra-details__body">
               <p v-if="!tournamentMatches.length" class="empty-msg">In attesa della prima partita...</p>
               <MatchRow
                 v-for="(m, i) in tournamentMatches"
@@ -419,7 +370,7 @@ async function cancelTournament() {
             </div>
           </details>
           <div class="active-footer">
-            <button class="btn-cancel" @click="cancelTournament">Annulla torneo</button>
+            <button class="ra-btn ra-btn--red ra-btn--block" @click="cancelTournament">Annulla torneo</button>
           </div>
         </div>
 

@@ -12,15 +12,15 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal">
-      <h2 class="modal-title">{{ title }}</h2>
+  <div class="ra-modal-overlay" @click.self="$emit('close')">
+    <div class="ra-modal ra-pop-in">
+      <h2 class="ra-modal__title">{{ title }}</h2>
       <p>{{ message }}</p>
-      <div class="modal-actions">
-        <button type="button" class="btn-cancel" @click="$emit('close')">Annulla</button>
+      <div class="ra-modal__actions">
+        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Annulla</button>
         <button
           type="button"
-          :class="danger ? 'btn-cancel btn-danger' : 'btn-gold'"
+          :class="danger ? 'ra-btn ra-btn--red' : 'ra-btn ra-btn--gold'"
           @click="$emit('confirm')"
         >
           {{ confirmLabel ?? 'Conferma' }}

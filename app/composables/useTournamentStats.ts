@@ -71,12 +71,3 @@ export function computePlayerTournamentStats(
 
   return Object.values(stats).filter(s => s.tournamentsPlayed > 0)
 }
-
-// Genera slug per nome arena per path immagine.
-export function arenaImg(arenaName: string): string {
-  const slug = arenaName.toLowerCase()
-    .replace(/['']/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
-  return `/images/arenas/${slug}.png`
-}
