@@ -14,49 +14,30 @@ function ignora() {
 
 <template>
   <Teleport to="body">
-    <div v-if="needRefresh" class="pwa-update-banner">
-      <span>Nuova versione disponibile.</span>
-      <button class="pwa-btn-ok" @click="aggiorna">Aggiorna</button>
-      <button class="pwa-btn-skip" @click="ignora">Ignora</button>
+    <!-- In alto, sotto la barra di stato: non copre mai tab bar e pulsanti d'azione -->
+    <div v-if="needRefresh" class="ra-panel ra-update ra-pop-in" role="status">
+      <img src="/images/ui/icon-192.png" alt="" width="36" height="36" class="ra-update__icon">
+      <span class="ra-update__text">Nuova versione disponibile</span>
+      <button class="ra-btn ra-btn--gold ra-btn--sm" @click="aggiorna">Aggiorna</button>
+      <button class="ra-btn ra-btn--round ra-btn--xs" aria-label="Più tardi" @click="ignora">✕</button>
     </div>
   </Teleport>
 </template>
 
 <style scoped>
-.pwa-update-banner {
+.ra-update {
   position: fixed;
-  bottom: calc(80px + env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--bg3);
-  border: 1px solid var(--gold-dim);
-  border-radius: 12px;
-  padding: 12px 18px;
+  top: calc(env(safe-area-inset-top) + 8px);
+  left: 12px;
+  right: 12px;
+  z-index: 1200;
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  color: var(--text);
-  z-index: 200;
-  white-space: nowrap;
-  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  gap: 10px;
+  max-width: 456px;
+  margin: 0 auto;
+  padding: 8px 10px;
 }
-.pwa-btn-ok {
-  background: var(--gold);
-  color: #0a0f2e;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-family: 'Lilita One', cursive;
-  font-size: 13px;
-  cursor: pointer;
-}
-.pwa-btn-skip {
-  background: transparent;
-  color: var(--muted);
-  border: none;
-  font-family: 'Lilita One', cursive;
-  font-size: 13px;
-  cursor: pointer;
-}
+.ra-update__icon { flex-shrink: 0; border-radius: 10px; border: 2px solid var(--ra-stroke); }
+.ra-update__text { flex: 1; min-width: 0; font-family: var(--ra-font-display); font-size: var(--ra-fs-sm); }
 </style>

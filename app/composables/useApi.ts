@@ -160,6 +160,70 @@ export function useApi() {
     return true
   }
 
+  // Battle ids already used by a non-annulled tournament of the clan
+  // (annulled tournaments don't count: their battles can be reused).
+  async function getUsedBattleIds(clanId: number): Promise<Set<string>> {
+    const { data, error } = await $db
+      .from('tournament_matches')
+      .select('cr_battle_id, tournaments!inner ( clan_id, status )')
+      .eq('tournaments.clan_id', clanId)
+      .neq('tournaments.status', 'invalid')
+    if (error) throw error
+    return new Set((data ?? []).map((r: { cr_battle_id: string }) => r.cr_battle_id))
+  }
+
+  /**
+   * Saves an already-played tournament (validated by validatePastTournament).
+   * Created as 'invalid' and switched to 'finished' only after every match is stored,
+   * so a failure halfway leaves an annulled tournament that counts nowhere.
+   * Match wins are added to the clan standings, as in a live tournament.
+   */
+  async function savePastTournament(
+    clanId: number,
+    playerIds: number[],
+    fullRanking: boolean,
+    matches: TournamentMatch[],
+  ): Promise<number> {
+    const sorted = [...matches].sort((a, b) => new Date(a.played_at).getTime() - new Date(b.played_at).getTime())
+    const { data: tournament, error: tErr } = await $db
+      .from('tournaments')
+      .insert({
+        clan_id: clanId,
+        match_type: 'amichevole',
+        status: 'invalid',
+        full_ranking: fullRanking,
+        started_at: sorted[0]!.played_at,
+        finished_at: sorted[sorted.length - 1]!.played_at,
+      })
+      .select()
+      .single()
+    if (tErr) throw tErr
+
+    const { error: tpErr } = await $db.from('tournament_players')
+      .insert(playerIds.map(pid => ({ tournament_id: tournament.id, player_id: pid })))
+    if (tpErr) throw tpErr
+
+    const { error: mErr } = await $db.from('tournament_matches').insert(sorted.map(m => ({
+      tournament_id: tournament.id,
+      player1_id: m.player1_id,
+      player2_id: m.player2_id,
+      winner_id: m.winner_id,
+      crowns_p1: m.crowns_p1,
+      crowns_p2: m.crowns_p2,
+      played_at: m.played_at,
+      cr_battle_id: m.cr_battle_id,
+    })))
+    if (mErr) throw mErr
+
+    const { error: fErr } = await $db.from('tournaments').update({ status: 'finished' }).eq('id', tournament.id)
+    if (fErr) throw fErr
+
+    const wins: Record<number, number> = {}
+    sorted.forEach((m) => { wins[m.winner_id] = (wins[m.winner_id] ?? 0) + 1 })
+    await addWins(clanId, Object.entries(wins).map(([id, w]) => ({ player_id: Number(id), wins: w })))
+    return tournament.id as number
+  }
+
   // =====================================================
   // STANDINGS
   // =====================================================
@@ -228,6 +292,7 @@ export function useApi() {
     // tournaments
     getActiveTournament, createTournament, updateTournamentStatus,
     setTournamentFullRanking, getTournamentMatches, saveTournamentMatch,
+    getUsedBattleIds, savePastTournament,
     // standings
     getStandings, addWins, getTournamentsHistory,
     // cr api

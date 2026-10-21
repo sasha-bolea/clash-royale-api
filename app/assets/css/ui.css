@@ -736,6 +736,39 @@ html { background-color: var(--ra-navy-950); }
   color: var(--ra-text-muted);
 }
 
+/* Ingresso "Registra un torneo passato" sotto la lista giocatori */
+.ra-arena__past { margin-top: 14px; }
+
+/* ---------- Torneo passato (recupera.vue) ---------- */
+.ra-past__intro { margin: 4px 2px 14px; }
+.ra-past__warn { margin-bottom: 12px; font-family: var(--ra-font-text); font-size: var(--ra-fs-sm); color: var(--ra-red-400); }
+.ra-past__day { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.ra-past__day .ra-label::first-letter { text-transform: uppercase; }
+.ra-past__preview { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+.ra-past__error { color: var(--ra-red-400); text-align: center; }
+.ra-past__winner { font-family: var(--ra-font-display); font-weight: 400; font-size: var(--ra-fs-md); color: var(--ra-gold-400); }
+
+/* Partita selezionabile: orario + riga partita + spunta */
+.ra-pick {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px 4px 4px;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .12s var(--ra-ease-out), border-color .15s, background .2s;
+}
+.ra-pick:active { transform: scale(.98); }
+.ra-pick.is-selected { border-color: var(--ra-gold-400); background: rgba(255, 210, 63, .1); }
+.ra-pick__time { flex-shrink: 0; width: 40px; font-family: var(--ra-font-display); font-size: var(--ra-fs-xs); color: var(--ra-text-muted); text-align: center; }
+.ra-pick__match { flex: 1; min-width: 0; }
+.ra-pick.is-selected .ra-chip__check { background: var(--ra-green-400); color: var(--ra-stroke); transform: scale(1.1); }
+
 /* ---------- Arena: torneo in corso ---------- */
 .ra-live { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
 .ra-live__text { flex: 1; font-family: 'Lilita One', cursive; font-size: 15px; }
