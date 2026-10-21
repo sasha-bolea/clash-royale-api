@@ -5,14 +5,23 @@ const route = useRoute()
 // Bottom nav visibile solo nelle pagine di un clan attivo.
 const showNav = computed(() => /^\/clans\/[A-Z0-9]+(\/|$)/.test(route.path))
 
-// Attiva app-shell flex per pagine clan: rende bottom-nav figlio statico
-// invece di position:fixed, eliminando i bug di repaint fixed su iOS PWA.
-watchEffect(() => {
-  document.body.classList.toggle('clan-shell', showNav.value)
-})
+// Installed app (standalone): pin the app height to the real screen height.
+// iOS sometimes reports a window shorter by the status bar (47px) after a resume,
+// leaving an empty band at the bottom. Re-checked on resize, rotation and resume.
+function syncAppHeight() {
+  const standalone = matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true
+  if (!standalone) return
+  const h = Math.max(window.innerHeight, screen.height)
+  document.documentElement.style.setProperty('--ra-app-h', `${h}px`)
+}
 
 // Blocca pinch-zoom su iOS (ignora user-scalable=no dal iOS 10)
 onMounted(() => {
+  syncAppHeight()
+  window.addEventListener('resize', syncAppHeight)
+  window.addEventListener('orientationchange', syncAppHeight)
+  document.addEventListener('visibilitychange', syncAppHeight)
+
   document.addEventListener('touchmove', (e) => {
     if (e.touches.length > 1) e.preventDefault()
   }, { passive: false })
@@ -24,16 +33,7 @@ onMounted(() => {
     <NuxtPage />
     <BottomNav v-if="showNav" />
     <Toast />
+    <ConfirmHost />
     <PwaUpdatePrompt />
-    <PwaInstallBanner />
-    <!-- TEMPORARY: iOS band diagnostic, remove after the fix -->
-    <DiagBadge />
   </div>
 </template>
-
-<style>
-#app-root {
-  padding-top: var(--install-banner-height, 0px);
-  transition: padding-top 0.2s ease;
-}
-</style>

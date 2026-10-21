@@ -15,7 +15,13 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 4. **Ogni superficie è un `ra-panel`** (o un componente che ne eredita lo stile: chip, stat, match). Niente card con bordo sottile o piatte.
 5. **Profondità = ombra piena verso il basso** (`--ra-depth`), non ombre sfocate da sole. Premere = scendere di 3px.
 6. **Animazioni brevi e con rimbalzo** (`--ra-ease-pop`), mai bloccanti; tutte disattivate con `prefers-reduced-motion`.
-7. **Target touch ≥ 44px** (pulsanti 52px, chip 56px).
+7. **Target touch ≥ 44px** (pulsanti 52px, chip 56px; `ra-btn--xs` è 32px visibili ma con area di tocco estesa).
+8. **Una sola area che scorre per pagina**: la pagina è `[PageHeader] + <main> + [ra-actionbar] + [BottomNav]`. Scorre solo `<main>`, con rimbalzo iOS. Mai `overscroll-behavior: none`, mai altri contenitori con scroll verticale (eccezioni: dialoghi lunghi, strisce orizzontali).
+9. **I nomi stanno su una riga**: troncati con "…" (`white-space: nowrap; text-overflow: ellipsis`). Gruppi di nomi = `ra-strip` orizzontale, mai a capo.
+10. **Mai `confirm()`/`alert()` del browser**: si usa `await askConfirm({...})` (`useConfirm`). Nel dialogo, il tasto che chiude si chiama "Indietro", per non confondersi con azioni tipo "Annulla torneo".
+11. **Caricamento = `SkeletonList`**, vuoto = `EmptyState` con icona e possibilmente un'azione. Niente testi "Caricamento...".
+12. **Font**: `--ra-font-display` (Lilita One) per titoli, nomi, numeri e pulsanti; `--ra-font-text` (sistema) per le frasi. Dimensioni solo dalla scala `--ra-fs-*`.
+13. **Tocco da app**: niente evidenziazione al tocco né selezione del testo con la pressione lunga (si riattiva con `ra-selectable`). Ogni elemento toccabile reagisce alla pressione.
 
 ## Catalogo
 
@@ -44,7 +50,7 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 | Home | `ra-home`, `ra-hero` (+ `__logo`, `__sub`, `__cta`) | Landing senza clan (logo che fluttua) e lista clan | [`index.vue:14`](../app/pages/index.vue#L14) |
 | Card clan | componente `ClanCard` → `ra-panel--interactive ra-clan-card` | Un clan salvato: scudo, nome, codice | [`ClanCard.vue:8`](../app/components/ClanCard.vue#L8) |
 | Footer disclaimer | componente `AppFooter` → `ra-footer` | Solo in home; testo legale Supercell, non rimuovere | [`AppFooter.vue:7`](../app/components/AppFooter.vue#L7) |
-| Toast | componente `Toast` → `ra-toast.is-visible` | Messaggi brevi, sopra la tab bar | [`Toast.vue:6`](../app/components/Toast.vue#L6) |
+| Toast | componente `Toast` → `ra-toast.is-visible` | Messaggi brevi, sopra la tab bar (conferme di azioni riuscite) | [`Toast.vue:6`](../app/components/Toast.vue#L6) |
 | Dialogo con passaggi | componente `InfoDialog` (`title`, `steps`) → `ra-info`, `ra-steps` | Spiegazioni "Come funziona": numeri dorati, X rotonda in alto a destra | [`torneo.vue:312`](../app/pages/clans/[code]/torneo.vue#L312) |
 | Riga etichetta + contatore | `ra-arena__label-row` (`ra-label` + `ra-badge`) | Titolo di sezione con conteggio a destra; badge oro quando il valore è valido | [`torneo.vue:276`](../app/pages/clans/[code]/torneo.vue#L276) |
 | Stato live | `ra-panel ra-live` (+ `__text`, `__timer`, `__players`, `__player`, `__tools`) | Torneo in corso: badge LIVE, timer, partecipanti come pillole con avatar | [`torneo.vue:316`](../app/pages/clans/[code]/torneo.vue#L316) |
@@ -59,6 +65,17 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 | Grafico | `ra-panel ra-chart` + `PointsChart` (palette oro, azzurro, rosso, verde, bronzo, viola) | Andamento vittorie nel tempo | [`statistiche.vue:140`](../app/pages/clans/[code]/statistiche.vue#L140) |
 | Impostazioni | `ra-settings`, `ra-settings__block`, `__code`, `__help`, `__players`, `__player` | Blocchi impostazioni; codice clan in grande oro; liste giocatori (anche nei dialoghi) | [`settings.vue:111`](../app/pages/clans/[code]/settings.vue#L111) |
 | Scelta singola | `ra-radio` > `input[type=radio]` | Opzioni esclusive nei dialoghi | [`LeaveClanDialog.vue:22`](../app/components/LeaveClanDialog.vue#L22) |
+| Struttura pagina | `body` ancorato + `main` unico che scorre (`style.css`, sezione APP SHELL) | Tutte le pagine; contenuto centrato a 480px tramite padding di `main` | [`style.css:58`](../app/assets/css/style.css#L58) |
+| Barra azione | `ra-actionbar` (+ `__hint`) | Azione principale sempre in vista tra contenuto e tab bar (AVVIA TORNEO) | [`torneo.vue:372`](../app/pages/clans/[code]/torneo.vue#L372) |
+| Striscia orizzontale | `ra-strip` | Pillole o chip su una riga che scorre di lato, con bordi sfumati | [`torneo.vue:306`](../app/pages/clans/[code]/torneo.vue#L306) |
+| Pulsante info | `ra-btn--round ra-btn--xs` | Accessorio accanto a un titolo ("?") | [`torneo.vue:274`](../app/pages/clans/[code]/torneo.vue#L274) |
+| Conferma | `useConfirm().askConfirm()` + `ConfirmHost` (in `app.vue`) → `ConfirmDialog` | Azioni distruttive o irreversibili | [`torneo.vue:233`](../app/pages/clans/[code]/torneo.vue#L233) |
+| Pannello dal basso | automatico per ogni `ra-modal` sotto i 600px (maniglia, sale dal basso) | Tutti i dialoghi su telefono | [`ui.css`](../app/assets/css/ui.css) (sezione "Dialoghi come pannello") |
+| Caricamento | componente `SkeletonList` (`count`, `height`) → `ra-skeleton` | Al posto di qualsiasi "Caricamento..." | [`torneo.vue:267`](../app/pages/clans/[code]/torneo.vue#L267) |
+| Stato vuoto | componente `EmptyState` (`icon`, `title`, `text`, slot azione) → `ra-empty` | Liste e pagine senza dati | [`storico.vue:46`](../app/pages/clans/[code]/storico.vue#L46) |
+| Attesa breve | `ra-waiting` | Messaggio d'attesa dentro una sezione | [`torneo.vue`](../app/pages/clans/[code]/torneo.vue) |
+| Card installazione | componente `PwaInstallBanner` → `ra-install` | Solo in home e solo nel browser; si nasconde per sempre con la X | [`PwaInstallBanner.vue:30`](../app/components/PwaInstallBanner.vue#L30) |
+| Transizione pagine | `ra-page-*` (nuxt.config `pageTransition`) | Dissolvenza breve tra le pagine | [`nuxt.config.ts:29`](../nuxt.config.ts#L29) |
 
 ## Font e immagini
 

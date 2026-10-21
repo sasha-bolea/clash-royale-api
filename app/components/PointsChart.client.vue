@@ -146,7 +146,7 @@ onBeforeUnmount(() => { chart?.destroy(); chart = null })
 
 <template>
   <div class="ts-chart-wrap">
-    <p v-if="empty" class="empty-msg" style="text-align:center;padding:24px 0">
+    <p v-if="empty" class="ra-waiting">
       Nessun torneo nel periodo
     </p>
     <canvas v-show="!empty" ref="canvasRef" id="ts-chart"></canvas>

@@ -35,7 +35,7 @@ onMounted(async () => {
     <PageHeader title="Storico" />
     <main>
       <div id="tab-content">
-        <p v-if="loading" class="loading">Caricamento...</p>
+        <SkeletonList v-if="loading" :count="3" :height="180" />
         <p v-else-if="error" class="error-msg">Errore: {{ error }}</p>
         <template v-else>
           <label class="ra-toggle">
@@ -43,7 +43,14 @@ onMounted(async () => {
             <span class="ra-toggle__track" aria-hidden="true" />
             <span>Mostra tornei annullati</span>
           </label>
-          <p v-if="!visibleList.length" class="empty-msg">Nessun torneo concluso.</p>
+          <EmptyState
+            v-if="!visibleList.length"
+            icon="/images/ui/tournament.png"
+            title="Ancora nessun torneo"
+            text="Quando un torneo finisce, lo trovi qui con tutte le partite."
+          >
+            <NuxtLink v-if="clan" :to="`/clans/${clan.code}/torneo`" class="ra-btn ra-btn--gold">Vai all'Arena</NuxtLink>
+          </EmptyState>
           <div v-else class="storico-list">
             <TournamentHistoryCard
               v-for="(t, i) in visibleList"

@@ -17,7 +17,7 @@ const emit = defineEmits<{
       <h2 class="ra-modal__title">{{ title }}</h2>
       <p>{{ message }}</p>
       <div class="ra-modal__actions">
-        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Annulla</button>
+        <button type="button" class="ra-btn ra-btn--ghost" @click="$emit('close')">Indietro</button>
         <button
           type="button"
           :class="danger ? 'ra-btn ra-btn--red' : 'ra-btn ra-btn--gold'"

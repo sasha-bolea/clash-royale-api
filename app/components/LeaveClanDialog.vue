@@ -24,7 +24,7 @@ const selected = ref<number | null>(null)
         <span>Solo esci (non rimuovere nessun giocatore)</span>
       </label>
 
-      <p v-if="!players.length" class="empty-msg">Nessun giocatore nel clan.</p>
+      <p v-if="!players.length" class="ra-waiting">Nessun giocatore nel clan.</p>
       <div v-else class="ra-settings__players ra-settings__players--scroll">
         <label v-for="p in players" :key="p.id" class="ra-radio">
           <input v-model="selected" type="radio" :value="p.id" />

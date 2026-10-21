@@ -8,6 +8,7 @@ const clanStore = useClanStore()
 const session = useBrowserSession()
 const api = useApi()
 const { showToast, showError } = useToast()
+const { askConfirm } = useConfirm()
 
 const playerStore = usePlayerStore()
 const { allPlayers } = storeToRefs(playerStore)
@@ -43,7 +44,12 @@ async function copyCode() {
 
 async function regen() {
   if (!clanId.value) return
-  if (!confirm('Generare nuovo codice? Il precedente diventa invalido.')) return
+  const ok = await askConfirm({
+    title: 'Nuovo codice?',
+    message: 'Il codice attuale smette di funzionare: dovrai condividere quello nuovo.',
+    confirmLabel: 'Rigenera',
+  })
+  if (!ok) return
   regenerating.value = true
   try {
     const newCode = await api.regenerateCode(clanId.value)
@@ -62,7 +68,13 @@ async function regen() {
 }
 
 async function removePlayer(playerId: number) {
-  if (!confirm('Rimuovere il giocatore? Se è l\'ultimo, anche il clan viene eliminato.')) return
+  const ok = await askConfirm({
+    title: 'Rimuovere il giocatore?',
+    message: "Se è l'ultimo giocatore, anche il clan viene eliminato.",
+    confirmLabel: 'Rimuovi',
+    danger: true,
+  })
+  if (!ok) return
   try {
     await api.removePlayer(playerId)
     allPlayers.value = allPlayers.value.filter(p => p.id !== playerId)
@@ -108,7 +120,7 @@ async function confirmLeave(removePlayerId: number | null) {
       <section class="ra-panel ra-settings__block">
         <p class="ra-label">Codice di invito</p>
         <div class="ra-settings__code-row">
-          <span class="ra-settings__code">{{ clan.code }}</span>
+          <span class="ra-settings__code ra-selectable">{{ clan.code }}</span>
           <button class="ra-btn ra-btn--sm" @click="copyCode">Copia</button>
         </div>
         <button class="ra-btn ra-btn--ghost ra-btn--sm ra-btn--block" :disabled="regenerating" @click="regen">
@@ -124,10 +136,8 @@ async function confirmLeave(removePlayerId: number | null) {
           <p class="ra-label">Giocatori</p>
           <span class="ra-badge">{{ allPlayers.length }}</span>
         </div>
-        <p v-if="loadingPlayers" class="loading">Caricamento...</p>
-        <p v-else-if="!allPlayers.length" class="empty-msg">
-          Nessun giocatore. Aggiungi il primo dalla pagina Arena.
-        </p>
+        <SkeletonList v-if="loadingPlayers" :count="3" :height="48" />
+        <p v-else-if="!allPlayers.length" class="ra-settings__help">Nessun giocatore. Aggiungi il primo dalla pagina Arena.</p>
         <ul v-else class="ra-settings__players">
           <li v-for="p in allPlayers" :key="p.id" class="ra-settings__player">
             <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>

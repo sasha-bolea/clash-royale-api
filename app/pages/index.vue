@@ -11,6 +11,7 @@ const showJoin = ref(false)
 
 <template>
   <div class="index-root">
+    <PageHeader v-if="savedClans.length" title="Royal Arena" />
     <main class="ra-home">
       <template v-if="!savedClans.length">
         <section class="ra-hero">
@@ -23,15 +24,16 @@ const showJoin = ref(false)
             <button class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block" @click="showCreate = true">CREA CLAN</button>
             <button class="ra-btn ra-btn--ghost ra-btn--block" @click="showJoin = true">Ho un codice</button>
           </div>
+          <PwaInstallBanner />
         </section>
       </template>
 
       <template v-else>
-        <PageHeader title="Royal Arena" />
         <div class="ra-home__actions">
           <button class="ra-btn ra-btn--gold ra-btn--block" @click="showCreate = true">+ Nuovo clan</button>
           <button class="ra-btn ra-btn--ghost ra-btn--block" @click="showJoin = true">Entra con codice</button>
         </div>
+        <PwaInstallBanner />
         <p class="ra-label">I tuoi clan</p>
         <div class="ra-home__list">
           <ClanCard
@@ -43,9 +45,8 @@ const showJoin = ref(false)
           />
         </div>
       </template>
+      <AppFooter />
     </main>
-
-    <AppFooter />
 
     <CreateClanModal
       v-if="showCreate"
@@ -59,17 +60,3 @@ const showJoin = ref(false)
     />
   </div>
 </template>
-
-<style scoped>
-.index-root {
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-}
-/* footer subito dopo l'ultimo clan;
-   quando il contenuto è corto, margin-top:auto lo spinge a 20px dal fondo */
-.index-root :deep(.ra-footer) {
-  margin-top: auto;
-  padding-bottom: calc(20px + env(safe-area-inset-bottom));
-}
-</style>

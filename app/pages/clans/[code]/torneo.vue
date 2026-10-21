@@ -9,6 +9,7 @@ definePageMeta({ middleware: ['clan-access'] })
 const { clan, clanId } = useActiveClan()
 const api = useApi()
 const { showToast, showError } = useToast()
+const { askConfirm } = useConfirm()
 const session = useBrowserSession()
 
 const playerStore = usePlayerStore()
@@ -39,17 +40,6 @@ const view = computed<'loading' | 'idle' | 'active' | 'complete'>(() => {
 })
 
 useHead(() => ({ title: clan.value ? `${clan.value.name} — Torneo` : 'Torneo' }))
-
-// Blocco scroll + layout fisso (page-home) SOLO in selezione; torneo attivo scrolla.
-// Toggle imperativo sul body: affidabile, indipendente da unhead.
-watchEffect(() => {
-  if (import.meta.client) {
-    document.body.classList.toggle('page-home', view.value === 'idle')
-  }
-})
-onBeforeUnmount(() => {
-  if (import.meta.client) document.body.classList.remove('page-home')
-})
 
 const participants = computed(() =>
   (activeTournament.value?.tournament_players ?? []).map(tp => tp.players),
@@ -240,7 +230,13 @@ function startNewTournament() {
 
 async function cancelTournament() {
   if (!activeTournament.value) return
-  if (!confirm('Annullare il torneo in corso?')) return
+  const ok = await askConfirm({
+    title: 'Annullare il torneo?',
+    message: 'Il torneo in corso viene chiuso come annullato e le partite rilevate non contano.',
+    confirmLabel: 'Annulla torneo',
+    danger: true,
+  })
+  if (!ok || !activeTournament.value) return
   polling?.stopPolling()
   try {
     await api.updateTournamentStatus(activeTournament.value.id, 'invalid')
@@ -268,20 +264,23 @@ async function cancelTournament() {
 
     <main>
       <div id="app">
-        <p v-if="view === 'loading'" class="loading">Caricamento...</p>
+        <SkeletonList v-if="view === 'loading'" :count="5" :height="60" />
 
         <div v-else-if="view === 'idle'" class="idle-view">
           <PlayersManager v-if="clanId" :clan-id="clanId" />
 
           <div class="ra-arena__label-row">
             <p class="ra-label">Seleziona partecipanti</p>
-            <span class="ra-badge" :class="{ 'ra-badge--gold': VALID_SIZES.includes(selectedCount) }">{{ selectedCount }} selezionati</span>
+            <button class="ra-btn ra-btn--round ra-btn--xs" aria-label="Come funziona" @click="showInfo = true">?</button>
           </div>
           <div class="player-list-card">
             <div class="player-list">
-              <p v-if="!allPlayers.length" class="empty-msg">
-                Aggiungi giocatori per avviare un torneo
-              </p>
+              <EmptyState
+                v-if="!allPlayers.length"
+                icon="/images/ui/crown-shield.png"
+                title="Nessun giocatore"
+                text="Aggiungi i giocatori del clan con il loro tag di Clash Royale per avviare un torneo."
+              />
               <PlayerChip
                 v-for="(p, i) in allPlayers"
                 :key="p.id"
@@ -295,20 +294,6 @@ async function cancelTournament() {
             </div>
           </div>
 
-          <div class="start-wrap">
-            <div class="ra-arena__hint-row">
-              <p class="select-hint">Validi: 2, 3, 4, 6 o 8 giocatori</p>
-              <button class="ra-btn ra-btn--ghost ra-btn--sm" @click="showInfo = true">ⓘ Come funziona</button>
-            </div>
-            <button
-              class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block"
-              :disabled="starting || !VALID_SIZES.includes(selectedCount)"
-              @click="startTournament"
-            >
-              {{ starting ? '...' : 'AVVIA TORNEO' }}
-            </button>
-          </div>
-
           <InfoDialog v-if="showInfo" title="Come funziona" :steps="SETUP_STEPS" @close="showInfo = false" />
         </div>
 
@@ -318,7 +303,7 @@ async function cancelTournament() {
             <span class="ra-live__text">Rilevamento partite</span>
             <span class="ra-live__timer">{{ timerLabel }}</span>
           </div>
-          <div class="ra-live__players">
+          <div class="ra-live__players ra-strip">
             <span v-for="p in participants" :key="p.id" class="ra-pill">
               <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
               {{ p.username }}
@@ -360,7 +345,7 @@ async function cancelTournament() {
           <details class="ra-details">
             <summary class="ra-details__summary">Partite rilevate ({{ tournamentMatches.length }})</summary>
             <div class="ra-details__body">
-              <p v-if="!tournamentMatches.length" class="empty-msg">In attesa della prima partita...</p>
+              <p v-if="!tournamentMatches.length" class="ra-waiting">In attesa della prima partita…</p>
               <MatchRow
                 v-for="(m, i) in tournamentMatches"
                 :key="m.id"
@@ -382,6 +367,21 @@ async function cancelTournament() {
         />
       </div>
     </main>
+
+    <!-- Barra azione fissa sopra la tab bar: AVVIA sempre raggiungibile -->
+    <div v-if="view === 'idle'" class="ra-actionbar">
+      <p class="ra-actionbar__hint">
+        <span class="ra-badge" :class="{ 'ra-badge--gold': VALID_SIZES.includes(selectedCount) }">{{ selectedCount }}</span>
+        Scegli 2, 3, 4, 6 o 8 giocatori
+      </p>
+      <button
+        class="ra-btn ra-btn--gold ra-btn--lg ra-btn--block"
+        :disabled="starting || !VALID_SIZES.includes(selectedCount)"
+        @click="startTournament"
+      >
+        {{ starting ? '...' : 'AVVIA TORNEO' }}
+      </button>
+    </div>
 
     <WelcomeClanDialog
       v-if="showWelcome && clan"
