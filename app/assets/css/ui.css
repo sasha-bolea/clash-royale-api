@@ -68,6 +68,10 @@ html,
   background-attachment: fixed, fixed, scroll;
 }
 
+/* Colore di fondo = fondo della tab bar: se iOS lascia scoperta una striscia
+   fuori dalla pagina, si confonde con la barra invece di sembrare una banda */
+html { background-color: var(--ra-navy-950); }
+
 /* ---------- Testo display: bianco con contorno scuro, stile Clash ---------- */
 .ra-display {
   font-family: 'Lilita One', cursive;
