@@ -294,6 +294,12 @@ async function cancelTournament() {
             </div>
           </div>
 
+          <NuxtLink
+            v-if="clan && allPlayers.length >= 2"
+            :to="`/clans/${clan.code}/recupera`"
+            class="ra-btn ra-btn--ghost ra-btn--sm ra-btn--block ra-arena__past"
+          >↺ Registra un torneo passato</NuxtLink>
+
           <InfoDialog v-if="showInfo" title="Come funziona" :steps="SETUP_STEPS" @close="showInfo = false" />
         </div>
 
