@@ -344,7 +344,25 @@ export function useBracket() {
     return { positions: [...top, ...consPos] }
   }
 
+  // Final ranking of a tournament, picking the analyzer for its size (2/3/4/6/8).
+  // Returns null if the size is unsupported or the matches don't complete the bracket.
+  function analyzeTournament(
+    matches: TournamentMatch[],
+    players: Player[],
+    fullRanking: boolean,
+  ): BracketResult | null {
+    switch (players.length) {
+      case 2: return analyzeBracket2(matches, players)
+      case 3: return analyzeBracket3(matches, players)
+      case 4: return analyzeBracket4(matches, players, fullRanking)
+      case 6: return analyzeBracket6(matches, players, fullRanking)
+      case 8: return analyzeBracket8(matches, players, fullRanking)
+      default: return null
+    }
+  }
+
   return {
+    analyzeTournament,
     parseCRDate,
     makeBattleId,
     isBattleValid,

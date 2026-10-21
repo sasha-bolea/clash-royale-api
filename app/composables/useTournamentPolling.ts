@@ -131,14 +131,7 @@ export function useTournamentPolling(clanId: number) {
     }
     if (matches.length < needed) return
 
-    switch (n) {
-      case 2: result = bracket.analyzeBracket2(matches, allPlayers); break
-      case 3: result = bracket.analyzeBracket3(matches, allPlayers); break
-      case 4: result = bracket.analyzeBracket4(matches, allPlayers, fr); break
-      case 6: result = bracket.analyzeBracket6(matches, allPlayers, fr); break
-      case 8: result = bracket.analyzeBracket8(matches, allPlayers, fr); break
-      default: return
-    }
+    result = bracket.analyzeTournament(matches, allPlayers, fr)
     if (!result) return
 
     // Le vittorie sono già state assegnate per-match in poll().
