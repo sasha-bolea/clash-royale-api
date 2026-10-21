@@ -19,9 +19,10 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 8. **Una sola area che scorre per pagina**: la pagina è `[PageHeader] + <main> + [ra-actionbar] + [BottomNav]`. Scorre solo `<main>`, con rimbalzo iOS. Mai `overscroll-behavior: none`, mai altri contenitori con scroll verticale (eccezioni: dialoghi lunghi, strisce orizzontali).
 9. **I nomi stanno su una riga**: troncati con "…" (`white-space: nowrap; text-overflow: ellipsis`). Gruppi di nomi = `ra-strip` orizzontale, mai a capo.
 10. **Mai `confirm()`/`alert()` del browser**: si usa `await askConfirm({...})` (`useConfirm`). Nel dialogo, il tasto che chiude si chiama "Indietro", per non confondersi con azioni tipo "Annulla torneo".
-11. **Caricamento = `SkeletonList`**, vuoto = `EmptyState` con icona e possibilmente un'azione. Niente testi "Caricamento...".
-12. **Font**: `--ra-font-display` (Lilita One) per titoli, nomi, numeri e pulsanti; `--ra-font-text` (sistema) per le frasi. Dimensioni solo dalla scala `--ra-fs-*`.
-13. **Tocco da app**: niente evidenziazione al tocco né selezione del testo con la pressione lunga (si riattiva con `ra-selectable`). Ogni elemento toccabile reagisce alla pressione.
+11. **Pulsanti senza effetto si disattivano** (`:disabled`, con `title` che spiega perché), non spariscono: es. "Suggerisci" quando resta una sola combinazione.
+12. **Caricamento = `SkeletonList`**, vuoto = `EmptyState` con icona e possibilmente un'azione. Niente testi "Caricamento...".
+13. **Font**: `--ra-font-display` (Lilita One) per titoli, nomi, numeri e pulsanti; `--ra-font-text` (sistema) per le frasi. Dimensioni solo dalla scala `--ra-fs-*`.
+14. **Tocco da app**: niente evidenziazione al tocco né selezione del testo con la pressione lunga (si riattiva con `ra-selectable`). Ogni elemento toccabile reagisce alla pressione.
 
 ## Catalogo
 

@@ -110,6 +110,52 @@ export function computeSuggestions(
   }
 }
 
+// Number of ways to split k free players into pairs ((k-1)!! for even k).
+// Fewer than 2 free players: nothing to pair.
+function pairings(k: number): number {
+  if (k < 2) return 0
+  let n = 1
+  for (let i = k - 1; i > 1; i -= 2) n *= i
+  return n
+}
+
+/**
+ * How many different first-round suggestions are possible given the matches
+ * already played (same "committed players" rules as computeSuggestions).
+ * 0 or 1 means suggesting is pointless: the remaining pairing is already forced.
+ * @returns number of distinct suggestion outcomes
+ */
+export function countSuggestionChoices(
+  matches: TournamentMatch[],
+  participants: Player[],
+  format: BracketFormat,
+): number {
+  const sorted = sortByPlayed(matches)
+  const ids = participants.map(p => p.id)
+
+  switch (format) {
+    case 2:
+      return 0
+    case 3:
+      // 3 giocatori: 3 possibili prime partite, finché la prima non è giocata.
+      return sorted.length ? 0 : 3
+    case 4:
+      return pairings(ids.length - 2 * greedyMatching(sorted, { limit: 2 }).length)
+    case 8:
+      return pairings(ids.length - 2 * greedyMatching(sorted, { limit: 4 }).length)
+    case 6: {
+      const tris = detectTriangles(sorted, ids)
+      const groups = tris ?? [ids.slice(0, 3), ids.slice(3, 6)]
+      // Ogni girone la cui prima partita non è giocata offre 3 scelte.
+      const open = groups.filter((g) => {
+        const setG = new Set(g)
+        return !sorted.some(m => setG.has(m.player1_id) && setG.has(m.player2_id))
+      }).length
+      return open ? 3 ** open : 0
+    }
+  }
+}
+
 // True se entrambi gli slot del nodo sono vuoti (nessuna partita reale).
 function isEmpty(node: BracketNode): boolean {
   return node.slotA.playerId == null && node.slotB.playerId == null
