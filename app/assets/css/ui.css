@@ -1155,15 +1155,6 @@ img { -webkit-user-drag: none; }
 /* Spazio sotto le tab di pagina (statistiche) */
 main > .ra-tabs { margin-bottom: 14px; }
 
-/* ---------- Transizione tra pagine (nuxt.config: app.pageTransition "ra-page") ---------- */
-.ra-page-enter-active { transition: opacity .18s ease-out, transform .22s var(--ra-ease-out); }
-.ra-page-leave-active { transition: opacity .1s ease-in; }
-.ra-page-enter-from { opacity: 0; transform: translateY(8px); }
-.ra-page-leave-to { opacity: 0; }
-@media (prefers-reduced-motion: reduce) {
-  .ra-page-enter-active, .ra-page-leave-active { transition: none; }
-}
-
 /* Riga di attesa con spinner (es. ricerca tag in AddPlayerModal) */
 .loading-inline { display: flex; align-items: center; gap: 10px; min-height: 24px; font-size: 14px; color: var(--ra-text-muted); }
 

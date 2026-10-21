@@ -25,8 +25,6 @@ export default defineNuxtConfig({
   },
 
   app: {
-    // Dissolvenza breve tra le pagine (stili in ui.css, classi ra-page-*)
-    pageTransition: { name: 'ra-page', mode: 'out-in' },
     head: {
       title: 'Royal Arena',
       htmlAttrs: { lang: 'it' },

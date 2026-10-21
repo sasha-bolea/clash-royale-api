@@ -75,7 +75,6 @@ Direzione: **"Clash potenziato"**. Il sito deve sembrare un menu di gioco di Cla
 | Stato vuoto | componente `EmptyState` (`icon`, `title`, `text`, slot azione) → `ra-empty` | Liste e pagine senza dati | [`storico.vue:46`](../app/pages/clans/[code]/storico.vue#L46) |
 | Attesa breve | `ra-waiting` | Messaggio d'attesa dentro una sezione | [`torneo.vue`](../app/pages/clans/[code]/torneo.vue) |
 | Card installazione | componente `PwaInstallBanner` → `ra-install` | Solo in home e solo nel browser; si nasconde per sempre con la X | [`PwaInstallBanner.vue:30`](../app/components/PwaInstallBanner.vue#L30) |
-| Transizione pagine | `ra-page-*` (nuxt.config `pageTransition`) | Dissolvenza breve tra le pagine | [`nuxt.config.ts:29`](../nuxt.config.ts#L29) |
 
 ## Font e immagini
 
