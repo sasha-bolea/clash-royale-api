@@ -180,7 +180,9 @@ const podiumKey = ref(0)
 
 <style scoped>
 .ds-page {
-  min-height: 100dvh;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
 }

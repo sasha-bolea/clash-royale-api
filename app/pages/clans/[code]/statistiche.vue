@@ -105,16 +105,16 @@ onMounted(() => switchTab(activeTab.value))
         <p v-if="error" class="error-msg">Errore: {{ error }}</p>
 
         <template v-else-if="activeTab === 'giocatori'">
-          <p v-if="loadingPlayers" class="loading">Caricamento giocatori...</p>
-          <p v-else-if="!allPlayers.length" class="empty-msg">Nessun giocatore nel clan.</p>
+          <SkeletonList v-if="loadingPlayers" :count="4" :height="60" />
+          <EmptyState v-else-if="!allPlayers.length" icon="/images/ui/crown-shield.png" title="Nessun giocatore" text="Aggiungi i giocatori dalla pagina Arena." />
           <div v-else class="ra-stack">
             <PlayerStatsCard v-for="p in allPlayers" :key="p.id" :player="p" />
           </div>
         </template>
 
         <template v-else>
-          <p v-if="loadingTournaments" class="loading">Caricamento...</p>
-          <p v-else-if="!finishedTournaments.length" class="empty-msg">Nessun torneo concluso.</p>
+          <SkeletonList v-if="loadingTournaments" :count="3" :height="96" />
+          <EmptyState v-else-if="!finishedTournaments.length" icon="/images/ui/leaderboard.png" title="Ancora nessuna statistica" text="Le classifiche compaiono dopo il primo torneo concluso." />
           <div v-else class="ra-stack">
             <div class="ra-stats-summary">
               <div class="ra-stat">

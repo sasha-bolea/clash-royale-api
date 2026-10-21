@@ -41,7 +41,7 @@ function fmt(n: number) {
       <span class="ra-collapse__chev" aria-hidden="true">▾</span>
     </button>
     <div v-if="expanded" class="ra-collapse__body">
-      <p v-if="loading" class="loading-inline"><span class="spinner"></span> Caricamento...</p>
+      <SkeletonList v-if="loading" :count="2" :height="76" />
       <p v-else-if="error" class="error-inline">Errore API: {{ error }}</p>
       <template v-else-if="data">
         <div class="ra-pstats__top">

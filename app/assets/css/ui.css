@@ -39,6 +39,18 @@
   --ra-depth-pressed: 0 2px 0 var(--ra-stroke), 0 4px 10px rgba(0, 0, 0, .4);
   --ra-bevel: inset 0 2px 0 rgba(255, 255, 255, .16), inset 0 -4px 0 rgba(0, 0, 0, .28);
 
+  /* Tipografia: Lilita One per titoli, nomi, numeri e pulsanti;
+     font di sistema per le frasi (più leggibile sotto i 16px). */
+  --ra-font-display: 'Lilita One', cursive;
+  --ra-font-text: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  /* Scala dimensioni: usare solo questi valori per i nuovi elementi */
+  --ra-fs-xs: 12px;
+  --ra-fs-sm: 14px;
+  --ra-fs-md: 16px;
+  --ra-fs-lg: 20px;
+  --ra-fs-xl: 28px;
+  --ra-fs-xxl: 40px;
+
   /* Movimento */
   --ra-ease-pop: cubic-bezier(.34, 1.56, .64, 1);
   --ra-ease-out: cubic-bezier(.22, 1, .36, 1);
@@ -146,6 +158,7 @@ html,
   gap: 8px;
   min-height: 52px;
   padding: 0 26px;
+  white-space: nowrap;
   font-family: 'Lilita One', cursive;
   font-size: 18px;
   letter-spacing: 1px;
@@ -222,6 +235,9 @@ html,
 .ra-btn--round { width: 48px; min-height: 48px; padding: 0; border-radius: 50%; }
 .ra-btn--sm { min-height: 40px; padding: 0 16px; font-size: 15px; border-radius: 12px; }
 .ra-btn--round.ra-btn--sm { width: 40px; min-height: 40px; border-radius: 50%; }
+/* Pulsante rotondo piccolo per azioni accessorie (info): area di tocco estesa a 44px */
+.ra-btn--xs { width: 32px; min-height: 32px; font-size: 15px; overflow: visible; }
+.ra-btn--xs::after { content: ''; position: absolute; inset: -7px; }
 
 /* ---------- Tab segmentate ---------- */
 .ra-tabs {
@@ -247,7 +263,7 @@ html,
   transition: color .15s, background .2s var(--ra-ease-out);
 }
 .ra-tabs--sm { padding: 3px; gap: 3px; border-radius: 12px; }
-.ra-tabs--sm .ra-tab { flex: 0 0 auto; min-height: 32px; padding: 0 12px; font-size: 13px; border-radius: 9px; }
+.ra-tabs--sm .ra-tab { flex: 0 0 auto; min-height: 40px; padding: 0 14px; font-size: 13px; border-radius: 9px; }
 .ra-tab.is-active {
   color: var(--ra-text);
   -webkit-text-stroke: 3px var(--ra-stroke);
@@ -584,10 +600,6 @@ html,
 
 /* ---------- Home ---------- */
 .ra-home {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 0 16px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -612,6 +624,13 @@ html,
 .ra-hero__sub { max-width: 320px; font-size: 16px; line-height: 1.45; color: var(--ra-text-soft); }
 .ra-hero__cta { width: 100%; max-width: 340px; display: grid; gap: 12px; margin-top: 12px; }
 
+/* ---------- Card "Installa l'app" in home (PwaInstallBanner.vue) ---------- */
+.ra-install { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-top: 8px; }
+.ra-install__icon { flex-shrink: 0; border-radius: 12px; border: 2px solid var(--ra-stroke); }
+.ra-install__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; text-align: left; background: none; border: 0; color: inherit; cursor: pointer; }
+.ra-install__title { font-family: 'Lilita One', cursive; font-size: 17px; color: var(--ra-gold-400); }
+.ra-install__text { font-family: var(--ra-font-text); font-size: 13px; color: var(--ra-text-soft); }
+
 /* ---------- Card clan (ClanCard.vue) ---------- */
 .ra-clan-card {
   display: flex;
@@ -624,9 +643,8 @@ html,
 
 /* ---------- Footer disclaimer (AppFooter.vue) ---------- */
 .ra-footer {
-  max-width: 480px;
-  margin: 8px auto 0;
-  padding: 12px 20px calc(16px + env(safe-area-inset-bottom));
+  margin-top: auto;
+  padding: 16px 4px calc(8px + env(safe-area-inset-bottom));
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 10px;
   line-height: 1.5;
@@ -685,8 +703,34 @@ html,
 
 /* ---------- Arena: selezione giocatori ---------- */
 .ra-arena__label-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 14px 0 10px; }
-.ra-arena__hint-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-.ra-arena__hint-row .select-hint { margin: 0; text-align: left; font-family: system-ui, -apple-system, sans-serif; font-size: 12px; color: var(--ra-text-muted); }
+/* Barra azione fissa tra l'area che scorre e la tab bar (es. AVVIA TORNEO) */
+.ra-actionbar {
+  position: relative;
+  flex-shrink: 0;
+  padding: 10px max(20px, calc((100% - 480px) / 2)) 24px;
+  background: rgba(4, 8, 32, .92);
+  border-top: 2px solid var(--ra-stroke);
+}
+/* Sfumatura verso l'alto: la lista "sparisce" sotto la barra invece di tagliarsi netta */
+.ra-actionbar::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 28px;
+  background: linear-gradient(180deg, rgba(4, 8, 32, 0), rgba(4, 8, 32, .85));
+  pointer-events: none;
+}
+.ra-actionbar__hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--ra-text-muted);
+}
 
 /* ---------- Arena: torneo in corso ---------- */
 .ra-live { display: flex; align-items: center; gap: 10px; padding: 10px 14px; }
@@ -699,8 +743,13 @@ html,
   paint-order: stroke fill;
   font-variant-numeric: tabular-nums;
 }
-.ra-live__players { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.ra-live__players { margin: 12px -20px; padding: 0 20px; }
 .ra-pill {
+  flex-shrink: 0;
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -718,7 +767,8 @@ html,
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 12px;
+  min-height: 44px;
+  margin-bottom: 8px;
   font-family: system-ui, -apple-system, sans-serif;
   font-size: 13px;
   color: var(--ra-text-soft);
@@ -807,6 +857,19 @@ html,
 .ra-final__place { width: 30px; font-family: 'Lilita One', cursive; font-size: 18px; color: var(--ra-text-muted); }
 .ra-final__name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: left; font-family: 'Lilita One', cursive; font-size: 16px; }
 .ra-final__actions { display: grid; gap: 10px; }
+
+/* ---------- Striscia orizzontale (pillole, chip): una riga, scorre di lato ---------- */
+.ra-strip {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-mask: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+  mask: linear-gradient(90deg, transparent 0, #000 16px, #000 calc(100% - 16px), transparent 100%);
+}
+.ra-strip::-webkit-scrollbar { display: none; }
 
 /* ---------- Colonna di pannelli ---------- */
 .ra-stack { display: flex; flex-direction: column; gap: 12px; }
@@ -900,11 +963,11 @@ html,
 .ra-history__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .ra-history__date { font-family: 'Lilita One', cursive; font-size: 19px; color: var(--ra-text); -webkit-text-stroke: 4px var(--ra-stroke); paint-order: stroke fill; }
 .ra-history__time { font-size: 12px; color: var(--ra-text-muted); }
-.ra-history__players { display: flex; flex-wrap: wrap; gap: 6px; }
+.ra-history__players { margin: 0 -16px; padding: 0 16px; }
 .ra-history__matches { display: flex; flex-direction: column; gap: 8px; }
 
 /* ---------- Impostazioni (settings.vue) e liste giocatori nei dialoghi ---------- */
-.ra-settings { width: 100%; max-width: 480px; margin: 0 auto; padding: 4px 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+.ra-settings { display: flex; flex-direction: column; gap: 14px; }
 .ra-settings__block { display: flex; flex-direction: column; gap: 10px; }
 .ra-settings__block .ra-arena__label-row { margin: 0; }
 .ra-settings__code-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
@@ -950,6 +1013,86 @@ html,
 .ra-radio input:checked { background: radial-gradient(circle, var(--ra-gold-400) 0 45%, var(--ra-navy-950) 50%); }
 .ra-radio:has(input:checked) { border-color: var(--ra-gold-700); }
 
+/* ---------- Segnaposto di caricamento (SkeletonList.vue) ---------- */
+.ra-skeleton { display: flex; flex-direction: column; gap: 10px; }
+.ra-skeleton__row {
+  border: 2px solid var(--ra-stroke);
+  border-radius: var(--ra-radius);
+  background:
+    linear-gradient(100deg, rgba(255, 255, 255, 0) 30%, rgba(140, 196, 255, .14) 50%, rgba(255, 255, 255, 0) 70%) var(--ra-navy-800);
+  background-size: 200% 100%;
+  animation: ra-shimmer 1.3s linear infinite;
+}
+
+/* ---------- Stato vuoto (EmptyState.vue) ---------- */
+.ra-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 36px 16px; text-align: center; }
+.ra-empty__icon { width: 72px; height: auto; margin-bottom: 6px; filter: drop-shadow(0 4px 0 var(--ra-stroke)); opacity: .9; }
+.ra-empty__title { font-family: 'Lilita One', cursive; font-size: 20px; color: var(--ra-text); -webkit-text-stroke: 4px var(--ra-stroke); paint-order: stroke fill; }
+.ra-empty__text { max-width: 280px; font-size: 14px; line-height: 1.45; color: var(--ra-text-muted); }
+.ra-empty__action { margin-top: 10px; }
+
+/* ---------- Messaggio d'attesa breve, dentro una sezione ---------- */
+.ra-waiting { padding: 18px 0; text-align: center; font-size: 14px; color: var(--ra-text-muted); }
+
+/* ---------- Tocco: comportamento da app, non da pagina web ---------- */
+/* Niente riquadro grigio/blu al tocco, niente selezione del testo o menu
+   "copia" con la pressione lunga sugli elementi dell'interfaccia. */
+* { -webkit-tap-highlight-color: transparent; }
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+input, textarea, .ra-selectable {
+  -webkit-user-select: text;
+  user-select: text;
+  -webkit-touch-callout: default;
+}
+img { -webkit-user-drag: none; }
+
+/* Risposta alla pressione per tutto ciò che è toccabile */
+.ra-tab:active:not(.is-active),
+.ra-tabbar__item:active,
+.ra-collapse__head:active,
+.ra-details__summary:active,
+.ra-toggle:active .ra-toggle__track,
+.ra-radio:active,
+.ra-clan-card:active { transform: scale(.96); }
+.ra-tab,
+.ra-tabbar__item,
+.ra-collapse__head,
+.ra-details__summary,
+.ra-radio { transition: transform .12s var(--ra-ease-out), color .15s, background .2s; }
+.ra-collapse__head:active { background: rgba(255, 255, 255, .04); }
+
+/* ---------- Dialoghi come pannello dal basso su telefono ---------- */
+.ra-modal-overlay { animation: ra-fade-in .2s ease-out both; }
+@media (max-width: 600px) {
+  .ra-modal-overlay { align-items: flex-end; padding: 0; }
+  .ra-modal-overlay .ra-modal {
+    max-width: none;
+    max-height: 88dvh;
+    padding: 26px 20px calc(20px + env(safe-area-inset-bottom));
+    border-width: 3px 0 0;
+    border-radius: var(--ra-radius-lg) var(--ra-radius-lg) 0 0;
+    box-shadow: var(--ra-bevel), 0 -10px 30px rgba(0, 0, 0, .5);
+    animation: ra-sheet-up .38s var(--ra-ease-out) both;
+  }
+  /* Maniglia in alto: fa capire che è un pannello */
+  .ra-modal-overlay .ra-modal::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    width: 44px;
+    height: 5px;
+    margin-left: -22px;
+    border-radius: 999px;
+    background: rgba(140, 196, 255, .35);
+  }
+  .ra-modal { position: relative; }
+}
+
 /* ---------- Entrata a cascata per liste ---------- */
 .ra-pop-in { animation: ra-pop-in .45s var(--ra-ease-pop) both; }
 
@@ -970,6 +1113,18 @@ html,
   0%, 100% { transform: translateY(0) rotate(-4deg); }
   50% { transform: translateY(-6px) rotate(4deg); }
 }
+@keyframes ra-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+@keyframes ra-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes ra-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
 @keyframes ra-spin {
   to { transform: rotate(360deg); }
 }
@@ -986,9 +1141,44 @@ html,
   .ra-pop-in,
   .ra-hero__logo,
   .ra-final__rays,
+  .ra-modal-overlay,
+  .ra-modal-overlay .ra-modal,
+  .ra-skeleton__row,
   .ra-final__title,
   .ra-badge--live::before { animation: none; }
 }
 
 /* Spazio sotto le tab di pagina (statistiche) */
 main > .ra-tabs { margin-bottom: 14px; }
+
+/* ---------- Transizione tra pagine (nuxt.config: app.pageTransition "ra-page") ---------- */
+.ra-page-enter-active { transition: opacity .18s ease-out, transform .22s var(--ra-ease-out); }
+.ra-page-leave-active { transition: opacity .1s ease-in; }
+.ra-page-enter-from { opacity: 0; transform: translateY(8px); }
+.ra-page-leave-to { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .ra-page-enter-active, .ra-page-leave-active { transition: none; }
+}
+
+/* Riga di attesa con spinner (es. ricerca tag in AddPlayerModal) */
+.loading-inline { display: flex; align-items: center; gap: 10px; min-height: 24px; font-size: 14px; color: var(--ra-text-muted); }
+
+/* ---------- Testo corrente: font di sistema per le frasi ---------- */
+.ra-modal > p,
+.ra-steps p,
+.ra-hero__sub,
+.ra-empty__text,
+.ra-waiting,
+.ra-rows__row dt,
+.ra-rows__row > span:first-child,
+.ra-actionbar__hint,
+.ra-pstats__best,
+.ra-history__time,
+.ra-footer,
+.ra-settings__help,
+.ra-toggle,
+.ra-radio > span,
+.loading-inline,
+.error-msg,
+.error-inline,
+.add-player-help { font-family: var(--ra-font-text); }

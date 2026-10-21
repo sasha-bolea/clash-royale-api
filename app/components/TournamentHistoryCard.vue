@@ -29,7 +29,7 @@ const matches = computed(() => props.tournament.tournament_matches ?? [])
       <span v-if="isInvalid" class="ra-badge ra-badge--red">ANNULLATO</span>
       <span v-else class="ra-badge">{{ typeLabel }}</span>
     </header>
-    <div class="ra-history__players">
+    <div class="ra-history__players ra-strip">
       <span v-for="p in players" :key="p.id" class="ra-pill">
         <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
         {{ p.username }}
@@ -38,6 +38,6 @@ const matches = computed(() => props.tournament.tournament_matches ?? [])
     <div v-if="matches.length" class="ra-history__matches">
       <MatchRow v-for="(m, i) in matches" :key="m.id" :match="m" :index="i" />
     </div>
-    <p v-else class="empty-msg">Nessuna partita registrata</p>
+    <p v-else class="ra-waiting">Nessuna partita registrata</p>
   </article>
 </template>
