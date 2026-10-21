@@ -17,6 +17,28 @@ const typeLabel = computed(() => props.tournament.match_type.toUpperCase())
 const isInvalid = computed(() => props.tournament.status === 'invalid')
 const players = computed(() => (props.tournament.tournament_players ?? []).map(tp => tp.players))
 const matches = computed(() => props.tournament.tournament_matches ?? [])
+
+const bracket = useBracket()
+
+// Tournament champion(s), computed with the same bracket analysis as the end-of-tournament
+// podium. Fallback when the bracket can't be read: the player with the most match wins
+// (only if there is a single leader). Annulled tournaments have no winner.
+const winners = computed<string[]>(() => {
+  if (isInvalid.value || !matches.value.length) return []
+  const result = bracket.analyzeTournament(matches.value, players.value, props.tournament.full_ranking ?? false)
+  if (result) {
+    // Same rule as the podium: shared place when present, otherwise list order.
+    return result.positions
+      .filter((p, i) => (p.place ?? i + 1) === 1)
+      .map(p => p.username ?? '')
+      .filter(Boolean)
+  }
+  const wins: Record<number, number> = {}
+  matches.value.forEach((m) => { wins[m.winner_id] = (wins[m.winner_id] ?? 0) + 1 })
+  const max = Math.max(...Object.values(wins))
+  const leaders = players.value.filter(p => wins[p.id] === max)
+  return leaders.length === 1 ? [leaders[0]!.username] : []
+})
 </script>
 
 <template>
@@ -34,6 +56,13 @@ const matches = computed(() => props.tournament.tournament_matches ?? [])
         <span class="ra-avatar ra-avatar--sm">{{ p.username.charAt(0).toUpperCase() }}</span>
         {{ p.username }}
       </span>
+    </div>
+    <div v-if="winners.length" class="ra-history__winner">
+      <img class="ra-history__crown" src="/images/ui/blue-crown.png" alt="">
+      <div class="ra-history__winner-text">
+        <span class="ra-history__winner-label">{{ winners.length > 1 ? 'Vincitori' : 'Vincitore' }}</span>
+        <span class="ra-history__winner-name">{{ winners.join(' · ') }}</span>
+      </div>
     </div>
     <div v-if="matches.length" class="ra-history__matches">
       <MatchRow v-for="(m, i) in matches" :key="m.id" :match="m" :index="i" />
