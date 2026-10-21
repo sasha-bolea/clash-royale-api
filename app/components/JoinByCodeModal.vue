@@ -17,7 +17,11 @@ async function submit() {
   error.value = null
   submitting.value = true
   try {
-    const clean = code.value.trim().toUpperCase()
+    const clean = normalizeClanCode(code.value)
+    if (!clean) {
+      error.value = 'Il codice è di 6 caratteri, solo lettere e numeri'
+      return
+    }
     const clan = await api.getClanByCode(clean)
     if (!clan) {
       error.value = 'Codice non valido'

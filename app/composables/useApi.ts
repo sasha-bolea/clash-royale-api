@@ -37,7 +37,8 @@ export function useApi() {
   async function getClanByCode(code: string): Promise<Clan | null> {
     const { data, error } = await $db.rpc('get_clan_by_code', { _code: code })
     if (error) throw error
-    return (data as Clan | null) ?? null
+    // Unknown code → the RPC returns a row of nulls, not null: treat it as not found.
+    return isClanFound(data) ? data : null
   }
 
   async function regenerateCode(clanId: number): Promise<string> {

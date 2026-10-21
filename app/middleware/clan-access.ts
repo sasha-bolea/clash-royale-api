@@ -4,7 +4,7 @@
 export default defineNuxtRouteMiddleware(async (to) => {
   if (import.meta.server) return // pagine client-only, skip SSR
 
-  const code = to.params.code as string | undefined
+  const code = normalizeClanCode((to.params.code as string | undefined) ?? '')
   if (!code) return navigateTo('/')
 
   const api = useApi()

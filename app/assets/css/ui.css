@@ -70,7 +70,12 @@ html,
 
 /* Colore di fondo = fondo della tab bar: se iOS lascia scoperta una striscia
    fuori dalla pagina, si confonde con la barra invece di sembrare una banda */
-html { background-color: var(--ra-navy-950); }
+html {
+  background-color: var(--ra-navy-950);
+  /* Il fondo a rombi è disegnato sul box di <html>: lo allunga fino all'altezza
+     reale dell'app, così copre anche i 47px che iOS a volte lascia in basso. */
+  min-height: var(--ra-app-h, 100%);
+}
 
 /* ---------- Testo display: bianco con contorno scuro, stile Clash ---------- */
 .ra-display {
