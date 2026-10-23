@@ -1,5 +1,6 @@
 import type { CRBattle, Player, PodiumEntry, TournamentMatch } from '~~/shared/types/domain'
 import { greedyMatching, loserId, sortByPlayed, useBracket } from '~/composables/useBracket'
+import { isBattleUsed } from '~/utils/sameBattle'
 
 // ====================================================================
 // Recupero di un torneo passato: partite candidate + validazione rigorosa.
@@ -263,7 +264,7 @@ export function findCandidateBattles(
       const p2 = byTag[tagOf(b.opponent[0]!.tag)]
       if (!p1 || !p2 || p1.id === p2.id) continue
       const crId = bracket.makeBattleId(b.battleTime, [b.team[0]!.tag], [b.opponent[0]!.tag])
-      if (seen.has(crId) || usedBattleIds.has(crId)) continue
+      if (isBattleUsed(crId, seen) || isBattleUsed(crId, usedBattleIds)) continue
       seen.add(crId)
       const c1 = b.team[0]!.crowns ?? 0
       const c2 = b.opponent[0]!.crowns ?? 0
