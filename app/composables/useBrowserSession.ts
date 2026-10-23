@@ -17,7 +17,8 @@ function load(): SavedClan[] {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return []
     const parsed = JSON.parse(raw)
-    return Array.isArray(parsed?.saved_clans) ? parsed.saved_clans : []
+    // Drop malformed entries (e.g. the empty clan saved by an unknown code).
+    return Array.isArray(parsed?.saved_clans) ? sanitizeSavedClans(parsed.saved_clans) : []
   } catch {
     return []
   }
@@ -36,6 +37,7 @@ export function useBrowserSession() {
   const savedClans = useState<SavedClan[]>('saved-clans', () => load())
 
   function addClan(c: SavedClan) {
+    if (!sanitizeSavedClans([c]).length) return
     const existing = savedClans.value.find(s => s.clan_id === c.clan_id)
     if (existing) {
       existing.code = c.code

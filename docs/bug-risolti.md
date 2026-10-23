@@ -17,6 +17,17 @@
 - **Causa**: la correzione del 21/10 allungava l'app all'altezza dello schermo, ma in quello stato iOS dà davvero all'app 47px in meno: il fondo finiva fuori schermo.
 - **Fix**: tolta l'altezza forzata (`--ra-app-h`); la striscia che iOS disegna sotto prende il colore del manifest, uguale al fondo della tab bar.
 - **File**: `app/app.vue`, `app/assets/css/style.css`.
+## 2026-10-22 — Clan vuoto salvato con un codice inesistente
+- **Sintomo**: in home compariva una card clan senza nome con solo "#", e aprendola "Errore: Clan non valido".
+- **Causa**: l'RPC `get_clan_by_code` è dichiarata `RETURNS clans`: per un codice inesistente risponde `{"id":null,"name":null,"code":null}` invece di `null`, e l'app la prendeva per un clan valido (salvato in `localStorage`). Stesso effetto aprendo un link `/clans/<codice falso>`.
+- **Fix**: `isClanFound` scarta le righe senza id; il codice viene normalizzato e controllato (6 lettere/numeri) prima della richiesta; i clan salvati non ben formati vengono scartati al caricamento e non si possono più aggiungere. Test in `tests/clanCode.test.ts`.
+- **File**: `app/utils/clanCode.ts`, `app/composables/useApi.ts`, `app/composables/useBrowserSession.ts`, `app/components/JoinByCodeModal.vue`, `app/middleware/clan-access.ts`.
+
+## 2026-10-22 — Striscia scura in fondo alla home (app installata)
+- **Sintomo**: dopo la correzione della banda, in fondo alla home restava una striscia blu scuro senza il fondo a rombi.
+- **Causa**: il fondo a rombi è disegnato sul box di `<html>`, che restava alto quanto la finestra "corta" riportata da iOS.
+- **Fix**: `html { min-height: var(--ra-app-h, 100%) }`.
+- **File**: `app/assets/css/ui.css`.
 
 ## 2026-10-21 — Pagina vuota su iPhone, tab bar in alto
 - **Sintomo**: nell'app installata, cambiando pagina restava solo la barra di navigazione, spostata in cima; nessun contenuto.
