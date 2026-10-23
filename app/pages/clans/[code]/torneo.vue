@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 import type { BracketFormat } from '~~/shared/types/domain'
 import TournamentBracket from '~/components/bracket/TournamentBracket.vue'
-import { computeSuggestions, type SuggestedPair } from '~/composables/useSuggestions'
+import { computeSuggestions, countSuggestionChoices, type SuggestedPair } from '~/composables/useSuggestions'
 
 definePageMeta({ middleware: ['clan-access'] })
 
@@ -54,6 +54,10 @@ const suggestedPairs = ref<SuggestedPair[]>([])
 const activeFormat = computed(() => participants.value.length as BracketFormat)
 // Il 2 mostra già entrambi i finalisti: niente da consigliare.
 const canSuggest = computed(() => activeFormat.value !== 2)
+// Suggerire ha senso solo se restano almeno 2 combinazioni possibili: con una
+// sola il tabellone è già obbligato e il pulsante resta disattivato.
+const suggestUseful = computed(() =>
+  countSuggestionChoices(tournamentMatches.value, participants.value, activeFormat.value) > 1)
 
 // Attiva/azzera il consiglio. All'attivazione genera coppie casuali fresche.
 function toggleSuggest() {
@@ -322,6 +326,8 @@ async function cancelTournament() {
               v-if="canSuggest"
               class="ra-btn ra-btn--sm"
               :class="{ 'ra-btn--red': suggestActive }"
+              :disabled="!suggestActive && !suggestUseful"
+              :title="!suggestActive && !suggestUseful ? 'Resta una sola combinazione possibile' : undefined"
               @click="toggleSuggest"
             >
               {{ suggestActive ? '✕ Pulisci' : '🎲 Suggerisci' }}
