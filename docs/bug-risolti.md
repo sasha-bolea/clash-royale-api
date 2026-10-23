@@ -26,7 +26,7 @@
 ## 2026-10-22 — Striscia scura in fondo alla home (app installata)
 - **Sintomo**: dopo la correzione della banda, in fondo alla home restava una striscia blu scuro senza il fondo a rombi.
 - **Causa**: il fondo a rombi è disegnato sul box di `<html>`, che restava alto quanto la finestra "corta" riportata da iOS.
-- **Fix**: `html { min-height: var(--ra-app-h, 100%) }`.
+- **Fix**: superato il 2026-10-23 — tolta l'altezza forzata (vedi "Tab bar tagliata"): la striscia è disegnata da iOS fuori dalla pagina e ha il colore del manifest, uguale alla tab bar.
 - **File**: `app/assets/css/ui.css`.
 
 ## 2026-10-21 — Pagina vuota su iPhone, tab bar in alto
