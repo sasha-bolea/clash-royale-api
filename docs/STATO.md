@@ -1,13 +1,14 @@
 # Stato del progetto
 
-_Ultimo aggiornamento: 2026-10-22 00:05 CEST_
+_Ultimo aggiornamento: 2026-10-24 (correzioni rilevamento partite, codice clan, Suggerisci)_
 
 ## Stato attuale
 - **Online** su https://royalarena.it (Vercel, deploy automatico da `main`). Database Supabase attivo con dati reali (clan "torneo fioi", codice MTHV83).
 - **Redesign "Clash potenziato"** completo su tutte le pagine (kit `ra-*`, [`design-system.md`](design-system.md)).
 - **Refactor UX** online: una sola area che scorre con rimbalzo iOS, header e tab bar fermi, barra azione AVVIA, dialoghi dal basso, conferme in-app, skeleton, stati vuoti, card "Installa l'app".
 - **Nuove funzioni** online: vincitore in evidenza nello storico; "Registra un torneo passato" con validazione rigorosa (17 test vitest).
-- Banda in basso e pagina vuota su iPhone: corrette, **in attesa di conferma sul telefono** di Sasha.
+- Online anche: partite doppie e partite del torneo precedente scartate dal rilevamento; codici clan non validi rifiutati; Suggerisci disattivato con una sola combinazione.
+- iPhone: la striscia in basso (iOS dà a volte 47px in meno all'app) non si può eliminare, solo mimetizzare col colore della tab bar; pagina vuota corretta. **In attesa di conferma sul telefono** di Sasha.
 
 ## Problemi aperti
 - Il middleware `clan-access` aspetta una richiesta al database a ogni cambio clan: se su iOS si blocca alla riapertura, il cambio pagina sembra non rispondere (prima della correzione causava la pagina vuota).
@@ -21,7 +22,8 @@ _Ultimo aggiornamento: 2026-10-22 00:05 CEST_
 | 2026-10-20 | Font Lilita One ospitato sul sito, niente Google Fonts | GDPR (sentenza LG München 2022) |
 | 2026-10-20 | Asset non usati rimossi, sorgenti grafici in `design/sorgenti/` | Tutto `public/` viene scaricato offline dalla PWA (da ~6 MB a 1,3 MB) |
 | 2026-10-20 | Lavoro su branch con anteprima Vercel, `main` solo con ok di Sasha | `main` va in produzione a ogni push |
-| 2026-10-21 | Altezza app installata = altezza reale dello schermo (`--ra-app-h`) | iOS a volte riporta 47px in meno e lascia una banda |
+| 2026-10-23 | Niente altezza forzata dell'app installata (tolto `--ra-app-h` del 21/10) | In quello stato iOS dà davvero 47px in meno: allungare l'app tagliava la tab bar |
+| 2026-10-23 | Stessa partita = stessi giocatori e orari entro 10s; il rilevamento scarta partite già in tornei non annullati | Clash Royale riporta la stessa battaglia con 1s di differenza; la tolleranza di 2 minuti all'avvio riprendeva la finale precedente |
 | 2026-10-21 | Niente transizione tra pagine | Con `out-in` su iOS restava la pagina vuota |
 | 2026-10-21 | Torneo passato: ogni 1v1 tra membri; partite dei tornei annullati riusabili; classifica completa dedotta dal numero di partite; vittorie contate in classifica | Scelte di Sasha, coerenti con il torneo dal vivo |
 | 2026-10-21 | Validazione rigorosa separata (`utils/pastTournament.ts`) invece di riusare l'analisi del dal vivo | Le partite scelte a mano vanno controllate in numero, accoppiamenti e ordine; l'analisi del dal vivo è tollerante |

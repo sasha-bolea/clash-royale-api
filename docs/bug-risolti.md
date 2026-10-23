@@ -5,12 +5,14 @@
 - **Causa**: il rilevamento accetta partite fino a 2 minuti prima dell'avvio (tolleranza sugli orologi) e non controllava se una partita apparteneva già a un altro torneo: la finale del torneo precedente (finita 2 minuti prima) è stata ripresa.
 - **Fix**: all'avvio del rilevamento si caricano le partite già in tornei non annullati del clan e si scartano.
 - **File**: `app/composables/useTournamentPolling.ts`, `app/utils/sameBattle.ts`.
+- **Dati corretti** (2026-10-24, ok di Sasha): torneo n. 80 (chiuso usando la vecchia finale) annullato e le sue vittorie tolte dalla classifica (Persak#freesera −2, Swahx −1).
 
 ## 2026-10-23 — Stessa partita contata due volte
 - **Sintomo**: nel torneo del 23/10 04:26 UTC la partita POLLOLOKO_717 – Swahx risulta due volte (04:46:39 e 04:46:40), con vittoria contata due volte.
 - **Causa**: Clash Royale riporta la stessa battaglia con l'orario di 1 secondo diverso nello storico dei due giocatori; l'id della partita contiene l'orario, quindi risultavano due partite.
 - **Fix**: una partita è "la stessa" se ha gli stessi giocatori e orari entro 10 secondi (`isSameBattle`), sia nel rilevamento dal vivo sia nel recupero dei tornei passati. Test in `tests/sameBattle.test.ts`.
 - **File**: `app/utils/sameBattle.ts`, `app/composables/useTournamentPolling.ts`, `app/utils/pastTournament.ts`.
+- **Dati corretti** (2026-10-24): eliminata la partita doppia n. 33 dal torneo n. 78 e tolta 1 vittoria a POLLOLOKO_717.
 
 ## 2026-10-23 — Tab bar tagliata in basso (app installata)
 - **Sintomo**: le scritte STORICO / STATS uscivano dal fondo dello schermo.
