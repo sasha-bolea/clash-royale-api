@@ -1,5 +1,6 @@
 import { storeToRefs } from 'pinia'
 import type { Player, BracketResult } from '~~/shared/types/domain'
+import { isBattleUsed } from '~/utils/sameBattle'
 
 const POLL_INTERVAL = 30_000 // 30s
 
@@ -15,6 +16,10 @@ export function useTournamentPolling(clanId: number) {
   const playerStore = usePlayerStore()
 
   const timerLabel = ref('0:00')
+
+  // Battles already in another non-annulled tournament of the clan (loaded once):
+  // the 2-minute grace before the start must not pull in the previous tournament's last match.
+  let usedElsewhere: Set<string> | null = null
 
   let pollingTimer: ReturnType<typeof setInterval> | null = null
   let timerInterval: ReturnType<typeof setInterval> | null = null
@@ -57,6 +62,14 @@ export function useTournamentPolling(clanId: number) {
     })
 
     let newBattlesFound = false
+    if (!usedElsewhere) {
+      try {
+        const own = new Set(tournamentMatches.value.map(m => m.cr_battle_id))
+        usedElsewhere = new Set([...await api.getUsedBattleIds(clanId)].filter(id => !own.has(id)))
+      } catch {
+        usedElsewhere = null // retry at the next poll; meanwhile only the own-tournament check applies
+      }
+    }
 
     for (const player of participants) {
       try {
@@ -67,7 +80,9 @@ export function useTournamentPolling(clanId: number) {
           const teamTags = battle.team.map(p => p.tag)
           const oppTags = battle.opponent.map(p => p.tag)
           const crId = bracket.makeBattleId(battle.battleTime, teamTags, oppTags)
-          if (knownBattleIds.value.has(crId)) continue
+          // Same battle can come back 1-2s apart from the other player's log: compare with tolerance.
+          if (isBattleUsed(crId, knownBattleIds.value)) continue
+          if (usedElsewhere && isBattleUsed(crId, usedElsewhere)) continue
 
           const p1tag = teamTags[0]!.replace('#', '').toUpperCase()
           const p2tag = oppTags[0]!.replace('#', '').toUpperCase()

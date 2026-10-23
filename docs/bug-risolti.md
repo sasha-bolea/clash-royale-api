@@ -1,5 +1,23 @@
 # Bug risolti
 
+## 2026-10-23 — Il nuovo torneo parte con la finale del torneo precedente
+- **Sintomo**: appena avviato un torneo (timer 0:13), il tabellone mostrava già "Partita 1" giocata.
+- **Causa**: il rilevamento accetta partite fino a 2 minuti prima dell'avvio (tolleranza sugli orologi) e non controllava se una partita apparteneva già a un altro torneo: la finale del torneo precedente (finita 2 minuti prima) è stata ripresa.
+- **Fix**: all'avvio del rilevamento si caricano le partite già in tornei non annullati del clan e si scartano.
+- **File**: `app/composables/useTournamentPolling.ts`, `app/utils/sameBattle.ts`.
+
+## 2026-10-23 — Stessa partita contata due volte
+- **Sintomo**: nel torneo del 23/10 04:26 UTC la partita POLLOLOKO_717 – Swahx risulta due volte (04:46:39 e 04:46:40), con vittoria contata due volte.
+- **Causa**: Clash Royale riporta la stessa battaglia con l'orario di 1 secondo diverso nello storico dei due giocatori; l'id della partita contiene l'orario, quindi risultavano due partite.
+- **Fix**: una partita è "la stessa" se ha gli stessi giocatori e orari entro 10 secondi (`isSameBattle`), sia nel rilevamento dal vivo sia nel recupero dei tornei passati. Test in `tests/sameBattle.test.ts`.
+- **File**: `app/utils/sameBattle.ts`, `app/composables/useTournamentPolling.ts`, `app/utils/pastTournament.ts`.
+
+## 2026-10-23 — Tab bar tagliata in basso (app installata)
+- **Sintomo**: le scritte STORICO / STATS uscivano dal fondo dello schermo.
+- **Causa**: la correzione del 21/10 allungava l'app all'altezza dello schermo, ma in quello stato iOS dà davvero all'app 47px in meno: il fondo finiva fuori schermo.
+- **Fix**: tolta l'altezza forzata (`--ra-app-h`); la striscia che iOS disegna sotto prende il colore del manifest, uguale al fondo della tab bar.
+- **File**: `app/app.vue`, `app/assets/css/style.css`.
+
 ## 2026-10-21 — Pagina vuota su iPhone, tab bar in alto
 - **Sintomo**: nell'app installata, cambiando pagina restava solo la barra di navigazione, spostata in cima; nessun contenuto.
 - **Causa**: la transizione tra pagine (`pageTransition` mode `out-in`, aggiunta nel refactor UX) toglie la pagina vecchia prima che la nuova sia pronta; se la richiesta del middleware `clan-access` si blocca (iOS alla riapertura dell'app), la nuova non arriva mai. Su Chrome desktop non si riproduce.

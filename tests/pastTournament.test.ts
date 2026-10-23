@@ -193,4 +193,14 @@ describe('findCandidateBattles', () => {
     const withUsed = findCandidateBattles(logs, clan, new Set([all[1]!.cr_battle_id]))
     expect(withUsed.map(c => c.player1_id)).toEqual([2])
   })
+
+  it('la stessa partita riportata con 1 secondo di differenza compare una volta sola', () => {
+    const logs = [
+      [battle('20261023T044639.000Z', '#T1', '#T2', 1, 0)],
+      [battle('20261023T044640.000Z', '#T2', '#T1', 0, 1)],
+    ]
+    expect(findCandidateBattles(logs, clan, new Set())).toHaveLength(1)
+    // ...ed è considerata già usata se l'altra versione è in un torneo
+    expect(findCandidateBattles(logs, clan, new Set(['20261023T044640.000Z_T1_T2']))).toHaveLength(0)
+  })
 })

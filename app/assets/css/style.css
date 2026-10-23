@@ -57,13 +57,11 @@ body {
    ============================================================ */
 body {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  /* --ra-app-h: altezza reale dello schermo nell'app installata (app.vue).
-     iOS a volte riporta una finestra più corta di 47px (barra di stato)
-     e lascerebbe una banda in basso. Nel browser vale 100% (finestra). */
-  height: var(--ra-app-h, 100%);
+  /* Ancorato alla finestra reale. In app installata iOS a volte dà all'app 47px
+     in meno (barra di stato) e disegna da sé la striscia in basso: allungare il
+     body la fa uscire dallo schermo e taglia la tab bar (provato il 22/10).
+     La striscia prende il colore del manifest (#040820) = fondo della tab bar. */
+  inset: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
