@@ -122,6 +122,26 @@ async function toggleFullRanking(e: Event) {
   }
 }
 
+// Tornei consecutivi: a fine torneo ne parte subito un altro con gli stessi
+// giocatori. Salvato sul torneo (vale per tutto il clan), il successivo lo eredita.
+async function toggleAutoRestart(e: Event) {
+  const input = e.target as HTMLInputElement
+  if (!activeTournament.value) return
+  try {
+    await api.setTournamentAutoRestart(activeTournament.value.id, input.checked)
+    activeTournament.value = { ...activeTournament.value, auto_restart: input.checked }
+  } catch (err: any) {
+    input.checked = !input.checked
+    showError('Errore tornei consecutivi: ' + (err?.message ?? err))
+  }
+}
+
+// A new tournament (consecutive mode) starts with a clean suggestion overlay.
+watch(() => activeTournament.value?.id, () => {
+  suggestActive.value = false
+  suggestedPairs.value = []
+})
+
 // Partite vinte per giocatore nel torneo corrente (per il podio).
 const podiumWins = computed<Record<number, number>>(() => {
   const w: Record<number, number> = {}
@@ -345,9 +365,18 @@ async function cancelTournament() {
             <span class="ra-toggle__track" aria-hidden="true" />
             <span>Classifica completa (scontri per tutte le posizioni)</span>
           </label>
+          <label class="ra-toggle">
+            <input
+              type="checkbox"
+              :checked="activeTournament?.auto_restart"
+              @change="toggleAutoRestart"
+            >
+            <span class="ra-toggle__track" aria-hidden="true" />
+            <span>Tornei consecutivi (a fine torneo ne riparte uno con gli stessi giocatori)</span>
+          </label>
           <TournamentBracket
             v-if="activeTournament"
-            :key="`bracket-${activeTournament.full_ranking}`"
+            :key="`bracket-${activeTournament.id}-${activeTournament.full_ranking}`"
             :matches="tournamentMatches"
             :tournament="activeTournament"
             :participants="participants"

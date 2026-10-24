@@ -26,6 +26,7 @@ export interface Tournament {
   match_type: MatchType
   status: TournamentStatus
   full_ranking: boolean
+  auto_restart?: boolean
   started_at: string
   finished_at: string | null
   tournament_players?: Array<{ player_id: number; players: Player }>

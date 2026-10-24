@@ -98,10 +98,14 @@ export function useApi() {
     playerIds: number[],
     matchType: MatchType,
     fullRanking = false,
+    autoRestart = false,
   ): Promise<Tournament> {
+    const insert: Record<string, unknown> = { clan_id: clanId, match_type: matchType, status: 'active', full_ranking: fullRanking }
+    // Only sent when on: the column may be missing on a database not yet migrated.
+    if (autoRestart) insert.auto_restart = true
     const { data: tournament, error: tErr } = await $db
       .from('tournaments')
-      .insert({ clan_id: clanId, match_type: matchType, status: 'active', full_ranking: fullRanking })
+      .insert(insert)
       .select()
       .single()
     if (tErr) throw tErr
@@ -129,6 +133,29 @@ export function useApi() {
     const { error } = await $db
       .from('tournaments').update({ full_ranking: value }).eq('id', tournamentId)
     if (error) throw error
+  }
+
+  // Turns consecutive tournaments on/off for a tournament (the next one inherits it).
+  async function setTournamentAutoRestart(tournamentId: number, value: boolean): Promise<void> {
+    const { error } = await $db
+      .from('tournaments').update({ auto_restart: value }).eq('id', tournamentId)
+    if (error) throw error
+  }
+
+  /**
+   * Closes an active tournament as finished, atomically.
+   * @returns true if this call closed it, false if it was already closed
+   *          (e.g. by another phone): only the closer starts the next one.
+   */
+  async function finishTournament(tournamentId: number): Promise<boolean> {
+    const { data, error } = await $db
+      .from('tournaments')
+      .update({ status: 'finished', finished_at: new Date().toISOString() })
+      .eq('id', tournamentId)
+      .eq('status', 'active')
+      .select('id')
+    if (error) throw error
+    return (data?.length ?? 0) > 0
   }
 
   async function getTournamentMatches(tournamentId: number): Promise<TournamentMatch[]> {
@@ -292,7 +319,7 @@ export function useApi() {
     getPlayers, addPlayer, removePlayer,
     // tournaments
     getActiveTournament, createTournament, updateTournamentStatus,
-    setTournamentFullRanking, getTournamentMatches, saveTournamentMatch,
+    setTournamentFullRanking, setTournamentAutoRestart, finishTournament, getTournamentMatches, saveTournamentMatch,
     getUsedBattleIds, savePastTournament,
     // standings
     getStandings, addWins, getTournamentsHistory,
