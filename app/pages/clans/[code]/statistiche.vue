@@ -136,7 +136,7 @@ onMounted(() => switchTab(activeTab.value))
 
             <div class="ra-panel ra-chart">
               <div class="ra-chart__head">
-                <p class="ra-label">Andamento vittorie</p>
+                <p class="ra-label">% vittorie per torneo</p>
                 <div class="ra-tabs ra-tabs--sm">
                   <button class="ra-tab" :class="{ 'is-active': chartFilter === '1m' }" @click="chartFilter = '1m'">1M</button>
                   <button class="ra-tab" :class="{ 'is-active': chartFilter === '3m' }" @click="chartFilter = '3m'">3M</button>

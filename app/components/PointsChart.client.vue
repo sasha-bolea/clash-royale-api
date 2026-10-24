@@ -17,15 +17,6 @@ let chart: Chart | null = null
 
 const empty = ref(false)
 
-// Partite vinte dal giocatore in questo torneo.
-function winsInTournament(t: Tournament, username: string): number {
-  let wins = 0
-  ;(t.tournament_matches ?? []).forEach((m) => {
-    if (m.winner?.username === username) wins++
-  })
-  return wins
-}
-
 function buildChart() {
   if (chart) {
     chart.destroy()
@@ -57,43 +48,21 @@ function buildChart() {
     new Date(t.started_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short' }),
   )
 
-  // Punti accumulati pre-finestra
-  const cumPoints: Record<string, number> = {}
-  props.players.forEach((p) => { cumPoints[p.username] = 0 })
-  if (cutoff) {
-    allSorted.filter(t => new Date(t.started_at) < cutoff!).forEach((t) => {
-      const partSet = new Set((t.tournament_players ?? []).map(tp => tp.players.username))
-      props.players.forEach((p) => {
-        if (partSet.has(p.username)) cumPoints[p.username]! += winsInTournament(t, p.username)
-      })
-    })
-  }
-
   const activeInPeriod = new Set(
-    sorted.flatMap(t => (t.tournament_players ?? []).map(tp => tp.players.username)),
+    sorted.flatMap(t => (t.tournament_players ?? []).map(tp => tp.players.id)),
   )
-
-  const seriesData: Record<string, number[]> = {}
-  props.players.forEach((p) => { seriesData[p.username] = [] })
-
-  sorted.forEach((t) => {
-    const partSet = new Set((t.tournament_players ?? []).map(tp => tp.players.username))
-    props.players.forEach((p) => {
-      if (partSet.has(p.username)) cumPoints[p.username]! += winsInTournament(t, p.username)
-      seriesData[p.username]!.push(cumPoints[p.username]!)
-    })
-  })
+  const seriesData = winRateSeries(sorted, props.players.map(p => p.id))
 
   // Series colours from the UI kit palette (gold, blue, red, green, bronze, violet).
   const colors = ['#ffd23f', '#8cc4ff', '#ff5c5c', '#4be08a', '#e08a4a', '#c07ef7']
   const datasets = props.players
-    .filter(p => activeInPeriod.has(p.username))
+    .filter(p => activeInPeriod.has(p.id))
     .map((p) => {
       const colorIdx = props.players.indexOf(p)
       const col = colors[colorIdx % colors.length]!
       return {
         label: p.username,
-        data: seriesData[p.username]!,
+        data: seriesData[p.id]!,
         borderColor: col,
         backgroundColor: col + '33',
         borderWidth: 3,
@@ -103,6 +72,7 @@ function buildChart() {
         pointBackgroundColor: col,
         tension: 0.3,
         fill: false,
+        spanGaps: true,
       }
     })
 
@@ -120,6 +90,9 @@ function buildChart() {
             font: { family: 'Lilita One, serif', size: 11 },
           },
         },
+        tooltip: {
+          callbacks: { label: c => `${c.dataset.label}: ${c.parsed.y}%` },
+        },
       },
       scales: {
         x: {
@@ -127,9 +100,10 @@ function buildChart() {
           grid: { color: 'rgba(140,196,255,0.08)' },
         },
         y: {
-          ticks: { color: '#8a96c8', stepSize: 1, font: { family: 'Lilita One, serif', size: 10 } },
+          ticks: { color: '#8a96c8', stepSize: 25, callback: v => `${v}%`, font: { family: 'Lilita One, serif', size: 10 } },
           grid: { color: 'rgba(140,196,255,0.08)' },
-          beginAtZero: true,
+          min: 0,
+          max: 100,
         },
       },
     },
