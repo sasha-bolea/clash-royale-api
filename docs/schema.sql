@@ -50,6 +50,8 @@ CREATE TABLE tournaments (
   status      TEXT NOT NULL DEFAULT 'active'
               CHECK (status IN ('active','paused','finished','invalid')),
   full_ranking BOOLEAN NOT NULL DEFAULT false,
+  -- Tornei consecutivi: a fine torneo ne parte subito un altro con gli stessi giocatori.
+  auto_restart BOOLEAN NOT NULL DEFAULT false,
   started_at  TIMESTAMPTZ DEFAULT NOW(),
   finished_at TIMESTAMPTZ
 );

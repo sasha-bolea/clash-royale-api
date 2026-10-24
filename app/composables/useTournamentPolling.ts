@@ -1,5 +1,5 @@
 import { storeToRefs } from 'pinia'
-import type { Player, BracketResult } from '~~/shared/types/domain'
+import type { Player, BracketResult, Tournament } from '~~/shared/types/domain'
 import { isBattleUsed } from '~/utils/sameBattle'
 
 const POLL_INTERVAL = 30_000 // 30s
@@ -14,6 +14,7 @@ export function useTournamentPolling(clanId: number) {
   const store = useTournamentStore()
   const { activeTournament, tournamentMatches, knownBattleIds } = storeToRefs(store)
   const playerStore = usePlayerStore()
+  const { showToast, showError } = useToast()
 
   const timerLabel = ref('0:00')
 
@@ -24,7 +25,10 @@ export function useTournamentPolling(clanId: number) {
   let pollingTimer: ReturnType<typeof setInterval> | null = null
   let timerInterval: ReturnType<typeof setInterval> | null = null
 
+  // Starts (or restarts) polling for the current active tournament.
   function startPolling() {
+    stopPolling()
+    usedElsewhere = null // reload: the previous tournament's matches are now "used elsewhere"
     poll()
     pollingTimer = setInterval(poll, POLL_INTERVAL)
     startTimer()
@@ -151,9 +155,43 @@ export function useTournamentPolling(clanId: number) {
 
     // Le vittorie sono già state assegnate per-match in poll().
     stopPolling()
-    await api.updateTournamentStatus(t.id, 'finished')
+    const closedHere = await api.finishTournament(t.id)
+    if (t.auto_restart && await startNextTournament(t, closedHere)) {
+      const winners = result.positions.filter((p, i) => (p.place ?? i + 1) === 1).map(p => p.username)
+      showToast(`Vince ${winners.join(' · ')} — nuovo torneo avviato`)
+      return
+    }
     store.completedPositions = result.positions
     activeTournament.value = { ...t, status: 'finished' }
+  }
+
+  /**
+   * Consecutive tournaments: opens the next tournament with the same players and
+   * settings, then follows it. Only the phone that closed the previous one creates
+   * it; the others wait for it to appear.
+   * @param prev the tournament just finished
+   * @param create true if this phone closed `prev`
+   * @returns true if the next tournament is now active on this phone
+   */
+  async function startNextTournament(prev: Tournament, create: boolean): Promise<boolean> {
+    try {
+      const ids = (prev.tournament_players ?? []).map(tp => tp.player_id ?? tp.players.id)
+      if (create) await api.createTournament(clanId, ids, prev.match_type, prev.full_ranking, true)
+      let next: Tournament | null = null
+      for (let attempt = 0; attempt < 4 && !next; attempt++) {
+        if (attempt) await new Promise(r => setTimeout(r, 2000))
+        next = await api.getActiveTournament(clanId)
+      }
+      if (!next) return false
+      activeTournament.value = next
+      tournamentMatches.value = []
+      knownBattleIds.value = new Set()
+      startPolling()
+      return true
+    } catch (err: any) {
+      showError('Errore avvio torneo successivo: ' + (err?.message ?? err))
+      return false
+    }
   }
 
   return {
