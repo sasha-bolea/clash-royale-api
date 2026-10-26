@@ -1,6 +1,7 @@
 import { storeToRefs } from 'pinia'
-import type { Player, BracketResult, Tournament } from '~~/shared/types/domain'
+import type { Player, BracketResult, Tournament, TournamentMatch } from '~~/shared/types/domain'
 import { isBattleUsed } from '~/utils/sameBattle'
+import { completionResult, splitAtCompletion } from '~/utils/completion'
 
 const POLL_INTERVAL = 30_000 // 30s
 
@@ -55,17 +56,14 @@ export function useTournamentPolling(clanId: number) {
     timerInterval = setInterval(tick, 1000)
   }
 
+  // Reads the participants' battlelogs, saves the new matches in played order up to
+  // the one that completes the tournament, then closes it. Matches played after it
+  // (app closed during several consecutive tournaments) are left for the next one.
   async function poll() {
     const t = activeTournament.value
     if (!t || !t.tournament_players) return
-
     const participants: Player[] = t.tournament_players.map(tp => tp.players)
-    const tagMap: Record<string, Player> = {}
-    participants.forEach((p) => {
-      tagMap[p.cr_tag.replace('#', '').toUpperCase()] = p
-    })
 
-    let newBattlesFound = false
     if (!usedElsewhere) {
       try {
         const own = new Set(tournamentMatches.value.map(m => m.cr_battle_id))
@@ -75,85 +73,91 @@ export function useTournamentPolling(clanId: number) {
       }
     }
 
+    const incoming = await collectNewMatches(t, participants)
+    if (!incoming.length) return
+    const { take, result } = splitAtCompletion(tournamentMatches.value, incoming, participants, t.full_ranking)
+
+    let saved = 0
+    for (const m of take) {
+      if (activeTournament.value?.id !== t.id) return // tournament changed meanwhile (annulled)
+      if (await saveMatch(t, m)) saved++
+    }
+    if (!saved) return
+    tournamentMatches.value = await api.getTournamentMatches(t.id)
+    if (result) await completeTournament(t, result)
+  }
+
+  /**
+   * New valid matches in the participants' battlelogs, not yet in this or another tournament.
+   * @returns unsaved matches (negative temporary ids), any order
+   */
+  async function collectNewMatches(t: Tournament, participants: Player[]): Promise<TournamentMatch[]> {
+    const tagMap: Record<string, Player> = {}
+    participants.forEach((p) => { tagMap[p.cr_tag.replace('#', '').toUpperCase()] = p })
+    const seen = new Set(knownBattleIds.value)
+    const found: TournamentMatch[] = []
+
     for (const player of participants) {
       try {
         const battles = await api.getBattlelog(player.cr_tag)
         for (const battle of battles) {
           if (!bracket.isBattleValid(battle, t, tagMap)) continue
-
           const teamTags = battle.team.map(p => p.tag)
           const oppTags = battle.opponent.map(p => p.tag)
           const crId = bracket.makeBattleId(battle.battleTime, teamTags, oppTags)
           // Same battle can come back 1-2s apart from the other player's log: compare with tolerance.
-          if (isBattleUsed(crId, knownBattleIds.value)) continue
+          if (isBattleUsed(crId, seen)) continue
           if (usedElsewhere && isBattleUsed(crId, usedElsewhere)) continue
 
-          const p1tag = teamTags[0]!.replace('#', '').toUpperCase()
-          const p2tag = oppTags[0]!.replace('#', '').toUpperCase()
-          const p1 = tagMap[p1tag]
-          const p2 = tagMap[p2tag]
+          const p1 = tagMap[teamTags[0]!.replace('#', '').toUpperCase()]
+          const p2 = tagMap[oppTags[0]!.replace('#', '').toUpperCase()]
           if (!p1 || !p2) continue
-
           const crownsP1 = battle.team[0]!.crowns ?? 0
           const crownsP2 = battle.opponent[0]!.crowns ?? 0
-          const winnerId = crownsP1 >= crownsP2 ? p1.id : p2.id
-
-          const saved = await api.saveTournamentMatch({
+          seen.add(crId)
+          found.push({
+            id: -found.length - 1,
             tournament_id: t.id,
             player1_id: p1.id,
             player2_id: p2.id,
-            winner_id: winnerId,
+            winner_id: crownsP1 >= crownsP2 ? p1.id : p2.id,
             crowns_p1: crownsP1,
             crowns_p2: crownsP2,
             played_at: bracket.parseCRDate(battle.battleTime).toISOString(),
             cr_battle_id: crId,
-            match_type: t.match_type,
           })
-          if (saved) {
-            knownBattleIds.value.add(crId)
-            newBattlesFound = true
-            // 1 vittoria = +1 partita vinta in classifica
-            await api.addWins(clanId, [{ player_id: winnerId, wins: 1 }])
-            playerStore.standingsMap[winnerId] = (playerStore.standingsMap[winnerId] ?? 0) + 1
-          }
         }
       } catch (err: any) {
         console.warn(`Poll fallito per ${player.username}:`, err?.message ?? err)
       }
     }
-
-    if (newBattlesFound) {
-      tournamentMatches.value = await api.getTournamentMatches(t.id)
-      await checkCompletion()
-    }
+    return found
   }
 
+  /**
+   * Saves one match and gives the winner +1 in the clan standings.
+   * @returns false if it was already saved (e.g. by another phone)
+   */
+  async function saveMatch(t: Tournament, m: TournamentMatch): Promise<boolean> {
+    const saved = await api.saveTournamentMatch({ ...m, match_type: t.match_type })
+    if (!saved) return false
+    knownBattleIds.value.add(m.cr_battle_id)
+    await api.addWins(clanId, [{ player_id: m.winner_id, wins: 1 }])
+    playerStore.standingsMap[m.winner_id] = (playerStore.standingsMap[m.winner_id] ?? 0) + 1
+    return true
+  }
+
+  // Closes the current tournament if its saved matches complete it (e.g. after
+  // turning "classifica completa" off).
   async function checkCompletion() {
     const t = activeTournament.value
     if (!t || !t.tournament_players) return
+    const result = completionResult(tournamentMatches.value, t.tournament_players.map(tp => tp.players), t.full_ranking)
+    if (result) await completeTournament(t, result)
+  }
 
-    const n = t.tournament_players.length
-    const fr = t.full_ranking
-    const matches = tournamentMatches.value
-    const allPlayers = t.tournament_players.map(tp => tp.players)
-
-    // Conteggio partite atteso + analyzer per dimensione torneo.
-    let needed: number
-    let result: BracketResult | null
-    switch (n) {
-      case 2: needed = 1; break
-      case 3: needed = 3; break
-      case 4: needed = fr ? 4 : 3; break
-      case 6: needed = 6 + (fr ? 3 : 1); break
-      case 8: needed = fr ? 12 : 7; break
-      default: return
-    }
-    if (matches.length < needed) return
-
-    result = bracket.analyzeTournament(matches, allPlayers, fr)
-    if (!result) return
-
-    // Le vittorie sono già state assegnate per-match in poll().
+  // Marks the tournament finished; shows the podium or, in consecutive mode, starts the next one.
+  async function completeTournament(t: Tournament, result: BracketResult) {
     stopPolling()
     const closedHere = await api.finishTournament(t.id)
     if (t.auto_restart && await startNextTournament(t, closedHere)) {
@@ -176,7 +180,10 @@ export function useTournamentPolling(clanId: number) {
   async function startNextTournament(prev: Tournament, create: boolean): Promise<boolean> {
     try {
       const ids = (prev.tournament_players ?? []).map(tp => tp.player_id ?? tp.players.id)
-      if (create) await api.createTournament(clanId, ids, prev.match_type, prev.full_ranking, true)
+      // Starts when the previous final was played: matches played since then
+      // (app closed meanwhile) belong to the new tournament.
+      const lastPlayed = tournamentMatches.value.map(m => m.played_at).sort().at(-1)
+      if (create) await api.createTournament(clanId, ids, prev.match_type, prev.full_ranking, true, lastPlayed)
       let next: Tournament | null = null
       for (let attempt = 0; attempt < 4 && !next; attempt++) {
         if (attempt) await new Promise(r => setTimeout(r, 2000))
