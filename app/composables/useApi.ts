@@ -99,8 +99,10 @@ export function useApi() {
     matchType: MatchType,
     fullRanking = false,
     autoRestart = false,
+    startedAt?: string,
   ): Promise<Tournament> {
     const insert: Record<string, unknown> = { clan_id: clanId, match_type: matchType, status: 'active', full_ranking: fullRanking }
+    if (startedAt) insert.started_at = startedAt
     // Only sent when on: the column may be missing on a database not yet migrated.
     if (autoRestart) insert.auto_restart = true
     const { data: tournament, error: tErr } = await $db
